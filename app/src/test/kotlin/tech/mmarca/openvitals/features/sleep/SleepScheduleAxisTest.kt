@@ -1,5 +1,6 @@
 package tech.mmarca.openvitals.features.sleep
 
+import tech.mmarca.openvitals.domain.preferences.SleepWindow
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -71,6 +72,44 @@ class SleepScheduleAxisTest {
         // With the 22:00 anchor, 20:00 -> 1320 and 10:00 -> 1320 + 14 h.
         assertEquals(1320.0, axis!!.min, 0.0)
         assertEquals(1320.0 + 14 * 60, axis.max, 0.0)
+    }
+
+    // anchorMinute: the middle of the waking day.
+
+    @Test fun `the anchor is the whole hour halfway through the waking day`() {
+        // Default 18:00-10:00 window: awake 10:00-18:00, so the axis wraps at 14:00.
+        assertEquals(14 * 60, SleepScheduleAxis.anchorMinute(SleepWindow.Default))
+        // 23:00-07:00: awake 07:00-23:00, wrap at 15:00.
+        assertEquals(15 * 60, SleepScheduleAxis.anchorMinute(SleepWindow(startHour = 23, endHour = 7)))
+        // An odd waking stretch rounds to a whole hour, so tick labels stay on the hour.
+        assertEquals(16 * 60, SleepScheduleAxis.anchorMinute(SleepWindow(startHour = 23, endHour = 8)))
+        // A window that does not cross midnight still wraps opposite the sleep.
+        assertEquals(2 * 60, SleepScheduleAxis.anchorMinute(SleepWindow(startHour = 13, endHour = 15)))
+        // A window with no waking stretch at all wraps twelve hours from its start.
+        assertEquals(10 * 60, SleepScheduleAxis.anchorMinute(SleepWindow(startHour = 22, endHour = 22)))
+    }
+
+    @Test fun `a bedtime before the window start stays above the other nights`() {
+        // The reported week: a 23:00 window, a night that began at 22:04 and two that began after midnight.
+        val window = SleepWindow(startHour = 23, endHour = 7)
+        val anchor = SleepScheduleAxis.anchorMinute(window)
+        val wednesday = night("2026-11-04", "2026-11-04T00:34:00Z", "2026-11-04T10:42:00Z")
+        val thursday = night("2026-11-05", "2026-11-04T22:04:00Z", "2026-11-05T10:38:00Z")
+        val friday = night("2026-11-06", "2026-11-06T00:49:00Z", "2026-11-06T10:30:00Z")
+
+        val axis = SleepScheduleAxis.range(listOf(wednesday, thursday, friday), zone, anchor)
+
+        assertNotNull(axis)
+        // 22:00 to 11:00, not the 35 hours the 23:00 anchor produced.
+        assertEquals(LocalTime.of(22, 0), SleepScheduleAxis.clockTime(axis!!.min.toInt(), anchor))
+        assertEquals(LocalTime.of(11, 0), SleepScheduleAxis.clockTime(axis.max.toInt(), anchor))
+        assertEquals(13.0 * 60, axis.span, 0.0)
+        val thursdayStart = SleepScheduleAxis.anchoredMinutes(thursday.inBedStart!!, zone, anchor)
+        val wednesdayStart = SleepScheduleAxis.anchoredMinutes(wednesday.inBedStart!!, zone, anchor)
+        assertTrue("22:04 must sit above 00:34 on the axis", thursdayStart < wednesdayStart)
+        // With the window start itself as the anchor the same week wrapped.
+        val wrapped = SleepScheduleAxis.range(listOf(wednesday, thursday, friday), zone, 23 * 60)
+        assertEquals(35.0 * 60, wrapped!!.span, 0.0)
     }
 
     // anchoredMinutes.

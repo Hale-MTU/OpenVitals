@@ -43,8 +43,9 @@ private val ScheduleAxisLabelWidth = 46.dp
 
 /**
  * Time-aligned, stage-coloured sleep chart for the period views: one bar
- * per night on a clock axis anchored at the window's start hour. Gate on
- * [SleepScheduleAxis.range] being non-null.
+ * per night on a clock axis anchored mid-waking-day, see
+ * [SleepScheduleAxis.anchorMinute]. Gate on [SleepScheduleAxis.range] being
+ * non-null.
  */
 @Composable
 internal fun SleepScheduleStageChart(
@@ -61,7 +62,7 @@ internal fun SleepScheduleStageChart(
     onDateSelected: ((LocalDate) -> Unit)? = null,
 ) {
     val zone = remember { ZoneId.systemDefault() }
-    val anchorMinute = sleepWindow.startHour * 60
+    val anchorMinute = SleepScheduleAxis.anchorMinute(sleepWindow)
     val axis = remember(days, anchorMinute) {
         SleepScheduleAxis.range(days, zone, anchorMinute)
     } ?: return

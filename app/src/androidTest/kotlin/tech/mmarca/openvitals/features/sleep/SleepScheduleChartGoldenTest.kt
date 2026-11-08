@@ -19,8 +19,8 @@ import tech.mmarca.openvitals.testing.assertVisualRootMatchesGolden
 import tech.mmarca.openvitals.testing.goldenInstant
 
 /**
- * [SleepScheduleStageChart]: a week of nights on one clock anchored at 18:00, so a night
- * crossing midnight is one bar. Every night here straddles midnight and Saturday goes to bed after it.
+ * [SleepScheduleStageChart]: a week of nights on one clock anchored at 14:00, the middle
+ * of the default window's waking day, so a night crossing midnight is one bar. Every night here straddles midnight and Saturday goes to bed after it.
  * This is the one chart with its label gutter on the right.
  */
 class SleepScheduleChartGoldenTest {
