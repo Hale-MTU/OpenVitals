@@ -41,6 +41,7 @@ fun SettingsScreen(
     onOpenSection: (SettingsSection) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val openWatchSummary by viewModel.openWatchSummary.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val unableToOpenPermissions = stringResource(R.string.onboarding_unable_open_permissions)
@@ -141,6 +142,7 @@ fun SettingsScreen(
             state = state,
             viewModel = viewModel,
             actions = actions,
+            openWatchSummary = openWatchSummary,
         )
     }
 }

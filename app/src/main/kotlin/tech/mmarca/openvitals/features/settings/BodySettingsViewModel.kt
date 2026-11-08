@@ -11,6 +11,8 @@ import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import tech.mmarca.openvitals.data.repository.PreferencesRepository
 import tech.mmarca.openvitals.data.repository.contract.BodyRepository
@@ -66,6 +68,7 @@ class BodySettingsViewModel @Inject constructor(
     private val bodyEnergyChainSyncService: BodyEnergyChainSyncService,
     private val derivedMetricsResetService: DerivedMetricsResetService,
     private val bmrEstimateService: BmrEstimateService,
+    private val openWatchLink: tech.mmarca.openvitals.openwatch.OpenWatchLink? = null,
 ) : ViewModel() {
     companion object {
         private const val TAG = "BodySettingsViewModel"
@@ -74,8 +77,22 @@ class BodySettingsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(readPreferences(BodySettingsUiState()))
     val uiState: StateFlow<BodySettingsUiState> = _uiState.asStateFlow()
 
+    /**
+     * When the profile shared with OpenWatch last changed on either side, while OpenWatch
+     * allows the profile; null when it is not kept in sync.
+     */
+    val openWatchProfileSync: StateFlow<Long?> = openWatchLink?.let { link ->
+        kotlinx.coroutines.flow.combine(link.summary, link.profileUpdatedAtMillis) { summary, updatedAt ->
+            updatedAt.takeIf { (summary as? tech.mmarca.openvitals.openwatch.OpenWatchLinkSummary.Connected)?.profileShared == true }
+        }.stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), null)
+    } ?: MutableStateFlow(null)
+
     init {
         resolveBodyProfileFromHealthConnect()
+        // A profile OpenWatch sent shows at once, not on the next visit.
+        openWatchLink?.let { link ->
+            viewModelScope.launch { link.profileUpdatedAtMillis.drop(1).collect { refresh() } }
+        }
     }
 
     /** Permissions are granted in Health Connect, so a return to the screen re-reads. */

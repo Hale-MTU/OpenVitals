@@ -76,6 +76,7 @@ class SettingsViewModel @Inject constructor(
     private val healthConnectPreferences: HealthConnectPreferences,
     private val heartThresholdPreferences: HeartThresholdPreferences,
     private val permissionUxState: HealthConnectPermissionUxState,
+    private val openWatchLink: tech.mmarca.openvitals.openwatch.OpenWatchLink? = null,
 ) : ViewModel() {
     companion object {
         private const val TAG = "SettingsViewModel"
@@ -84,11 +85,16 @@ class SettingsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
+    /** OpenWatch's status line on the Settings root; null without the link (tests). */
+    val openWatchSummary: StateFlow<tech.mmarca.openvitals.openwatch.OpenWatchLinkSummary?> =
+        openWatchLink?.summary ?: MutableStateFlow(null)
+
     init {
         refresh()
     }
 
     fun refresh() {
+        openWatchLink?.refresh()
         viewModelScope.launch {
             val avail = repository.availability()
             val granted = if (avail == HealthConnectAvailability.AVAILABLE) {

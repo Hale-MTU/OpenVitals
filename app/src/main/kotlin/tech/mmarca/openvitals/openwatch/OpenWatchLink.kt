@@ -11,10 +11,13 @@ import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -67,6 +70,24 @@ class OpenWatchLink @Inject constructor(
 
     val status: StateFlow<OpenLinkStatus> = client.status
 
+    val devices = client.devices
+
+    private val _profileSyncedAtMillis = MutableStateFlow(prefs.getLong(KEY_PROFILE_SYNCED_AT, 0L))
+
+    /** When a body profile last went to OpenWatch or came from it; 0 if never. */
+    val profileSyncedAtMillis: StateFlow<Long> = _profileSyncedAtMillis.asStateFlow()
+
+    private val _profileUpdatedAtMillis = MutableStateFlow(stamp.updatedAtMillis)
+
+    /** When the shared profile last changed on either side; 0 or 1 for one older than the link. */
+    val profileUpdatedAtMillis: StateFlow<Long> = _profileUpdatedAtMillis.asStateFlow()
+
+    /** What Settings, OpenWatch shows: the one status line and, once connected, the details. */
+    val summary: StateFlow<OpenWatchLinkSummary> =
+        combine(client.status, client.devices, profileSyncedAtMillis) { status, devices, syncedAt ->
+            openWatchLinkSummary(status, devices, syncedAt)
+        }.distinctUntilChanged().stateIn(scope, SharingStarted.Eagerly, OpenWatchLinkSummary.Connecting)
+
     /** The dashboard tile, or null for none. */
     val tile: StateFlow<OpenWatchTileDisplay?> = combine(client.status, client.devices, ::openWatchTile)
         .distinctUntilChanged()
@@ -104,6 +125,12 @@ class OpenWatchLink @Inject constructor(
             }
         }
         scope.launch {
+            client.profileExchangedAtMillis.filter { it > 0 }.collect { at ->
+                _profileSyncedAtMillis.value = at
+                prefs.edit { putLong(KEY_PROFILE_SYNCED_AT, at) }
+            }
+        }
+        scope.launch {
             recording.state
                 .map { if (it.isActive) RecordingKey(it.startTime, it.exerciseType) else null }
                 .distinctUntilChanged()
@@ -126,15 +153,16 @@ class OpenWatchLink @Inject constructor(
 
     fun requestSync(deviceId: String) = client.requestSync(deviceId)
 
+    /** Looks for OpenWatch again, for when the user may just have installed or updated it. */
+    fun refresh() = client.refresh()
+
     /**
      * Opens OpenWatch: its consent screen while it waits for an answer about OpenVitals,
-     * else its home screen. False if neither could be opened.
+     * else its home screen. Call it from a tap: the consent screen opens on the strength of
+     * this app being on screen. False if neither could be opened.
      */
     fun open(context: Context): Boolean {
-        val state = (client.status.value as? OpenLinkStatus.Connected)?.state
-        state?.consentIntent?.let { pending ->
-            return runCatching { pending.send(); true }.getOrDefault(false)
-        }
+        if (client.openConsent(context)) return true
         val launch = context.packageManager.getLaunchIntentForPackage(hostPackage) ?: return false
         return runCatching { context.startActivity(launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)); true }.getOrDefault(false)
     }
@@ -163,6 +191,7 @@ class OpenWatchLink @Inject constructor(
             putLong(KEY_PROFILE_AT, stamp.updatedAtMillis)
             putString(KEY_PROFILE_SIGNATURE, stamp.signature)
         }
+        _profileUpdatedAtMillis.value = stamp.updatedAtMillis
     }
 
     private fun isInstalled(packageName: String): Boolean =
@@ -173,6 +202,7 @@ class OpenWatchLink @Inject constructor(
         const val PREFS = "openwatch_link"
         const val KEY_PROFILE_AT = "profile_updated_at"
         const val KEY_PROFILE_SIGNATURE = "profile_signature"
+        const val KEY_PROFILE_SYNCED_AT = "profile_synced_at"
         const val SOURCE_PREFIX = "openwatch:"
         val HostPackages = listOf("tech.mmarca.openwatch", "tech.mmarca.openwatch.debug")
     }
