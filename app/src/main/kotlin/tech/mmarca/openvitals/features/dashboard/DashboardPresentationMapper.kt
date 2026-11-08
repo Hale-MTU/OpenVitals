@@ -32,6 +32,8 @@ object DashboardPresentationMapper {
         bodyEnergySetupCompleted: Boolean = false,
         includeUnsupported: Boolean = false,
         medicalRecordsAvailable: Boolean = false,
+        /** The OpenWatch tile; null hides it. */
+        openWatch: tech.mmarca.openvitals.openwatch.OpenWatchTileDisplay? = null,
         /** Tiles whose last read Health Connect refused. They are not sorted as empty. */
         degradedWidgets: Set<DashboardWidgetId> = emptySet(),
     ): DashboardDisplayState {
@@ -53,6 +55,7 @@ object DashboardPresentationMapper {
                     isLoading = widgetId in loadingWidgets,
                     bodyEnergySetupCompleted = bodyEnergySetupCompleted,
                     medicalRecordsAvailable = medicalRecordsAvailable,
+                    openWatch = openWatch,
                 ) ?: return@forEach
                 if (!isSupported) unsupportedIds += widgetId
                 put(widgetId, if (widgetId in degradedWidgets) widget.copy(degraded = true) else widget)
@@ -72,6 +75,7 @@ object DashboardPresentationMapper {
         isLoading: Boolean,
         bodyEnergySetupCompleted: Boolean,
         medicalRecordsAvailable: Boolean = false,
+        openWatch: tech.mmarca.openvitals.openwatch.OpenWatchTileDisplay? = null,
     ): DashboardWidgetDisplayModel? = when (widgetId) {
         DashboardWidgetId.STEPS -> metricWidget(
             id = widgetId,
@@ -415,6 +419,10 @@ object DashboardPresentationMapper {
         // No feature, no tile: a null here also keeps it out of edit mode's tray.
         DashboardWidgetId.MEDICAL_RECORDS ->
             if (medicalRecordsAvailable) DashboardWidgetDisplayModel(id = widgetId) else null
+        // No OpenWatch, or no watch in it: no tile, and none in the add tray either.
+        DashboardWidgetId.OPENWATCH -> openWatch?.let {
+            DashboardWidgetDisplayModel(id = widgetId, openWatch = it, isLoading = isLoading)
+        }
         DashboardWidgetId.WORKOUT -> null
     }
 

@@ -3790,4 +3790,14 @@
     <string name="cycle_hormonal_kind_ring_or_patch">リングまたはパッチ</string>
     <string name="cycle_hormonal_kind_injection">注射</string>
     <string name="cycle_hormonal_kind_other">その他のホルモン系の方法</string>
+    <!-- The OpenWatch tile (features/dashboard, openwatch/) -->
+    <string name="metric_watch">ウォッチ</string>
+    <string name="dashboard_watch_sync">ウォッチを同期</string>
+    <string name="dashboard_watch_battery">バッテリー %1$d%%</string>
+    <string name="dashboard_watch_last_sync">同期 %1$s</string>
+    <plurals name="dashboard_watch_more">
+        <item quantity="one">他 %1$d 件</item>
+        <item quantity="other">他 %1$d 件</item>
+    </plurals>
+    <string name="dashboard_openwatch_allow">OpenWatch で OpenVitals を許可してください</string>
 </resources>

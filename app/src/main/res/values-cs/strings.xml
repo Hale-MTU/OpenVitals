@@ -3786,4 +3786,16 @@
     <string name="cycle_hormonal_kind_ring_or_patch">Kroužek nebo náplast</string>
     <string name="cycle_hormonal_kind_injection">Injekce</string>
     <string name="cycle_hormonal_kind_other">Jiná hormonální metoda</string>
+    <!-- The OpenWatch tile (features/dashboard, openwatch/) -->
+    <string name="metric_watch">Hodinky</string>
+    <string name="dashboard_watch_sync">Synchronizovat hodinky</string>
+    <string name="dashboard_watch_battery">%1$d%% baterie</string>
+    <string name="dashboard_watch_last_sync">synchronizováno %1$s</string>
+    <plurals name="dashboard_watch_more">
+        <item quantity="one">+%1$d další</item>
+        <item quantity="few">+%1$d další</item>
+        <item quantity="many">+%1$d dalšího</item>
+        <item quantity="other">+%1$d dalších</item>
+    </plurals>
+    <string name="dashboard_openwatch_allow">Povolte OpenVitals v OpenWatch</string>
 </resources>

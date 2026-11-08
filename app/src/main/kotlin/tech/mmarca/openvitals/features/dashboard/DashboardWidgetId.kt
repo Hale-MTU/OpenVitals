@@ -45,6 +45,9 @@ enum class DashboardWidgetId {
 
     /** The way into medical records. Static: it reads nothing. */
     MEDICAL_RECORDS,
+
+    /** The watch OpenWatch syncs, through OpenLink. Device state, not a metric. */
+    OPENWATCH,
 }
 
 const val DashboardWidgetGridColumns = 2
@@ -55,6 +58,8 @@ const val DashboardFixedWidgetCount = DashboardWidgetGridColumns * DashboardFixe
 val DefaultDashboardWidgetIds: List<DashboardWidgetId> = listOf(
     DashboardWidgetId.STEPS,
     DashboardWidgetId.WEEKLY_CARDIO_LOAD,
+    // First after the hero rings: it is the tile the user taps to sync.
+    DashboardWidgetId.OPENWATCH,
     DashboardWidgetId.DISTANCE,
     DashboardWidgetId.CALORIES_OUT,
     DashboardWidgetId.ACTIVE_CALORIES,
@@ -100,7 +105,8 @@ fun customizableDashboardWidgetIds(widgetIds: List<DashboardWidgetId>): List<Das
  * alongside read as new. Nothing is added here later.
  */
 private val WidgetIdsKnownBeforeTracking: Set<String> =
-    (DashboardWidgetId.entries - DashboardWidgetId.MEDICAL_RECORDS).mapTo(mutableSetOf()) { it.name } + "WATCH"
+    (DashboardWidgetId.entries - DashboardWidgetId.MEDICAL_RECORDS - DashboardWidgetId.OPENWATCH)
+        .mapTo(mutableSetOf()) { it.name } + "WATCH"
 
 /**
  * The saved layout with any never-offered widget appended. The known-ids
@@ -260,6 +266,6 @@ fun DashboardWidgetId.toDashboardMetricOrNull(): DashboardMetric? = when (this) 
     DashboardWidgetId.CARDIO_LOAD -> DashboardMetric.WEEKLY_CARDIO_LOAD
     DashboardWidgetId.MINDFULNESS -> DashboardMetric.MINDFULNESS
     DashboardWidgetId.CYCLE -> DashboardMetric.CYCLE
-    // The medical records entry, never gated by the provider.
-    DashboardWidgetId.MEDICAL_RECORDS -> null
+    // The medical records entry and the OpenWatch tile, never gated by the provider.
+    DashboardWidgetId.MEDICAL_RECORDS, DashboardWidgetId.OPENWATCH -> null
 }

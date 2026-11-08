@@ -3786,4 +3786,16 @@
     <string name="cycle_hormonal_kind_ring_or_patch">Pierścień lub plaster</string>
     <string name="cycle_hormonal_kind_injection">Zastrzyk</string>
     <string name="cycle_hormonal_kind_other">Inna metoda hormonalna</string>
+    <!-- The OpenWatch tile (features/dashboard, openwatch/) -->
+    <string name="metric_watch">Zegarek</string>
+    <string name="dashboard_watch_sync">Synchronizuj zegarek</string>
+    <string name="dashboard_watch_battery">%1$d%% baterii</string>
+    <string name="dashboard_watch_last_sync">zsynchronizowano %1$s</string>
+    <plurals name="dashboard_watch_more">
+        <item quantity="one">+%1$d więcej</item>
+        <item quantity="few">+%1$d więcej</item>
+        <item quantity="many">+%1$d więcej</item>
+        <item quantity="other">+%1$d więcej</item>
+    </plurals>
+    <string name="dashboard_openwatch_allow">Zezwól OpenVitals w OpenWatch</string>
 </resources>

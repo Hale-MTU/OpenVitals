@@ -37,6 +37,7 @@ Most importantly, body and entry/session browsing now live in metric-owned detai
 | `features/` | one package per user-facing feature area |
 | `healthconnect/` | the Health Connect integration boundary: manager, per-area readers, permission/UX services |
 | `navigation/` | routes and graph registration |
+| `openwatch/` | the OpenLink client to OpenWatch (the `openlink/` submodule, a composite build): the body profile both ways, the dashboard watch tile and its sync, a recording session that keeps the watch streaming, and its live heart rate into `sensors/ble` |
 | `sensors/ble/` | live BLE sensor streaming during activity recording |
 | `ui/` | shared components, charts, theme |
 

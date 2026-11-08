@@ -29,6 +29,8 @@ data class DashboardWidgetDisplayModel(
     val sleepScore: SleepScoreDisplay? = null,
     val weeklyCardioLoad: DashboardWeeklyCardioLoad? = null,
     val cycle: CycleWidgetDisplay? = null,
+    /** The OpenWatch tile's watch, for [DashboardWidgetId.OPENWATCH]. */
+    val openWatch: tech.mmarca.openvitals.openwatch.OpenWatchTileDisplay? = null,
     val measurementSubtitle: String? = null,
     /** Consumed-today figure shown under the active-caffeine headline. */
     val caffeineConsumedTodayMg: Long? = null,
@@ -136,6 +138,7 @@ internal fun DashboardWidgetDisplayModel.showsNoDataMessage(): Boolean = when {
     id == DashboardWidgetId.CYCLE -> cycle == null
     // Static: it has no data to lack, so it never sinks.
     id == DashboardWidgetId.MEDICAL_RECORDS -> false
+    id == DashboardWidgetId.OPENWATCH -> openWatch == null
     id == DashboardWidgetId.WEEKLY_CARDIO_LOAD || id == DashboardWidgetId.CARDIO_LOAD ->
         weeklyCardioLoad == null
     else -> value == null || !hasValue

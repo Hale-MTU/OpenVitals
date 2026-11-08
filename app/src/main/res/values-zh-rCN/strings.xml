@@ -3723,4 +3723,14 @@
     <string name="cycle_hormonal_kind_ring_or_patch">阴道环或贴片</string>
     <string name="cycle_hormonal_kind_injection">注射</string>
     <string name="cycle_hormonal_kind_other">其他激素类方法</string>
+    <!-- The OpenWatch tile (features/dashboard, openwatch/) -->
+    <string name="metric_watch">手表</string>
+    <string name="dashboard_watch_sync">同步手表</string>
+    <string name="dashboard_watch_battery">电量 %1$d%%</string>
+    <string name="dashboard_watch_last_sync">同步于 %1$s</string>
+    <plurals name="dashboard_watch_more">
+        <item quantity="one">另有 %1$d 项</item>
+        <item quantity="other">另加 %1$d 项</item>
+    </plurals>
+    <string name="dashboard_openwatch_allow">在 OpenWatch 中允许 OpenVitals</string>
 </resources>
