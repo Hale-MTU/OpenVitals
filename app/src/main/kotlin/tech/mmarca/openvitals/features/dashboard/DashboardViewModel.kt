@@ -92,6 +92,8 @@ data class DashboardUiState(
     /** When Health Connect's refusal ends, epoch millis, or null while it is answering. */
     val rateLimitDeadlineEpochMillis: Long? = null,
     val sensorStatus: DashboardSensorStatus = DashboardSensorStatus(),
+    /** The OpenWatch tile, from OpenLink; null hides it. */
+    val openWatch: tech.mmarca.openvitals.openwatch.OpenWatchTileDisplay? = null,
 )
 
 @Immutable
@@ -155,6 +157,7 @@ class DashboardViewModel @Inject constructor(
     private val chainSyncService: BodyEnergyChainSyncService? = null,
     private val medicalRecords: MedicalRecordsRepository? = null,
     private val foregroundGate: AppForegroundGate? = null,
+    private val openWatchLink: tech.mmarca.openvitals.openwatch.OpenWatchLink? = null,
 ) : ViewModel() {
 
     val minimumOnboardingPermissions get() = repository.minimumOnboardingPermissions
@@ -195,6 +198,7 @@ class DashboardViewModel @Inject constructor(
     private var inFlightLoadDate: LocalDate? = null
 
     init {
+        observeOpenWatch()
         observeSensorStatus()
         observeBodyEnergyRebuild()
         observeRateLimit()
@@ -242,6 +246,31 @@ class DashboardViewModel @Inject constructor(
 
     fun clearError() {
         _uiState.update { it.copy(error = null) }
+    }
+
+    /** The OpenWatch tile follows OpenLink's state; a change rebuilds the grid around it. */
+    private fun observeOpenWatch() {
+        val link = openWatchLink ?: return
+        _uiState.update { it.copy(openWatch = link.tile.value) }
+        viewModelScope.launch {
+            link.tile.collect { tile ->
+                if (tile != _uiState.value.openWatch) {
+                    _uiState.update { it.copy(openWatch = tile) }
+                    rebuildDisplay()
+                }
+            }
+        }
+    }
+
+    /** The tile's sync button: the watch it shows, through OpenWatch. */
+    fun syncWatchNow() {
+        val deviceId = _uiState.value.openWatch?.deviceId ?: return
+        openWatchLink?.requestSync(deviceId)
+    }
+
+    /** The tile itself: OpenWatch, or its consent screen while it waits. */
+    fun openOpenWatch(context: android.content.Context) {
+        openWatchLink?.open(context)
     }
 
     private fun observeSensorStatus() {
@@ -727,6 +756,7 @@ class DashboardViewModel @Inject constructor(
             // Only edit mode shows unsupported metrics, in the add tray.
             includeUnsupported = _uiState.value.isEditingDashboard,
             medicalRecordsAvailable = medicalRecords?.isAvailable() == true,
+            openWatch = _uiState.value.openWatch,
         )
             // A reload marks every tile loading. Without the last answers, the sort would reshuffle.
             .withLastDemoted(_uiState.value.display.lastDemoted)

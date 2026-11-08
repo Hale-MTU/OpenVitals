@@ -3722,4 +3722,14 @@
     <string name="cycle_hormonal_kind_ring_or_patch">Ring oder Pflaster</string>
     <string name="cycle_hormonal_kind_injection">Spritze</string>
     <string name="cycle_hormonal_kind_other">Andere hormonelle Methode</string>
+    <!-- The OpenWatch tile (features/dashboard, openwatch/) -->
+    <string name="metric_watch">Uhr</string>
+    <string name="dashboard_watch_sync">Uhr synchronisieren</string>
+    <string name="dashboard_watch_battery">%1$d%% Akku</string>
+    <string name="dashboard_watch_last_sync">synchronisiert %1$s</string>
+    <plurals name="dashboard_watch_more">
+        <item quantity="one">+%1$d weitere</item>
+        <item quantity="other">+%1$d weitere</item>
+    </plurals>
+    <string name="dashboard_openwatch_allow">OpenVitals in OpenWatch erlauben</string>
 </resources>

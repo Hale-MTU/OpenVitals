@@ -263,6 +263,15 @@ version released while paused reaches Play only by hand, from the AAB on its
 GitHub release, or by a production run from its tag after the variable is
 gone; the next release's upload also supersedes it.
 
+### The OpenLink submodule
+
+The app builds the OpenLink client from the git submodule at `openlink/`
+(`includeBuild("openlink")` in `settings.gradle.kts`). Clone with
+`git clone --recurse-submodules`, or run `git submodule update --init` in an existing
+checkout. Every workflow checkout passes `submodules: true`. F-Droid builds from the tag
+with its own recipe in fdroiddata: that recipe needs `submodules: true` on the build entry
+from the first release that carries OpenLink, or the build fails at configuration.
+
 ## Release Checklist
 
 For a versioned prerelease:

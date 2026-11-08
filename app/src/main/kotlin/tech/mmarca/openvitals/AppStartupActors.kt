@@ -22,6 +22,7 @@ class AppStartupActors @Inject constructor(
     private val syncedRecordOriginRepository: SyncedRecordOriginRepository,
     private val homeWidgetRefreshScheduler: HomeWidgetRefreshScheduler,
     private val appleHealthImportWorkController: AppleHealthImportWorkController,
+    private val openWatchLink: tech.mmarca.openvitals.openwatch.OpenWatchLink,
 ) {
     /** [observeProcessLifecycle] must add its observer on the main thread. This runs off it. */
     fun start(observeProcessLifecycle: (LifecycleObserver) -> Unit) {
@@ -32,5 +33,7 @@ class AppStartupActors @Inject constructor(
         homeWidgetRefreshScheduler.reconcile()
         // A health export copied for an analysis the user never finished.
         appleHealthImportWorkController.clearAbandonedStagedExport()
+        // OpenLink to OpenWatch: bound while in the foreground or recording.
+        openWatchLink.start()
     }
 }

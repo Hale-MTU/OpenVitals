@@ -18,8 +18,9 @@ class AppStartupActorsTest {
     private val origins = mockk<SyncedRecordOriginRepository>(relaxed = true)
     private val widgets = mockk<HomeWidgetRefreshScheduler>(relaxed = true)
     private val appleHealth = mockk<AppleHealthImportWorkController>(relaxed = true)
+    private val openWatch = mockk<tech.mmarca.openvitals.openwatch.OpenWatchLink>(relaxed = true)
 
-    private fun subject() = AppStartupActors(reminders, origins, widgets, appleHealth)
+    private fun subject() = AppStartupActors(reminders, origins, widgets, appleHealth, openWatch)
 
     @Test
     fun `every actor is started once`() {
@@ -28,6 +29,7 @@ class AppStartupActorsTest {
         verify(exactly = 1) { origins.warmOverlay() }
         verify(exactly = 1) { widgets.reconcile() }
         verify(exactly = 1) { appleHealth.clearAbandonedStagedExport() }
+        verify(exactly = 1) { openWatch.start() }
     }
 
     @Test

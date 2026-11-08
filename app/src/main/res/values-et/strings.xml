@@ -3722,4 +3722,14 @@
     <string name="cycle_hormonal_kind_ring_or_patch">Rõngas või plaaster</string>
     <string name="cycle_hormonal_kind_injection">Süst</string>
     <string name="cycle_hormonal_kind_other">Muu hormonaalne meetod</string>
+    <!-- The OpenWatch tile (features/dashboard, openwatch/) -->
+    <string name="metric_watch">Kell</string>
+    <string name="dashboard_watch_sync">Sünkrooni kell</string>
+    <string name="dashboard_watch_battery">%1$d%% akut</string>
+    <string name="dashboard_watch_last_sync">sünkroonitud %1$s</string>
+    <plurals name="dashboard_watch_more">
+        <item quantity="one">+%1$d veel</item>
+        <item quantity="other">+%1$d veel</item>
+    </plurals>
+    <string name="dashboard_openwatch_allow">Luba OpenVitals OpenWatchis</string>
 </resources>

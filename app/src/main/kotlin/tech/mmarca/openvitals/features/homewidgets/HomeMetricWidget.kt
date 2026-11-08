@@ -672,8 +672,8 @@ internal fun DashboardData.toSnapshot(
                 snapshot(displayValue)
             }
         }
-        // The medical records entry, not a day's reading.
-        DashboardWidgetId.MEDICAL_RECORDS -> snapshot(null)
+        // The medical records entry and the OpenWatch tile, not a day's reading.
+        DashboardWidgetId.MEDICAL_RECORDS, DashboardWidgetId.OPENWATCH -> snapshot(null)
     }
 }
 
@@ -718,6 +718,7 @@ fun DashboardWidgetId.homeMetricTitleRes(): Int = when (this) {
     DashboardWidgetId.MINDFULNESS -> R.string.metric_mindfulness
     DashboardWidgetId.CYCLE -> R.string.metric_cycle
     DashboardWidgetId.MEDICAL_RECORDS -> R.string.medical_records_title
+    DashboardWidgetId.OPENWATCH -> R.string.metric_watch
 }
 
 /** CYCLE has its own concealed-by-default widget; a placed metric tile for it keeps rendering. */

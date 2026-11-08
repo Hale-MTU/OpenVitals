@@ -3722,4 +3722,14 @@
     <string name="cycle_hormonal_kind_ring_or_patch">Rengas tai laastari</string>
     <string name="cycle_hormonal_kind_injection">Injektio</string>
     <string name="cycle_hormonal_kind_other">Muu hormonaalinen menetelmä</string>
+    <!-- The OpenWatch tile (features/dashboard, openwatch/) -->
+    <string name="metric_watch">Kello</string>
+    <string name="dashboard_watch_sync">Synkronoi kello</string>
+    <string name="dashboard_watch_battery">Akku %1$d%%</string>
+    <string name="dashboard_watch_last_sync">synkronoitu %1$s</string>
+    <plurals name="dashboard_watch_more">
+        <item quantity="one">+%1$d lisää</item>
+        <item quantity="other">+%1$d lisää</item>
+    </plurals>
+    <string name="dashboard_openwatch_allow">Salli OpenVitals OpenWatchissa</string>
 </resources>

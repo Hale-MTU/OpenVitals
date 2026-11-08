@@ -3787,4 +3787,16 @@
     <string name="cycle_hormonal_kind_ring_or_patch">Кольцо или пластырь</string>
     <string name="cycle_hormonal_kind_injection">Инъекции</string>
     <string name="cycle_hormonal_kind_other">Другой гормональный метод</string>
+    <!-- The OpenWatch tile (features/dashboard, openwatch/) -->
+    <string name="metric_watch">Часы</string>
+    <string name="dashboard_watch_sync">Синхронизировать часы</string>
+    <string name="dashboard_watch_battery">Заряд батареи %1$d%%</string>
+    <string name="dashboard_watch_last_sync">синхронизировано %1$s</string>
+    <plurals name="dashboard_watch_more">
+        <item quantity="one">Ещё: %1$d</item>
+        <item quantity="few">Ещё: %1$d</item>
+        <item quantity="many">Ещё: %1$d</item>
+        <item quantity="other">Ещё: %1$d</item>
+    </plurals>
+    <string name="dashboard_openwatch_allow">Разрешите OpenVitals в OpenWatch</string>
 </resources>

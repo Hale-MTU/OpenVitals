@@ -259,6 +259,8 @@ androidComponents {
 }
 
 dependencies {
+    // The OpenLink client, from the openlink/ submodule (a composite build).
+    implementation("tech.mmarca.openlink:client")
     implementation(project(":domain"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

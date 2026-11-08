@@ -212,7 +212,18 @@
         android:required="false" />
 
     <!-- Query for Health Connect package (needed on Android 11+) -->
+    <!--
+        OpenLink: OpenVitals binds OpenWatch's control service for the paired watches, the body
+        profile and a watch's live heart rate during a recording. The debug permission is for
+        a debug build of OpenWatch.
+    -->
+    <uses-permission android:name="tech.mmarca.openwatch.permission.OPENLINK" />
+    <uses-permission android:name="tech.mmarca.openwatch.debug.permission.OPENLINK" />
+
     <queries>
+        <!-- OpenWatch, the OpenLink host. -->
+        <package android:name="tech.mmarca.openwatch" />
+        <package android:name="tech.mmarca.openwatch.debug" />
         <package android:name="com.google.android.apps.healthdata" />
         <package android:name="com.android.vending" />
         <!-- CoMaps live-navigation provider. From Android 11 a package we do

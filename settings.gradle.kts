@@ -23,5 +23,8 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "OpenVitals"
+// The OpenLink control channel (git submodule at openlink/): OpenVitals is a client of
+// OpenWatch through it.
+includeBuild("openlink")
 include(":app")
 include(":domain")

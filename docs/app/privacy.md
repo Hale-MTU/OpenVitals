@@ -32,6 +32,8 @@ Every device feature is built around keeping that true:
 
 Watches and scales are not paired with OpenVitals. The separate [OpenWatch](https://github.com/Hale-MTU/OpenWatch) app syncs them and writes what they record to Health Connect, which OpenVitals then reads like any other source.
 
+With OpenWatch installed, the two apps also talk on the phone through [OpenLink](https://github.com/Hale-MTU/OpenLink), a bound service with no network: the body profile is kept the same in both (the later change wins), the dashboard shows the watch OpenWatch syncs and can ask for a sync, and during an activity recording OpenWatch streams the watch's heart rate into it (`openwatch/OpenWatchLink`). OpenWatch decides what OpenVitals may do on its Connected apps screen, from OpenVitals' signing certificate. The link is bound only while OpenVitals is in the foreground or recording.
+
 ### Phone-To-Phone Sync
 
 ### Phone-To-Phone Sync

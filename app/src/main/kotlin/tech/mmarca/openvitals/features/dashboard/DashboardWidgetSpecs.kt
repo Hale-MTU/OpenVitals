@@ -143,6 +143,12 @@ import tech.mmarca.openvitals.ui.theme.VitalsColor
 import tech.mmarca.openvitals.ui.theme.WeightColor
 import tech.mmarca.openvitals.ui.theme.WheelchairPushesColor
 import tech.mmarca.openvitals.ui.theme.WorkoutColor
+import tech.mmarca.openvitals.openwatch.OpenWatchTileDisplay
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.outlined.Watch
+import androidx.compose.material.icons.outlined.Sync
+import android.text.format.DateUtils
 
 @Composable
 internal fun dashboardWidgetSpecs(
@@ -151,6 +157,7 @@ internal fun dashboardWidgetSpecs(
     widgetIds: Collection<DashboardWidgetId>,
     isEditingDashboard: Boolean,
     onOpenMetric: (DashboardWidgetId) -> Unit,
+    onSyncWatch: () -> Unit = {},
 ): List<DashboardWidgetSpec> = buildList {
     val loadingMessage = stringResource(R.string.loading)
     val openMetric: (DashboardWidgetId) -> (() -> Unit)? = { widgetId ->
@@ -172,6 +179,34 @@ internal fun dashboardWidgetSpecs(
                     style = model.style,
                     loadingMessage = loadingMessage.takeIf { model.isLoading },
                     onClick = openMetric(widgetId),
+                )
+            }
+            model.id == DashboardWidgetId.OPENWATCH -> {
+                add(
+                    DashboardWidgetSpec(widgetId, title) { modifier ->
+                        val watch = model.openWatch
+                        DashboardPillWidget(
+                            title = title,
+                            // The watch's name is the value; battery and last sync sit underneath.
+                            value = DisplayValue(watch?.name.orEmpty(), ""),
+                            icon = meta.icon,
+                            accentColor = meta.accentColor,
+                            message = loadingMessage.takeIf { model.isLoading }
+                                ?: stringResource(R.string.dashboard_openwatch_allow).takeIf { watch?.awaitingConsent == true },
+                            subtitle = watch?.takeUnless { it.awaitingConsent }?.let { watchSubtitle(it) },
+                            modifier = modifier,
+                            trailing = watch?.takeIf { it.deviceId != null }?.let { current ->
+                                {
+                                    WatchSyncButton(
+                                        isSyncing = current.isSyncing,
+                                        // A live button inside a dragged tile would fire on the grab.
+                                        onClick = if (isEditingDashboard) null else onSyncWatch,
+                                    )
+                                }
+                            },
+                            onClick = openMetric(widgetId),
+                        )
+                    },
                 )
             }
             model.id == DashboardWidgetId.MEDICAL_RECORDS -> {
@@ -383,6 +418,7 @@ private fun dashboardWidgetTitle(widgetId: DashboardWidgetId): String =
             DashboardWidgetId.MINDFULNESS -> R.string.metric_mindfulness
             DashboardWidgetId.CYCLE -> R.string.metric_cycle
             DashboardWidgetId.MEDICAL_RECORDS -> R.string.medical_records_title
+            DashboardWidgetId.OPENWATCH -> R.string.metric_watch
             DashboardWidgetId.WORKOUT -> R.string.metric_workout
         },
     )
@@ -440,6 +476,7 @@ private fun dashboardWidgetMeta(widgetId: DashboardWidgetId): DashboardWidgetMet
         DashboardWidgetId.MINDFULNESS -> DashboardWidgetMeta(Icons.Outlined.SelfImprovement, MindfulnessColor)
         DashboardWidgetId.CYCLE -> DashboardWidgetMeta(Icons.Outlined.CalendarMonth, CycleColor)
         DashboardWidgetId.MEDICAL_RECORDS -> DashboardWidgetMeta(Icons.Outlined.MedicalInformation, MedicalRecordsColor)
+        DashboardWidgetId.OPENWATCH -> DashboardWidgetMeta(Icons.Outlined.Watch, VitalsColor)
         DashboardWidgetId.WORKOUT -> DashboardWidgetMeta(Icons.AutoMirrored.Outlined.DirectionsRun, WorkoutColor)
     }
 
@@ -646,4 +683,56 @@ internal fun MutableList<DashboardWidgetSpec>.addWeeklyCardioLoadMetric(
             }
         }
     )
+}
+
+/** The sync action: a spinner while the sync runs, since the tile is where the user sees it. */
+private val WatchSyncButtonSize = 32.dp
+private val WatchSyncGlyphSize = 18.dp
+private val WatchSyncSpinnerSize = 20.dp
+private val WatchSyncSpinnerStroke = 2.dp
+
+@Composable
+private fun WatchSyncButton(isSyncing: Boolean, onClick: (() -> Unit)?) {
+    if (isSyncing) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(WatchSyncSpinnerSize),
+            strokeWidth = WatchSyncSpinnerStroke,
+        )
+        return
+    }
+    IconButton(
+        onClick = { onClick?.invoke() },
+        enabled = onClick != null,
+        modifier = Modifier.size(WatchSyncButtonSize),
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Sync,
+            contentDescription = stringResource(R.string.dashboard_watch_sync),
+            modifier = Modifier.size(WatchSyncGlyphSize),
+        )
+    }
+}
+
+/** The line under the watch's name: battery, last sync, other watches, whichever exist. */
+@Composable
+private fun watchSubtitle(watch: OpenWatchTileDisplay): String? {
+    val parts = buildList {
+        watch.batteryPercent?.let { add(stringResource(R.string.dashboard_watch_battery, it)) }
+        watch.lastSyncedAt?.let {
+            add(
+                stringResource(
+                    R.string.dashboard_watch_last_sync,
+                    DateUtils.getRelativeTimeSpanString(
+                        it.toEpochMilli(),
+                        System.currentTimeMillis(),
+                        DateUtils.MINUTE_IN_MILLIS,
+                    ).toString(),
+                ),
+            )
+        }
+        if (watch.additionalCount > 0) {
+            add(pluralStringResource(R.plurals.dashboard_watch_more, watch.additionalCount, watch.additionalCount))
+        }
+    }
+    return parts.joinToString(" · ").ifBlank { null }
 }
