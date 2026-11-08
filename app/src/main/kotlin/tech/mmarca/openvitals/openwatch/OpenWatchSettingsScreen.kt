@@ -65,6 +65,7 @@ fun OpenWatchSettingsScreen(viewModel: OpenWatchSettingsViewModel) {
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refresh() }
     val openWatchUrl = stringResource(R.string.openwatch_url)
     val cannotOpen = stringResource(R.string.openwatch_cannot_open)
+    val noBrowser = stringResource(R.string.openwatch_move_no_browser, openWatchUrl)
     val openOpenWatch = {
         if (!viewModel.open(context)) Toast.makeText(context, cannotOpen, Toast.LENGTH_SHORT).show()
     }
@@ -72,7 +73,7 @@ fun OpenWatchSettingsScreen(viewModel: OpenWatchSettingsViewModel) {
         runCatching {
             context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(openWatchUrl)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }.onFailure {
-            Toast.makeText(context, context.getString(R.string.openwatch_move_no_browser, openWatchUrl), Toast.LENGTH_LONG).show()
+            Toast.makeText(context, noBrowser, Toast.LENGTH_LONG).show()
         }
         Unit
     }
