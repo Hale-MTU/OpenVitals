@@ -54,6 +54,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.SelfImprovement
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Watch
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -165,6 +166,8 @@ internal fun SettingsCategoryCard(
     section: SettingsSection,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    /** A live line in place of the section's fixed summary (OpenWatch's status). */
+    summary: String? = null,
 ) {
     OpenVitalsCard(
         onClick = onClick,
@@ -192,7 +195,7 @@ internal fun SettingsCategoryCard(
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
-                    text = stringResource(section.summaryRes),
+                    text = summary ?: stringResource(section.summaryRes),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 2.dp),
@@ -218,6 +221,7 @@ internal val SettingsSection.icon: ImageVector
         SettingsSection.RECOVERY -> Icons.Outlined.FavoriteBorder
         SettingsSection.CYCLE -> Icons.Outlined.CalendarMonth
         SettingsSection.DATA_IMPORT -> Icons.Outlined.FolderOpen
+        SettingsSection.OPENWATCH -> Icons.Outlined.Watch
         SettingsSection.DEVICE_SYNC -> Icons.Outlined.Devices
         SettingsSection.HEALTH_CONNECT -> Icons.Outlined.HealthAndSafety
         SettingsSection.DEBUG_DIAGNOSTICS -> Icons.Outlined.BugReport
