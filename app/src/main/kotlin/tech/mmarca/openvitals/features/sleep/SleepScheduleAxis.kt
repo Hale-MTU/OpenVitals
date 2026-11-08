@@ -1,5 +1,6 @@
 package tech.mmarca.openvitals.features.sleep
 
+import tech.mmarca.openvitals.domain.preferences.SleepWindow
 import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
@@ -7,12 +8,28 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 /**
- * Clock-axis math for the sleep schedule chart, in minutes since the
- * window start hour, so a night stays contiguous across midnight.
+ * Clock-axis math for the sleep schedule chart, in minutes since an anchor
+ * clock time, so a night stays contiguous across midnight. The anchor is
+ * [anchorMinute]: the middle of the waking day, the clock time furthest from
+ * both ends of the sleep window.
  */
 internal object SleepScheduleAxis {
 
     const val MINUTES_PER_DAY = 24 * 60
+
+    /**
+     * Minute of the day the axis wraps at for [sleepWindow]: the whole hour
+     * halfway through the waking stretch between the window's end and its
+     * start. Anchoring at the window start itself put a bedtime shortly
+     * before it (22:04 on a 23:00 window) a full day down the axis, below
+     * the other nights, and stretched the axis to 36 hours.
+     */
+    fun anchorMinute(sleepWindow: SleepWindow): Int {
+        val startHour = sleepWindow.startHour.coerceIn(0, 23)
+        val endHour = sleepWindow.endHour.coerceIn(0, 23)
+        val wakingHours = (startHour - endHour).mod(24).let { if (it == 0) 24 else it }
+        return (startHour - wakingHours / 2).mod(24) * 60
+    }
 
     /** Nights at or beyond this in-bed span are implausible and excluded from the axis range. */
     private const val MAX_PLAUSIBLE_NIGHT_MINUTES = 16 * 60

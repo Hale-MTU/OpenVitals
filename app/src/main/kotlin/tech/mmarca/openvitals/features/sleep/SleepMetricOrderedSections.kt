@@ -194,7 +194,7 @@ internal fun LazyListScope.renderSleepPeriodOrderedContent(
     val scheduleAxis = SleepScheduleAxis.range(
         days = scheduleDays,
         zone = ZoneId.systemDefault(),
-        anchorMinute = state.sleepWindow.startHour * 60,
+        anchorMinute = SleepScheduleAxis.anchorMinute(state.sleepWindow),
     )
     val useScheduleChart = useSleepScheduleChart(state.selectedRange, scheduleDays, scheduleAxis)
 
