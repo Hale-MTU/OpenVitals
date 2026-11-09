@@ -62,6 +62,15 @@ internal class ProfileStamp(
         return profile.toLink(updatedAtMillis).takeIf { updatedAtMillis > 0 }
     }
 
+    /**
+     * [profile] as OpenWatch should hold it, with the time of its last change, or null for
+     * one this side has not stamped (or an empty one). Pushed on every start and on "Sync
+     * now", not only on a change: OpenWatch keeps it only if it is newer, so a repeat is
+     * harmless, and a push queued before the link was allowed does not outlive the process.
+     */
+    fun current(profile: BodyProfile): OpenLinkProfile? =
+        profile.toLink(updatedAtMillis).takeIf { updatedAtMillis > 0 && profile.signature() == signature }
+
     /** OpenWatch's profile: the body profile to adopt if it is newer, else null. */
     fun onRemote(profile: OpenLinkProfile): BodyProfile? {
         if (profile.updatedAtMillis <= updatedAtMillis) return null

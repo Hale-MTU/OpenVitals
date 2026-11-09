@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -50,6 +51,8 @@ class OpenWatchSettingsViewModel @Inject constructor(
     fun refresh() = link.refresh()
 
     fun open(context: android.content.Context): Boolean = link.open(context)
+
+    fun syncProfile(): Boolean = link.syncProfileNow()
 }
 
 /**
@@ -65,6 +68,7 @@ fun OpenWatchSettingsScreen(viewModel: OpenWatchSettingsViewModel) {
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refresh() }
     val openWatchUrl = stringResource(R.string.openwatch_url)
     val cannotOpen = stringResource(R.string.openwatch_cannot_open)
+    val nothingToSync = stringResource(R.string.openwatch_profile_nothing_to_sync)
     val noBrowser = stringResource(R.string.openwatch_move_no_browser, openWatchUrl)
     val openOpenWatch = {
         if (!viewModel.open(context)) Toast.makeText(context, cannotOpen, Toast.LENGTH_SHORT).show()
@@ -116,6 +120,11 @@ fun OpenWatchSettingsScreen(viewModel: OpenWatchSettingsViewModel) {
                                 stringResource(R.string.openwatch_profile_not_shared)
                             },
                         )
+                        if (current.profileShared) {
+                            OutlinedButton(onClick = {
+                                if (!viewModel.syncProfile()) Toast.makeText(context, nothingToSync, Toast.LENGTH_SHORT).show()
+                            }) { Text(stringResource(R.string.openwatch_profile_sync_now)) }
+                        }
                     }
                 }
             }

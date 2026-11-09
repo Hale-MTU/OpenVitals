@@ -114,7 +114,11 @@ class OpenWatchLink @Inject constructor(
         }
         scope.launch {
             profiles.bodyProfileFlow.collect { profile ->
-                val push = synchronized(stamp) { stamp.onLocal(profile, System.currentTimeMillis()).also { saveStamp() } }
+                // A change is stamped now; the profile the app starts with is offered again
+                // as it stands, so OpenWatch gets it even if an earlier push never got there.
+                val push = synchronized(stamp) {
+                    stamp.onLocal(profile, System.currentTimeMillis()).also { saveStamp() } ?: stamp.current(profile)
+                }
                 push?.let(client::setProfile)
             }
         }
@@ -152,6 +156,18 @@ class OpenWatchLink @Inject constructor(
     }
 
     fun requestSync(deviceId: String) = client.requestSync(deviceId)
+
+    /**
+     * "Sync now" for the body profile: offers this side's profile again, and the exchange
+     * time moves once it is sent. OpenWatch keeps it only if it is newer; a newer one of
+     * OpenWatch's came over when the link connected. False when there is nothing to send
+     * (no profile entered here yet).
+     */
+    fun syncProfileNow(): Boolean {
+        val push = synchronized(stamp) { stamp.current(profiles.bodyProfile()) } ?: return false
+        client.setProfile(push)
+        return true
+    }
 
     /** Looks for OpenWatch again, for when the user may just have installed or updated it. */
     fun refresh() = client.refresh()

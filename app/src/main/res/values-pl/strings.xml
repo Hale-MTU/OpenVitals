@@ -3833,4 +3833,6 @@
     <string name="openwatch_just_now">przed chwilą</string>
     <string name="body_profile_openwatch_synced">Synchronizowane z OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Synchronizowane z OpenWatch · zaktualizowano %1$s</string>
+    <string name="openwatch_profile_sync_now">Synchronizuj profil ciała teraz</string>
+    <string name="openwatch_profile_nothing_to_sync">Najpierw wpisz profil ciała w Ustawieniach, Profil ciała</string>
 </resources>
