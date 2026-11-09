@@ -1,12 +1,12 @@
 # OpenVitals Privacy Policy
 
-Last updated: November 8, 2026
+Last updated: November 9, 2026
 
 OpenVitals is a local-first Android app for viewing health and fitness data from Health Connect.
 
-This policy applies to the OpenVitals Android app published under the package name `tech.mmarca.openvitals`.
+This policy applies to the OpenVitals Android app published under the package name `tech.mmarca.openvitals` by Mittetulundusühing Hale (MTÜ Hale), a non-profit association registered in Estonia, registry code 80677610.
 
-Privacy contact: manuel@mmarca.tech
+Privacy contact: hello@hale.ngo
 
 ## Summary
 
@@ -158,4 +158,4 @@ This privacy policy may be updated when OpenVitals changes how it accesses, uses
 
 For privacy questions, contact:
 
-manuel@mmarca.tech
+hello@hale.ngo

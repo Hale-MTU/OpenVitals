@@ -4,7 +4,7 @@ import java.util.Collections
 import java.util.IdentityHashMap
 import tech.mmarca.openvitals.core.privacy.PrivacyRedactor
 
-internal const val CrashReportEmailRecipient = "manuel@mmarca.tech"
+internal const val CrashReportEmailRecipient = "hello@hale.ngo"
 
 internal data class CrashReportAppInfo(
     val packageName: String,
