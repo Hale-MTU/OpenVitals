@@ -1663,7 +1663,7 @@
     <string name="settings_apple_health_import_category_nutrition_desc">Nahrungsenergie, Makros, Koffein, Mineralstoffe und Vitamine.</string>
     <string name="settings_apple_health_import_category_hydration">Hydrierung</string>
     <string name="settings_apple_health_import_category_hydration_desc">Wasseraufnahme.</string>
-    <string name="settings_apple_health_import_category_mindfulness">Mindfulness</string>
+    <string name="settings_apple_health_import_category_mindfulness">Achtsamkeit</string>
     <string name="settings_apple_health_import_category_mindfulness_desc">Mindfulness-Sitzungen, wenn Health Connect sie unterstützt.</string>
     <string name="settings_apple_health_import_category_cycle">Zyklus</string>
     <string name="settings_apple_health_import_category_cycle_desc">Menstruation, Ovulation, Zervixschleim, Blutungen, Basaltemperatur und sexuelle Aktivität.</string>
@@ -2067,8 +2067,8 @@
     <string name="body_energy_calibration_skip">Vorerst überspringen</string>
     <string name="body_energy_calibration_saved">Körperenergie-Kalibrierung gespeichert</string>
     <string name="body_energy_calibration_reset">Körperenergie-Kalibrierung auf automatisch zurückgesetzt</string>
-    <string name="settings_derived_metrics_reset_title">Körperenergie, Erholung und Verbrauch von vorne beginnen</string>
-    <string name="settings_derived_metrics_reset_body">Löscht alles, was OpenVitals für diese Metriken selbst berechnet hat – den Körperenergie-Verlauf und die von deiner Uhr gelernte Abstimmung, die Basislinien und den Verbrauchs-Cache – und baut es aus Health Connect neu auf, wie bei einer Neuinstallation. Deine Health-Connect-Daten, dein Körperprofil, deine Herzfrequenzzonen und Ziele bleiben erhalten.</string>
+    <string name="settings_derived_metrics_reset_title">Körperenergie und Erholung neustarten</string>
+    <string name="settings_derived_metrics_reset_body">Löscht alles, was OpenVitals für diese Metriken selbst berechnet hat – den Körperenergie-Verlauf, die von deiner Uhr gelernte Abstimmung und die Basislinien – und baut es aus Health Connect neu auf, wie bei einer Neuinstallation. Deine Health-Connect-Daten, dein Körperprofil, deine Herzfrequenzzonen und Ziele bleiben erhalten.</string>
     <string name="body_energy_not_set_up">Nicht eingerichtet</string>
     <string name="body_energy_timeline_estimated">Von OpenVitals geschätzt</string>
     <string name="body_energy_timeline_start">Start</string>
@@ -2263,7 +2263,7 @@
     <string name="reference_aasm_sleep_duration">AASM-Schlafdauer für Erwachsene</string>
     <string name="reference_nsf_sleep_duration">NSF-Empfehlungen zur Schlafdauer (Hirshkowitz 2015)</string>
     <string name="reference_nsf_sleep_quality">NSF-Empfehlungen zur Schlafqualität (Ohayon 2017)</string>
-    <string name="reference_garmin_sleep_score">Garmin Sleep Score and Sleep Insights</string>
+    <string name="reference_garmin_sleep_score">Garmin Schlaf-Score and Schlaf-Analysen</string>
     <string name="reference_multidimensional_sleep_health">Mehrdimensionale Schlafgesundheit</string>
     <string name="reference_sleep_efficiency_definition">Definition der Schlafeffizienz</string>
     <string name="reference_sleep_efficiency_denominator">Forschung zum Nenner der Schlafeffizienz</string>
@@ -3029,7 +3029,7 @@
     <string name="hc_segment_running_treadmill">Laufen (Laufband)</string>
     <string name="hc_segment_shoulder_press">Schulterdrücken</string>
     <string name="hc_segment_single_arm_triceps_extension">Trizepsstrecken einarmig</string>
-    <string name="hc_segment_sit_up">Sit-up</string>
+    <string name="hc_segment_sit_up">Sit-Up</string>
     <string name="hc_segment_squat">Kniebeuge</string>
     <string name="hc_segment_stair_climbing">Treppensteigen</string>
     <string name="hc_segment_stair_climbing_machine">Stepper</string>
@@ -3107,7 +3107,7 @@
     <string name="settings_fit_import_folder_truncated">Dieser Ordner ist sehr groß: Nur die ersten %1$d FIT-Dateien wurden importiert.</string>
     <string name="settings_derived_metrics_reset_action">Von vorne beginnen</string>
     <string name="settings_derived_metrics_reset_confirm_title">Diese Metriken von vorne beginnen?</string>
-    <string name="settings_derived_metrics_reset_confirm_body">Körperenergie-Verlauf, gelernte Abstimmung, Basislinien und Verbrauchs-Cache werden gelöscht und aus Health Connect neu berechnet. In Health Connect wird nichts geändert. Das lässt sich nicht rückgängig machen.</string>
+    <string name="settings_derived_metrics_reset_confirm_body">Körperenergie-Verlauf, gelernte Abstimmung und Basislinien werden gelöscht und aus Health Connect neu berechnet. In Health Connect wird nichts geändert. Dies lässt sich nicht rückgängig machen.</string>
     <string name="import_leave_title">Import abbrechen?</string>
     <string name="import_leave_body">Wenn du diesen Bildschirm verlässt, wird der Import abgebrochen. Was bereits importiert ist, bleibt erhalten, und du kannst ihn später erneut starten.</string>
     <string name="import_leave_confirm">Abbrechen und verlassen</string>
