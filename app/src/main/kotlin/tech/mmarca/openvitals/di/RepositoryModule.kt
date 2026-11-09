@@ -20,6 +20,7 @@ import tech.mmarca.openvitals.data.repository.HydrationRepositoryImpl
 import tech.mmarca.openvitals.data.repository.MedicalDocumentsRepositoryImpl
 import tech.mmarca.openvitals.data.repository.MedicalRecordsRepositoryImpl
 import tech.mmarca.openvitals.data.repository.MindfulnessRepositoryImpl
+import tech.mmarca.openvitals.data.repository.StrengthRepositoryImpl
 import tech.mmarca.openvitals.data.repository.NutritionRepositoryImpl
 import tech.mmarca.openvitals.data.repository.SleepRepositoryImpl
 import tech.mmarca.openvitals.data.repository.VitalsRepositoryImpl
@@ -38,6 +39,7 @@ import tech.mmarca.openvitals.data.repository.contract.HydrationRepository
 import tech.mmarca.openvitals.data.repository.contract.MedicalDocumentsRepository
 import tech.mmarca.openvitals.data.repository.contract.MedicalRecordsRepository
 import tech.mmarca.openvitals.data.repository.contract.MindfulnessRepository
+import tech.mmarca.openvitals.data.repository.contract.StrengthRepository
 import tech.mmarca.openvitals.data.repository.contract.NutritionRepository
 import tech.mmarca.openvitals.data.repository.contract.SleepRepository
 import tech.mmarca.openvitals.data.repository.contract.VitalsRepository
@@ -94,6 +96,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindMindfulnessRepository(impl: MindfulnessRepositoryImpl): MindfulnessRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindStrengthRepository(impl: StrengthRepositoryImpl): StrengthRepository
 
     @Binds
     @Singleton

@@ -419,6 +419,8 @@ object DashboardPresentationMapper {
         // No feature, no tile: a null here also keeps it out of edit mode's tray.
         DashboardWidgetId.MEDICAL_RECORDS ->
             if (medicalRecordsAvailable) DashboardWidgetDisplayModel(id = widgetId) else null
+        // Static: the way into the strength screen, which reads for itself.
+        DashboardWidgetId.STRENGTH -> DashboardWidgetDisplayModel(id = widgetId)
         // No OpenWatch, or no watch in it: no tile, and none in the add tray either.
         DashboardWidgetId.OPENWATCH -> openWatch?.let {
             DashboardWidgetDisplayModel(id = widgetId, openWatch = it, isLoading = isLoading)

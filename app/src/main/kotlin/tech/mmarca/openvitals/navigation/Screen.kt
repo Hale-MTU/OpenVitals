@@ -249,6 +249,9 @@ sealed class Screen(
     }
     data object Achievements : Screen("achievements", R.string.screen_achievements)
 
+    /** Strength training: the period's sessions, their imported sets, muscles and progress. */
+    data object Strength : Screen("strength", R.string.screen_strength)
+
     companion object {
         /** Every screen. `ScreenTitleTest` fails when one is missing. */
         val all: List<Screen> by lazy {
@@ -315,6 +318,7 @@ sealed class Screen(
                 MedicalRecordEntry,
                 SettingsMedicalImport,
                 Achievements,
+                Strength,
             )
         }
 

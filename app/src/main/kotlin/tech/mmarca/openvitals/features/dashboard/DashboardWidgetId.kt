@@ -46,6 +46,9 @@ enum class DashboardWidgetId {
     /** The way into medical records. Static: it reads nothing. */
     MEDICAL_RECORDS,
 
+    /** The way into strength training. Static: it reads nothing. */
+    STRENGTH,
+
     /** The watch OpenWatch syncs, through OpenLink. Device state, not a metric. */
     OPENWATCH,
 }
@@ -95,6 +98,7 @@ val DefaultDashboardWidgetIds: List<DashboardWidgetId> = listOf(
     DashboardWidgetId.MINDFULNESS,
     DashboardWidgetId.CYCLE,
     DashboardWidgetId.MEDICAL_RECORDS,
+    DashboardWidgetId.STRENGTH,
 )
 
 fun customizableDashboardWidgetIds(widgetIds: List<DashboardWidgetId>): List<DashboardWidgetId> =
@@ -105,7 +109,7 @@ fun customizableDashboardWidgetIds(widgetIds: List<DashboardWidgetId>): List<Das
  * alongside read as new. Nothing is added here later.
  */
 private val WidgetIdsKnownBeforeTracking: Set<String> =
-    (DashboardWidgetId.entries - DashboardWidgetId.MEDICAL_RECORDS - DashboardWidgetId.OPENWATCH)
+    (DashboardWidgetId.entries - DashboardWidgetId.MEDICAL_RECORDS - DashboardWidgetId.OPENWATCH - DashboardWidgetId.STRENGTH)
         .mapTo(mutableSetOf()) { it.name } + "WATCH"
 
 /**
@@ -266,6 +270,6 @@ fun DashboardWidgetId.toDashboardMetricOrNull(): DashboardMetric? = when (this) 
     DashboardWidgetId.CARDIO_LOAD -> DashboardMetric.WEEKLY_CARDIO_LOAD
     DashboardWidgetId.MINDFULNESS -> DashboardMetric.MINDFULNESS
     DashboardWidgetId.CYCLE -> DashboardMetric.CYCLE
-    // The medical records entry and the OpenWatch tile, never gated by the provider.
-    DashboardWidgetId.MEDICAL_RECORDS, DashboardWidgetId.OPENWATCH -> null
+    // The medical records and strength entries and the OpenWatch tile, never gated by the provider.
+    DashboardWidgetId.MEDICAL_RECORDS, DashboardWidgetId.STRENGTH, DashboardWidgetId.OPENWATCH -> null
 }
