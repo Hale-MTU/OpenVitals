@@ -30,15 +30,17 @@ import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
-# Root files whose page name is fixed; any other root Markdown file is named
-# after its first heading.
-ROOT_PAGES = {
+# Files whose page name is fixed, and the name is the title too; any other
+# file is named after its first heading.
+FIXED_PAGES = {
     "README.md": "Home",
     "CHANGELOG.md": "Changelog",
     "PRIVACY.md": "Privacy-Policy",
     "AGENTS.md": "Agents",
     # OpenVitals: the detailed inventory, beside docs/features/README.md's "Features" index.
     "Features.md": "Feature-Inventory",
+    # OpenLink: its one doc, whose heading is a sentence.
+    "docs/spec.md": "Specification",
 }
 # The sidebar's order for docs/ folders; one not listed comes after, by name.
 SECTION_ORDER = ["features", "how-to", "app", "reference", "engineering", "proposals", "releases"]
@@ -81,18 +83,21 @@ def collect(root: pathlib.Path) -> list[Page]:
     roots = sorted(root.glob("*.md"), key=lambda p: (p.name != "README.md", p.name.lower()))
     for path in roots:
         heading = first_heading(path.read_text(encoding="utf-8"))
-        name = ROOT_PAGES.get(path.name)
+        name = FIXED_PAGES.get(path.name)
         if name is None:
             name = page_name(heading) if heading and not heading.endswith(".md") else page_name(path.stem.replace("_", " ").title())
         # A fixed name is the title too ("# AGENTS.md" names the file, not the page).
-        fixed = path.name in ROOT_PAGES and path.name != "README.md"
+        fixed = path.name in FIXED_PAGES and path.name != "README.md"
         title = heading if heading and not heading.endswith(".md") and not fixed else name.replace("-", " ")
         pages.append(Page(path.name, name, title, ""))
     for path in sorted((root / "docs").rglob("*.md")):
         source = path.relative_to(root).as_posix()
         title = first_heading(path.read_text(encoding="utf-8")) or path.stem
+        name = FIXED_PAGES.get(source) or page_name(title)
+        if source in FIXED_PAGES:
+            title = name.replace("-", " ")
         section = source.split("/")[1] if source.count("/") >= 2 else ""
-        pages.append(Page(source, page_name(title), title, section))
+        pages.append(Page(source, name, title, section))
     seen: dict[str, str] = {}
     for page in pages:
         if page.name in seen:
@@ -181,11 +186,11 @@ def sidebar(pages: list[Page]) -> str:
         for page in listed:
             lines.append(f"- [[{page.title}|{page.name}]]")
         lines.append("")
-    lines.append("**Project**")
-    for page in pages:
-        if not page.section and page.name != "Home":
-            lines.append(f"- [[{page.title}|{page.name}]]")
-    return "\n".join(lines) + "\n"
+    project = [page for page in pages if not page.section and page.name != "Home"]
+    if project:
+        lines.append("**Project**")
+        lines.extend(f"- [[{page.title}|{page.name}]]" for page in project)
+    return "\n".join(lines).rstrip("\n") + "\n"
 
 
 def build(root: pathlib.Path, repo: str, branch: str, out: pathlib.Path) -> tuple[list[str], list[tuple[str, str]]]:
