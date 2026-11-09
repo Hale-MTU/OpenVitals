@@ -227,6 +227,8 @@ fun dashboardWidgetIdsInGridPages(
 internal fun DashboardWidgetId.isSupportedBy(supportedMetrics: Set<DashboardMetric>): Boolean =
     when (this) {
         DashboardWidgetId.BODY_ENERGY -> DashboardMetric.AVG_HEART_RATE in supportedMetrics
+        // The strength screen reads exercise sessions, so the tile follows the workout metric.
+        DashboardWidgetId.STRENGTH -> DashboardMetric.WORKOUT in supportedMetrics
         else -> toDashboardMetricOrNull()?.let { it in supportedMetrics } ?: true
     }
 
