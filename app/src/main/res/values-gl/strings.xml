@@ -3838,4 +3838,6 @@ Se Acceder a rutas de exercicio non aparece no diálogo de acceso, abre os axust
     <string name="openwatch_just_now">agora mesmo</string>
     <string name="body_profile_openwatch_synced">Sincronizado con OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Sincronizado con OpenWatch · actualizado %1$s</string>
+    <string name="openwatch_profile_sync_now">Sincronizar agora o perfil corporal</string>
+    <string name="openwatch_profile_nothing_to_sync">Introduce primeiro o teu perfil corporal en Configuración, Perfil corporal</string>
 </resources>

@@ -3834,4 +3834,6 @@
     <string name="openwatch_just_now">только что</string>
     <string name="body_profile_openwatch_synced">Синхронизируется с OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Синхронизируется с OpenWatch · обновлено %1$s</string>
+    <string name="openwatch_profile_sync_now">Синхронизировать профиль тела</string>
+    <string name="openwatch_profile_nothing_to_sync">Сначала заполните профиль тела в разделе «Настройки», «Профиль тела»</string>
 </resources>

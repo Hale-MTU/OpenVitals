@@ -58,4 +58,15 @@ class ProfileStampTest {
 
         assertNull(stamp.onLocal(adopted, now = 21_000))
     }
+
+    @Test
+    fun `a profile already stamped in an earlier run is offered again as it stands, an edited or empty one is not`() {
+        val earlierRun = ProfileStamp().apply { onLocal(profile, now = 50_000) }
+        val stamp = ProfileStamp(earlierRun.updatedAtMillis, earlierRun.signature)
+
+        assertNull(stamp.onLocal(profile, now = 90_000))
+        assertEquals(1L, stamp.current(profile)!!.updatedAtMillis)
+        assertNull(stamp.current(profile.copy(weightKg = 80.0)))
+        assertNull(ProfileStamp().apply { onLocal(BodyProfile(), now = 1) }.current(BodyProfile()))
+    }
 }

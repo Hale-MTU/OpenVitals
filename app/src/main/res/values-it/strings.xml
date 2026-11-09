@@ -3797,4 +3797,6 @@
     <string name="openwatch_just_now">proprio ora</string>
     <string name="body_profile_openwatch_synced">Sincronizzato con OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Sincronizzato con OpenWatch · aggiornato %1$s</string>
+    <string name="openwatch_profile_sync_now">Sincronizza ora il profilo corporeo</string>
+    <string name="openwatch_profile_nothing_to_sync">Inserisci prima il profilo corporeo in Impostazioni, Profilo corporeo</string>
 </resources>

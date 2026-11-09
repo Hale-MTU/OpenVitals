@@ -452,4 +452,6 @@
     <string name="openwatch_just_now">μόλις τώρα</string>
     <string name="body_profile_openwatch_synced">Συγχρονίζεται με το OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Συγχρονίζεται με το OpenWatch · ενημερώθηκε %1$s</string>
+    <string name="openwatch_profile_sync_now">Συγχρονισμός σωματικού προφίλ τώρα</string>
+    <string name="openwatch_profile_nothing_to_sync">Εισαγάγετε πρώτα το σωματικό σας προφίλ στις Ρυθμίσεις, Σωματικό προφίλ</string>
 </resources>

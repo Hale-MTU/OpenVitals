@@ -3767,4 +3767,6 @@
     <string name="openwatch_just_now">just praegu</string>
     <string name="body_profile_openwatch_synced">Sünkroonis OpenWatchiga</string>
     <string name="body_profile_openwatch_synced_updated">Sünkroonis OpenWatchiga · uuendatud %1$s</string>
+    <string name="openwatch_profile_sync_now">Sünkrooni kehaprofiil kohe</string>
+    <string name="openwatch_profile_nothing_to_sync">Sisesta esmalt kehaprofiil jaotises Seaded, Kehaprofiil</string>
 </resources>

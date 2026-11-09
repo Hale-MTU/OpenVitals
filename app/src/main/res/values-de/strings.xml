@@ -3767,4 +3767,6 @@
     <string name="openwatch_just_now">gerade eben</string>
     <string name="body_profile_openwatch_synced">Mit OpenWatch synchron gehalten</string>
     <string name="body_profile_openwatch_synced_updated">Mit OpenWatch synchron gehalten · aktualisiert %1$s</string>
+    <string name="openwatch_profile_sync_now">Körperprofil jetzt synchronisieren</string>
+    <string name="openwatch_profile_nothing_to_sync">Gib zuerst dein Körperprofil unter Einstellungen, Körperprofil ein</string>
 </resources>
