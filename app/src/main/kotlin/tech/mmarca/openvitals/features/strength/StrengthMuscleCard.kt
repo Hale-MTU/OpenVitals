@@ -129,11 +129,10 @@ internal fun StrengthMuscleCard(
                     }
                 }
                 if (untrained.isNotEmpty()) {
+                    // map is inline, so the resource lookups stay in the composable's context.
+                    val untrainedNames = untrained.map { stringResource(it.labelRes) }
                     Text(
-                        text = stringResource(
-                            R.string.strength_muscles_untrained,
-                            untrained.joinToString(", ") { stringResource(it.labelRes) },
-                        ),
+                        text = stringResource(R.string.strength_muscles_untrained, untrainedNames.joinToString(", ")),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
