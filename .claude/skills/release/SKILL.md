@@ -5,8 +5,10 @@ description: Release a new OpenVitals version - changelogs, release notes, fastl
 
 # OpenVitals release process
 
-How a version ships, as done for 2.6.0 and 2.6.1. The order matters: every
-document is written FIRST, because `scripts/release.sh` commits them, tags the
+How a version ships, as done for 2.6.0 and 2.6.1. OpenWatch releases by the
+same process (`../OpenWatch/.claude/skills/release/SKILL.md`); keep the two
+skills alike, and when one learns something the other needs, write it in both.
+The order matters: every document is written FIRST, because `scripts/release.sh` commits them, tags the
 commit with the release notes, and pushes in one motion.
 
 ## 0. Pre-flight
@@ -33,13 +35,18 @@ commit with the release notes, and pushes in one motion.
   ones only) before writing the notes; `verifyTranslations` only enforces 70%.
   A locale under 70% (Hebrew, `values-iw`, started 2026-10) is not in the
   picker and must not be announced as a language.
-- `gh` is not installed on this laptop. Check GitHub state with `curl` against
-  `https://api.github.com/repos/Hale-MTU/OpenVitals/...` (anonymous,
-  60 calls an hour) or in the browser.
+- `gh` is installed and logged in on this laptop. `gh issue view` has printed
+  nothing before; `curl` against
+  `https://api.github.com/repos/Hale-MTU/OpenVitals/...` (anonymous, 60 calls
+  an hour) reads the same state.
 - The release workflow is enabled. A tag pushed while it is disabled starts
   nothing, and enabling it afterwards does not replay the push (2.14.0). Check
-  `state` is `active` in
-  `curl -s https://api.github.com/repos/Hale-MTU/OpenVitals/actions/workflows/release.yml`.
+  `state` is `active`:
+  `gh api repos/Hale-MTU/OpenVitals/actions/workflows/release.yml --jq .state`.
+- The Play variable says whether the uploads go, and the footer of the notes
+  depends on it: `gh variable list` shows `OPENVITALS_PLAY_PAUSED` when it is
+  set. It is a variable; one created as a secret by mistake is not read
+  (OpenWatch, 2026-11).
 
 ## 1. Version code (read this before touching anything)
 
@@ -66,11 +73,11 @@ git ls-remote --refs origin 'refs/version-code/*' | sed 's#.*/##' | sort -n | ta
 ```
 
 **Race caveat:** a nightly can mint a code between your preview and the release
-run. Only the release workflow's schedule (00:00 UTC, often started some minutes late
+run. Only the release workflow's schedule (00:00 UTC, often started some hours late
 by GitHub) and manual runs of `.github/workflows/release.yml` with target
 `nightly` build nightlies; a push to main runs tests only. Near midnight UTC,
 or while a manual run is going, check the runs first
-(`https://github.com/Hale-MTU/OpenVitals/actions/workflows/release.yml`). Either way,
+(`gh run list --workflow release.yml --limit 5`). Either way,
 compute the code and name the fastlane files immediately before running the
 release script, and afterwards verify the script's printed `versionCode`
 matches the filenames.
@@ -103,7 +110,7 @@ matches the filenames.
 
    While the repository variable `OPENVITALS_PLAY_PAUSED=true` holds the Play
    uploads (set 2026-10 while 2.13.0 was in Play review), the second line is
-   false. Ask whether it is still set, and if it is, say instead that the
+   false. Check (pre-flight), and if it is set, say instead that the
    Google Play update follows later. The fastlane changelogs are still written,
    for when that upload happens.
 3. **`README.md`** - add highlight bullets for headline features; update any
@@ -141,6 +148,8 @@ The script computes the version code, patches `baseVersionCode` and
 `build.gradle.kts`, commits `chore: release X.Y.Z` (staging CHANGELOG, README,
 docs, fastlane and the release machinery), tags `vX.Y.Z` with
 `docs/releases/X.Y.Z.md` as the annotation, and pushes `main` plus the tag.
+Anything outside what the script stages (this skill, code) is committed
+before it runs.
 The annotation drops the `# OpenVitals X.Y.Z` title line and keeps the rest
 as written, `###` headings included; it becomes the GitHub release notes and
 the Zulip post. Before 2.15.0 the tag lost every `#` line, headings too.
@@ -173,15 +182,21 @@ either way: Zulip readers see it first too.
 
 ## 4. Companion repos (after the tag is pushed)
 
-- **`../docs`** (Nextra site): `git fetch` first, since the previous
-  release's commit may already be upstream. Prepend the English section to
-  `docs/releases/changelog.md` (the narrative paragraph from the release
-  notes, then the CHANGELOG English bullets, minus app-repo-only details);
-  add or update `docs/features/*.md` pages for new features and register new
-  pages in `docs/features/_meta.ts`; fix any pages the release made stale.
+- **`../docs`** (Nextra site, OpenVitals under `docs/openvitals/`; the site
+  also holds OpenWatch, OpenLink and OpenBridge since 2026-11): `git fetch`
+  first, since the previous release's commit or the daily sync of the pages
+  ported from the other apps may already be upstream. Prepend the English
+  section to `docs/openvitals/releases/changelog.md` (the narrative paragraph
+  from the release notes, then the CHANGELOG English bullets, minus
+  app-repo-only details); add or update `docs/openvitals/features/*.md` pages
+  for new features and register new pages in
+  `docs/openvitals/features/_meta.ts`; fix any pages the release made stale.
   A feature page may already exist when the app links to it (the scales page
-  landed before 2.13.0 because Settings links to it): `ls docs/features`
-  before writing one. Commit `docs: X.Y.Z - <headline>` and push.
+  landed before 2.13.0 because Settings links to it):
+  `ls docs/openvitals/features` before writing one. Pages that say "kept in
+  step with" at the bottom are ported from another repository
+  (`scripts/app-docs.json`); never edit those here. Commit
+  `docs: X.Y.Z - <headline>` and push.
 - **`../landing-page`**: update the copy (the `features.cards` grid and any
   card the release touches) when a headline feature warrants it. Each of the
   14 languages is one file, `lib/locales/<code>.ts`; `en.ts` is the source.
@@ -190,8 +205,7 @@ either way: Zulip readers see it first too.
   so `npm run typecheck` picks up a global TypeScript that fails on the
   repo's `baseUrl` (TS5102), unrelated to the edit. Parse-check the edited
   files with `node -e` and `stripTypeScriptTypes` from `node:module` instead,
-  or rely on CI. A push to `main` deploys to hale.ngo. The repo has no git identity: commit with
-  `-c user.name=Manuel -c user.email=manuel@mmarca.tech`. Commit
+  or rely on CI. A push to `main` deploys to hale.ngo. Commit
   `content: <what changed>, for X.Y.Z` and push.
 
 ## 5. Gotchas that have actually happened
@@ -207,6 +221,10 @@ either way: Zulip readers see it first too.
 - Read facts in the notes against the code, not only the commit message:
   2.14.0's notes said the Garmin link redials three times, from a doc, while
   `CONNECT_ATTEMPTS = 3` means two redials. The tag kept the wrong count.
+- OpenWatch 0.1.1's tag run failed at Play: its first bundle had been
+  uploaded by hand and sat in Play's bundle library with no release, so the
+  code was "already used". A hand upload under a coming code stops the run
+  here too.
 - A fix that was hidden rather than announced can need announcing later:
   Medical records were cut from the Play build in 2.11.2 and 2.12.0 without a
   note, so 2.13.0 had to say they were back.
