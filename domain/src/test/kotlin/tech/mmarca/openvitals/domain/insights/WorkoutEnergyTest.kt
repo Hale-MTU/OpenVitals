@@ -101,4 +101,49 @@ class WorkoutEnergyTest {
             CompendiumMet.forExerciseType(ExerciseSessionRecord.EXERCISE_TYPE_VOLLEYBALL),
         )
     }
+
+    @Test
+    fun `a run at a pace ACSM covers is estimated from its distance`() {
+        // 12 km in 60 minutes = 200 m/min, above 134: 0.2 * 12000 * 70 / 1000 * 4.9 = 823.2 kcal net.
+        val result = estimateWorkoutEnergy(
+            ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
+            durationMinutes = 60.0,
+            meanHeartRateBpm = null,
+            profile = profile,
+            today = today,
+            distanceMeters = 12_000.0,
+        ) as WorkoutEnergyResult.Estimate
+
+        assertEquals(WorkoutEnergyMethod.DISTANCE_ON_FOOT, result.method)
+        assertEquals(823.2, result.activeKcal, 1e-6)
+        assertEquals(823.2 + 68.6979166, result.totalKcal, 1e-6)
+    }
+
+    @Test
+    fun `a walk counts 0_1 ml per kg per metre, only between 50 and 100 metres a minute`() {
+        // 4.8 km in 60 minutes = 80 m/min: 0.1 * 4800 * 70 / 1000 * 4.9 = 164.64 kcal.
+        assertEquals(
+            164.64,
+            AcsmDistanceOnFoot.netKcal(ExerciseSessionRecord.EXERCISE_TYPE_WALKING, 4_800.0, 60.0, 70.0)!!,
+            1e-9,
+        )
+        // 120 m/min is too fast for the walking equation and too slow for the running one.
+        assertNull(AcsmDistanceOnFoot.netKcal(ExerciseSessionRecord.EXERCISE_TYPE_WALKING, 7_200.0, 60.0, 70.0))
+        assertNull(AcsmDistanceOnFoot.netKcal(ExerciseSessionRecord.EXERCISE_TYPE_RUNNING, 7_200.0, 60.0, 70.0))
+        assertNull(AcsmDistanceOnFoot.netKcal(ExerciseSessionRecord.EXERCISE_TYPE_HIKING, 4_800.0, 60.0, 70.0))
+    }
+
+    @Test
+    fun `heart rate still comes before the distance`() {
+        val result = estimateWorkoutEnergy(
+            ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
+            durationMinutes = 60.0,
+            meanHeartRateBpm = 150.0,
+            profile = profile,
+            today = today,
+            distanceMeters = 12_000.0,
+        ) as WorkoutEnergyResult.Estimate
+
+        assertEquals(WorkoutEnergyMethod.HEART_RATE, result.method)
+    }
 }

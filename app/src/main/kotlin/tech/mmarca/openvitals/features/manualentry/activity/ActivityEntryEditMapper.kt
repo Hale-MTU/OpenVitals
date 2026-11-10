@@ -28,7 +28,6 @@ import tech.mmarca.openvitals.domain.model.ExerciseRoutePoint
 import tech.mmarca.openvitals.domain.model.ExerciseRouteStatus
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
 import tech.mmarca.openvitals.domain.insights.CompendiumMet
-import tech.mmarca.openvitals.domain.insights.WorkoutEnergyMethod
 import tech.mmarca.openvitals.domain.insights.WorkoutEnergyResult
 import tech.mmarca.openvitals.domain.insights.estimateWorkoutEnergy
 import tech.mmarca.openvitals.domain.insights.heartRateRecoveryWindowFor
@@ -381,9 +380,9 @@ internal data class CalorieEstimateContext(
 
 /**
  * The estimate for a session that recorded no calories: [estimateWorkoutEnergy]
- * from the session's mean heart rate or the activity's Compendium MET, with the
- * body profile's weight. Null without a weight: the form says so
- * ([calorieEstimateNeedsWeight]) rather than guess one.
+ * from the session's mean heart rate, its distance on foot or the activity's
+ * Compendium MET, with the body profile's weight. Null without a weight: the
+ * form says so ([calorieEstimateNeedsWeight]) rather than guess one.
  */
 internal fun activityCalorieEstimate(
     activityType: ActivityEntryType,
@@ -401,48 +400,17 @@ internal fun activityCalorieEstimate(
         meanHeartRateBpm = heartRateSamples.takeIf { it.isNotEmpty() }?.map { it.beatsPerMinute }?.average(),
         profile = context.profile,
         today = context.today,
-    ) as? WorkoutEnergyResult.Estimate ?: return null
-    // A route's distance can say a fast run cost more than the Compendium's general running.
-    val activeByDistance = distanceBasedActiveCalories(
-        exerciseType = activityType.exerciseType,
         distanceMeters = distanceMeters,
-        weightKg = context.profile.weightKg,
-    )?.takeIf { estimate.method == WorkoutEnergyMethod.COMPENDIUM_MET } ?: 0.0
-    val activeCalories = maxOf(estimate.activeKcal, activeByDistance)
-    val restingCalories = estimate.totalKcal - estimate.activeKcal
-
+    ) as? WorkoutEnergyResult.Estimate ?: return null
     return ActivityCalorieEstimate(
-        activeCaloriesText = activeCalories.toCaloriesInputText(),
-        totalCaloriesText = (activeCalories + restingCalories).toCaloriesInputText(),
+        activeCaloriesText = estimate.activeKcal.toCaloriesInputText(),
+        totalCaloriesText = estimate.totalKcal.toCaloriesInputText(),
     )
 }
 
 /** True when a session could be estimated but the body profile has no weight to do it with. */
 internal fun calorieEstimateNeedsWeight(activityType: ActivityEntryType, context: CalorieEstimateContext): Boolean =
     context.profile.weightKg == null && CompendiumMet.forExerciseType(activityType.exerciseType) != null
-
-/**
- * The net cost of covering a distance on foot, in kcal per kg per km: about 1 for
- * running and 0.5 for walking. Not yet checked against its source (the ACSM
- * metabolic equations); kept as it was until it is.
- */
-internal fun distanceBasedActiveCalories(
-    exerciseType: Int,
-    distanceMeters: Double?,
-    weightKg: Double?,
-): Double? {
-    val weight = weightKg ?: return null
-    val distanceKm = distanceMeters?.takeIf { it > 0.0 }?.div(1000.0) ?: return null
-    val kcalPerKgKm = when (exerciseType) {
-        ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
-        ExerciseSessionRecord.EXERCISE_TYPE_HIKING,
-        ExerciseSessionRecord.EXERCISE_TYPE_SNOWSHOEING -> RunningKcalPerKgKm
-        ExerciseSessionRecord.EXERCISE_TYPE_WALKING,
-        ExerciseSessionRecord.EXERCISE_TYPE_WHEELCHAIR -> WalkingKcalPerKgKm
-        else -> return null
-    }
-    return weight * distanceKm * kcalPerKgKm
-}
 
 internal fun parseDistanceMeters(text: String, unitSystem: UnitSystem): Double? {
     val value = text.toPositiveDoubleOrNull() ?: return null

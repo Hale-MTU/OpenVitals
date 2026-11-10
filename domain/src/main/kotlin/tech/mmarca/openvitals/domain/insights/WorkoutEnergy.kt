@@ -1,5 +1,6 @@
 package tech.mmarca.openvitals.domain.insights
 
+import androidx.health.connect.client.records.ExerciseSessionRecord
 import java.time.LocalDate
 import tech.mmarca.openvitals.domain.preferences.BiologicalSex
 import tech.mmarca.openvitals.domain.preferences.BodyProfile
@@ -11,6 +12,9 @@ enum class WorkoutEnergyInput { WEIGHT }
 enum class WorkoutEnergyMethod {
     /** Keytel et al. 2005, from the session's mean heart rate. */
     HEART_RATE,
+
+    /** ACSM's metabolic equation for walking or running on the level, from distance and pace. */
+    DISTANCE_ON_FOOT,
 
     /** The activity's MET value in the 2024 Adult Compendium. */
     COMPENDIUM_MET,
@@ -33,11 +37,14 @@ sealed interface WorkoutEnergyResult {
 /**
  * The calories a workout burned, estimated, for a session that recorded none.
  *
- * Gross energy comes from the heart rate when the session has one in the range
- * Keytel's equation was derived on and the profile has sex and age; otherwise
- * from the activity's Compendium MET. The resting share for the same time is
- * the wearer's own basal metabolic rate (Mifflin-St Jeor) when the profile has
- * every field it needs, else 1 MET; active = gross − resting.
+ * In this order: from the heart rate when the session has one in the range
+ * Keytel's equation was derived on and the profile has sex and age; from the
+ * distance of a walk or run whose pace lies where ACSM's equation holds
+ * ([AcsmDistanceOnFoot]); otherwise from the activity's Compendium MET. The
+ * resting share for the same time is the wearer's own basal metabolic rate
+ * (Mifflin-St Jeor) when the profile has every field it needs, else 1 MET.
+ * Heart rate and MET give gross energy, active = gross − resting; ACSM's
+ * horizontal component is already net of rest.
  *
  * Without a weight there is no estimate: [WorkoutEnergyResult.MissingInputs].
  */
@@ -47,6 +54,7 @@ fun estimateWorkoutEnergy(
     meanHeartRateBpm: Double?,
     profile: BodyProfile,
     today: LocalDate,
+    distanceMeters: Double? = null,
 ): WorkoutEnergyResult {
     if (!(durationMinutes > 0.0) || !durationMinutes.isFinite()) return WorkoutEnergyResult.Unavailable
     val weightKg = profile.weightKg ?: return WorkoutEnergyResult.MissingInputs(setOf(WorkoutEnergyInput.WEIGHT))
@@ -55,15 +63,18 @@ fun estimateWorkoutEnergy(
     val heartRateGross = meanHeartRateBpm?.let { heartRate ->
         keytelGrossKcal(profile, weightKg, heartRate, durationMinutes, today)
     }
-    val (grossKcal, method) = when {
-        heartRateGross != null -> heartRateGross to WorkoutEnergyMethod.HEART_RATE
+    val distanceNet = distanceMeters?.let {
+        AcsmDistanceOnFoot.netKcal(exerciseType, it, durationMinutes, weightKg)
+    }
+    val (activeKcal, method) = when {
+        heartRateGross != null -> (heartRateGross - restingKcal) to WorkoutEnergyMethod.HEART_RATE
+        distanceNet != null -> distanceNet to WorkoutEnergyMethod.DISTANCE_ON_FOOT
         else -> {
             val met = CompendiumMet.forExerciseType(exerciseType)?.met ?: return WorkoutEnergyResult.Unavailable
-            CompendiumMet.grossKcal(met, weightKg, durationMinutes) to WorkoutEnergyMethod.COMPENDIUM_MET
+            (CompendiumMet.grossKcal(met, weightKg, durationMinutes) - restingKcal) to WorkoutEnergyMethod.COMPENDIUM_MET
         }
     }
-    val activeKcal = (grossKcal - restingKcal).coerceAtLeast(0.0)
-    if (activeKcal <= 0.0) return WorkoutEnergyResult.Unavailable
+    if (!(activeKcal > 0.0)) return WorkoutEnergyResult.Unavailable
     return WorkoutEnergyResult.Estimate(
         activeKcal = activeKcal,
         totalKcal = activeKcal + restingKcal,
@@ -115,6 +126,42 @@ object KeytelHeartRate {
             BiologicalSex.MALE -> -55.0969 + 0.6309 * heartRateBpm + 0.1988 * weightKg + 0.2017 * ageYears
             BiologicalSex.FEMALE -> -20.4022 + 0.4472 * heartRateBpm - 0.1263 * weightKg + 0.074 * ageYears
         }
+}
+
+/**
+ * ACSM's metabolic equations for walking and running on the level, ACSM's
+ * Guidelines for Exercise Testing and Prescription, 10th ed. (2018), Table 6.3:
+ * VO2 (ml/kg/min) = 3.5 + 0.1 × speed for walking, 3.5 + 0.2 × speed for
+ * running, speed in m/min. The 3.5 is rest, so the horizontal part alone is
+ * the net cost: 0.1 or 0.2 ml O2 per kg per metre, turned into kcal with the
+ * table's 4.9 kcal per litre of O2 (about 0.49 and 0.98 kcal per kg per km).
+ * Margaria et al. 1963 (doi:10.1152/jappl.1963.18.2.367) measured the same
+ * for running: about 1 kcal per kg per km, independent of speed.
+ *
+ * The table says where each holds: walking at 50 to 100 m/min, running above
+ * 134 m/min. Outside that pace, or for any other activity, there is no answer.
+ * Climbing is not counted: a total ascent does not give the grade of each stretch.
+ */
+object AcsmDistanceOnFoot {
+    private const val WalkingMlPerKgMetre = 0.1
+    private const val RunningMlPerKgMetre = 0.2
+    private const val KcalPerLitreOxygen = 4.9
+    private val WalkingPaceMetresPerMinute = 50.0..100.0
+    private const val MinRunningPaceMetresPerMinute = 134.0
+
+    fun netKcal(exerciseType: Int, distanceMeters: Double, durationMinutes: Double, weightKg: Double): Double? {
+        if (!(distanceMeters > 0.0) || !(durationMinutes > 0.0)) return null
+        val pace = distanceMeters / durationMinutes
+        val mlPerKgMetre = when (exerciseType) {
+            ExerciseSessionRecord.EXERCISE_TYPE_WALKING ->
+                WalkingMlPerKgMetre.takeIf { pace in WalkingPaceMetresPerMinute }
+            ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
+            ExerciseSessionRecord.EXERCISE_TYPE_RUNNING_TREADMILL ->
+                RunningMlPerKgMetre.takeIf { pace > MinRunningPaceMetresPerMinute }
+            else -> null
+        } ?: return null
+        return mlPerKgMetre * distanceMeters * weightKg / 1000.0 * KcalPerLitreOxygen
+    }
 }
 
 private const val MinutesPerDay = 24.0 * 60.0
