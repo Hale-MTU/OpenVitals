@@ -22,6 +22,8 @@ import tech.mmarca.openvitals.data.local.heartratecache.HeartRateDayEntity
 import tech.mmarca.openvitals.data.local.medical.MedicalDocumentDao
 import tech.mmarca.openvitals.data.local.medical.MedicalDocumentEntity
 import tech.mmarca.openvitals.data.local.medical.MedicalDocumentRecordEntity
+import tech.mmarca.openvitals.data.local.strength.StrengthSetDao
+import tech.mmarca.openvitals.data.local.strength.StrengthSetEntity
 import tech.mmarca.openvitals.data.local.syncorigin.SyncedRecordOriginDao
 import tech.mmarca.openvitals.data.local.syncorigin.SyncedRecordOriginEntity
 import tech.mmarca.openvitals.data.local.vitalscache.VitalsDailyAggregateEntity
@@ -44,6 +46,7 @@ import tech.mmarca.openvitals.data.local.vitalscache.VitalsSyncCursorEntity
         PillIntakeEntity::class,
         MedicalDocumentEntity::class,
         MedicalDocumentRecordEntity::class,
+        StrengthSetEntity::class,
     ],
     version = OpenVitalsDatabase.VERSION,
     exportSchema = true,
@@ -69,10 +72,13 @@ abstract class OpenVitalsDatabase : RoomDatabase() {
 
     abstract fun medicalDocumentDao(): MedicalDocumentDao
 
+    /** The sets of imported strength workouts, which Health Connect cannot hold. */
+    abstract fun strengthSetDao(): StrengthSetDao
+
 
     companion object {
         /** Raise it with a new migration in [ALL_MIGRATIONS], and commit the schema file Room then writes. */
-        const val VERSION = 18
+        const val VERSION = 19
 
         val MIGRATION_1_3 = beverageMigration(1)
         val MIGRATION_2_3 = beverageMigration(2)
@@ -196,6 +202,16 @@ abstract class OpenVitalsDatabase : RoomDatabase() {
          * Every migration, in one place. The database builder takes this list, so a migration
          * cannot be written and then left out of it.
          */
+        /**
+         * The sets of imported strength workouts: exercises, reps and loads, which Health
+         * Connect's session record cannot hold. Creation only; nothing to backfill.
+         */
+        val MIGRATION_18_19 = object : Migration(18, 19) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                createStrengthSetsTable(db)
+            }
+        }
+
         val ALL_MIGRATIONS: Array<Migration>
             get() = arrayOf(
                 MIGRATION_1_3,
@@ -215,6 +231,7 @@ abstract class OpenVitalsDatabase : RoomDatabase() {
                 MIGRATION_15_16,
                 MIGRATION_16_17,
                 MIGRATION_17_18,
+                MIGRATION_18_19,
             )
 
         /** `ALTER TABLE ADD COLUMN`, skipped when an earlier creation already carries the column. */
@@ -429,6 +446,28 @@ abstract class OpenVitalsDatabase : RoomDatabase() {
             db.execSQL(
                 "CREATE INDEX IF NOT EXISTS `index_medical_document_records_data_source_id_resource_type_resource_id` " +
                     "ON `medical_document_records` (`data_source_id`, `resource_type`, `resource_id`)"
+            )
+        }
+
+        private fun createStrengthSetsTable(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `strength_sets` (
+                    `workout_start` TEXT NOT NULL,
+                    `workout_end` TEXT,
+                    `workout_title` TEXT NOT NULL,
+                    `exercise_index` INTEGER NOT NULL,
+                    `exercise_name` TEXT NOT NULL,
+                    `set_index` INTEGER NOT NULL,
+                    `set_type` TEXT,
+                    `weight_kg` REAL,
+                    `reps` INTEGER,
+                    `distance_km` REAL,
+                    `duration_seconds` INTEGER,
+                    `rpe` REAL,
+                    PRIMARY KEY(`workout_start`, `exercise_index`, `set_index`)
+                )
+                """.trimIndent()
             )
         }
 

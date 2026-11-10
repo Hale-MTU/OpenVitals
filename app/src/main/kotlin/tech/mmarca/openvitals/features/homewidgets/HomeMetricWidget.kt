@@ -672,8 +672,8 @@ internal fun DashboardData.toSnapshot(
                 snapshot(displayValue)
             }
         }
-        // The medical records entry and the OpenWatch tile, not a day's reading.
-        DashboardWidgetId.MEDICAL_RECORDS, DashboardWidgetId.OPENWATCH -> snapshot(null)
+        // The medical records and strength entries and the OpenWatch tile, not a day's reading.
+        DashboardWidgetId.MEDICAL_RECORDS, DashboardWidgetId.STRENGTH, DashboardWidgetId.OPENWATCH -> snapshot(null)
     }
 }
 
@@ -718,6 +718,7 @@ fun DashboardWidgetId.homeMetricTitleRes(): Int = when (this) {
     DashboardWidgetId.MINDFULNESS -> R.string.metric_mindfulness
     DashboardWidgetId.CYCLE -> R.string.metric_cycle
     DashboardWidgetId.MEDICAL_RECORDS -> R.string.medical_records_title
+    DashboardWidgetId.STRENGTH -> R.string.screen_strength
     DashboardWidgetId.OPENWATCH -> R.string.metric_watch
 }
 
@@ -725,7 +726,7 @@ fun DashboardWidgetId.homeMetricTitleRes(): Int = when (this) {
 fun homeMetricWidgetCatalog(): List<DashboardWidgetId> =
     DashboardWidgetId.entries.filterNot {
         it == DashboardWidgetId.CARDIO_LOAD || it == DashboardWidgetId.CAFFEINE || it == DashboardWidgetId.CYCLE ||
-            it == DashboardWidgetId.MEDICAL_RECORDS
+            it == DashboardWidgetId.MEDICAL_RECORDS || it == DashboardWidgetId.STRENGTH
     }
 
 private fun String?.toDashboardWidgetIdOrNull(): DashboardWidgetId? =

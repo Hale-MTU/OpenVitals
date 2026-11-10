@@ -18,7 +18,7 @@ The repo now has one Android app module for the local app. The goal is to keep b
 - Feature repositories: in place for activity, sleep, heart, body, body energy, caffeine, hydration, nutrition, mindfulness, cycle, and vitals
 - Dashboard: still a dedicated day-based summary screen, not a period-detail screen
 - Manual entry: separate from the dashboard and writes explicit user-entered records directly to Health Connect
-- Room is at schema version 18. It holds derived summary caches plus the tables Health Connect cannot represent (`synced_record_origins`, the food catalog, the cycle journal, cycle exclusions, pill intakes, and the index of kept medical documents); Health Connect remains the source of truth for everything it has a record type for
+- Room is at schema version 19. It holds derived summary caches plus the tables Health Connect cannot represent (`synced_record_origins`, the food catalog, the cycle journal, cycle exclusions, pill intakes, the index of kept medical documents, and the sets of imported strength workouts); Health Connect remains the source of truth for everything it has a record type for
 - WorkManager is used for user-started Apple Health imports, offline map imports, and the home widget refresh
 - Phone-to-phone Health Connect sync lives under [`features/devicesync`](../../app/src/main/kotlin/tech/mmarca/openvitals/features/devicesync) and runs over Bluetooth Classic RFCOMM
 - A one-time Flutter-to-Kotlin data migrator lives under [`data/migration`](../../app/src/main/kotlin/tech/mmarca/openvitals/data/migration) and runs from `OpenVitalsApp.onCreate()`
@@ -206,7 +206,7 @@ Some repositories are now split into a `data/repository/contract/` interface and
 
 ### Local storage
 
-[`OpenVitalsDatabase`](../../app/src/main/kotlin/tech/mmarca/openvitals/data/local/OpenVitalsDatabase.kt) is at `VERSION = 18`, with migrations declared in its companion object and listed once, in `ALL_MIGRATIONS`, which the database builder takes. Room exports the schema of each version to [`app/schemas`](../../app/schemas); the files are committed.
+[`OpenVitalsDatabase`](../../app/src/main/kotlin/tech/mmarca/openvitals/data/local/OpenVitalsDatabase.kt) is at `VERSION = 19`, with migrations declared in its companion object and listed once, in `ALL_MIGRATIONS`, which the database builder takes. Room exports the schema of each version to [`app/schemas`](../../app/schemas); the files are committed.
 
 To change the schema: raise `VERSION`, write the migration, add it to `ALL_MIGRATIONS`, build once, and commit the new schema file. `OpenVitalsDatabaseSchemaTest` fails until all of that is done: it replays every migration's statements and compares the tables they leave with the exported schema. It can do that on the JVM because the migrations only create and drop tables. A migration that alters a table needs a real database, so add `room-testing` and a `MigrationTestHelper` test with it; the exported schemas are what that helper reads.
 
@@ -221,6 +221,7 @@ To change the schema: raise `VERSION`, write the migration, add it to `ALL_MIGRA
 | `cycle_journal_entries`, `cycle_exclusions` | `data/local/cycle` | the cycle day log Health Connect has no record type for (pain, mood, energy, desire, symptoms, notes, pregnancy test, temperature disturbances, cervical sensation, cervix opening, firmness and position) and the cycles kept out of the estimate, added in migration 12 → 13; the cervix and desire columns in 16 → 17 |
 | `pill_intakes` | `data/local/cycle` | the days the contraceptive pill was marked as taken; the scheme itself is a cycle preference, added in migration 13 → 14 |
 | `medical_documents`, `medical_document_records` | `data/local/medical` | the files kept from medical imports, stored under `files/medical_documents`, and the Health Connect records each one gave; a file is data Health Connect cannot hold, and the records stay in Health Connect. Added in migration 14 → 15 |
+| `strength_sets` | `data/local/strength` | the exercises, sets, reps and loads of strength workouts imported from a training app's export (Hevy's CSV), keyed by the workout's local start minute, which is also what matches them to the Health Connect session; the session itself stays in Health Connect, which has no record for a set. Added in migration 18 → 19 |
 
 Three tables the device layer owned (`garmin_wellness_samples`, added in 5 → 6; `garmin_sleep_minutes`, 9 → 10; `scale_weigh_ins`, 15 → 16) left with that layer: `MIGRATION_17_18` drops all three. Their data lives in OpenWatch now.
 
@@ -296,6 +297,7 @@ Current feature packages:
 - [`features/readiness`](../../app/src/main/kotlin/tech/mmarca/openvitals/features/readiness)
 - [`features/recovery`](../../app/src/main/kotlin/tech/mmarca/openvitals/features/recovery)
 - [`features/settings`](../../app/src/main/kotlin/tech/mmarca/openvitals/features/settings)
+- [`features/strength`](../../app/src/main/kotlin/tech/mmarca/openvitals/features/strength) — strength sessions from Health Connect joined with the sets of an imported Hevy export (`StrengthSessions.kt`), a muscle map and the estimated one-rep max per exercise; the period scaffold with a month calendar in place of the Month chart
 - [`features/workoutplans`](../../app/src/main/kotlin/tech/mmarca/openvitals/features/workoutplans) — plan list/builder; `WorkoutPlanStepMapping.kt` is the one seam between Health Connect plans and the activity form's step rows
 
 Two of these are not metric features and follow their own shape: `features/devicesync` is a phone-to-phone sync wizard, and `features/imports/*` are import workflows.

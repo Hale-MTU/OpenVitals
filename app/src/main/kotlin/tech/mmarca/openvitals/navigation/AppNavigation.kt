@@ -34,6 +34,8 @@ import tech.mmarca.openvitals.core.presentation.DateTimeFormatterProvider
 import tech.mmarca.openvitals.core.presentation.UnitFormatter
 import tech.mmarca.openvitals.features.achievements.AchievementsScreen
 import tech.mmarca.openvitals.features.achievements.AchievementsViewModel
+import tech.mmarca.openvitals.features.strength.StrengthScreen
+import tech.mmarca.openvitals.features.strength.StrengthViewModel
 import tech.mmarca.openvitals.features.activity.ActivityDetailScreen
 import tech.mmarca.openvitals.features.activity.ActivityDetailViewModel
 import tech.mmarca.openvitals.features.activity.ActivityOverviewViewModel
@@ -754,6 +756,21 @@ fun AppNavigation(
                 )
             }
 
+            composable(
+                route = Screen.Strength.route + SELECTED_DAY_QUERY_PATTERN,
+                arguments = listOf(navArgument(SELECTED_DAY_ARG) { type = NavType.StringType; nullable = true; defaultValue = null }),
+            ) {
+                val strengthViewModel = hiltViewModel<StrengthViewModel>()
+                StrengthScreen(
+                    viewModel = strengthViewModel,
+                    unitFormatter = unitFormatter,
+                    dateTimeFormatterProvider = dateTimeFormatterProvider,
+                    onOpenActivity = { activityId ->
+                        navController.navigate(Screen.ActivityDetail.createRoute(activityId))
+                    },
+                )
+            }
+
             settingsRoutes(
                 navController = navController,
                 onImportRouteFile = { uri ->
@@ -840,5 +857,6 @@ private fun metricTitleRes(metricId: DashboardWidgetId): Int =
         DashboardWidgetId.CYCLE -> R.string.metric_cycle
         DashboardWidgetId.MEDICAL_RECORDS -> R.string.medical_records_title
         DashboardWidgetId.OPENWATCH -> R.string.metric_watch
+        DashboardWidgetId.STRENGTH -> R.string.screen_strength
     }
 

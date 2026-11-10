@@ -224,6 +224,21 @@ internal fun dashboardWidgetSpecs(
                     },
                 )
             }
+            model.id == DashboardWidgetId.STRENGTH -> {
+                add(
+                    DashboardWidgetSpec(widgetId, title) { modifier ->
+                        DashboardPillWidget(
+                            title = title,
+                            value = DisplayValue("", ""),
+                            icon = meta.icon,
+                            accentColor = meta.accentColor,
+                            message = stringResource(R.string.strength_tile_message),
+                            modifier = modifier,
+                            onClick = openMetric(widgetId),
+                        )
+                    },
+                )
+            }
             model.id == DashboardWidgetId.CYCLE -> {
                 add(
                     DashboardWidgetSpec(widgetId, title) { modifier ->
@@ -418,6 +433,7 @@ private fun dashboardWidgetTitle(widgetId: DashboardWidgetId): String =
             DashboardWidgetId.MINDFULNESS -> R.string.metric_mindfulness
             DashboardWidgetId.CYCLE -> R.string.metric_cycle
             DashboardWidgetId.MEDICAL_RECORDS -> R.string.medical_records_title
+            DashboardWidgetId.STRENGTH -> R.string.screen_strength
             DashboardWidgetId.OPENWATCH -> R.string.metric_watch
             DashboardWidgetId.WORKOUT -> R.string.metric_workout
         },
@@ -476,6 +492,7 @@ private fun dashboardWidgetMeta(widgetId: DashboardWidgetId): DashboardWidgetMet
         DashboardWidgetId.MINDFULNESS -> DashboardWidgetMeta(Icons.Outlined.SelfImprovement, MindfulnessColor)
         DashboardWidgetId.CYCLE -> DashboardWidgetMeta(Icons.Outlined.CalendarMonth, CycleColor)
         DashboardWidgetId.MEDICAL_RECORDS -> DashboardWidgetMeta(Icons.Outlined.MedicalInformation, MedicalRecordsColor)
+        DashboardWidgetId.STRENGTH -> DashboardWidgetMeta(Icons.Outlined.FitnessCenter, WorkoutColor)
         DashboardWidgetId.OPENWATCH -> DashboardWidgetMeta(Icons.Outlined.Watch, VitalsColor)
         DashboardWidgetId.WORKOUT -> DashboardWidgetMeta(Icons.AutoMirrored.Outlined.DirectionsRun, WorkoutColor)
     }

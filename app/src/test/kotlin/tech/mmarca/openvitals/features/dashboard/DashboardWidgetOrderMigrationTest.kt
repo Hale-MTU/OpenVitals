@@ -40,7 +40,7 @@ class DashboardWidgetOrderMigrationTest {
             persist = recorder::persist,
         )
 
-        // The default order puts the OpenWatch tile right after STEPS and medical records after CYCLE.
+        // The default order puts the OpenWatch tile right after STEPS, and medical records then strength after CYCLE.
         assertEquals(
             listOf(
                 DashboardWidgetId.STEPS,
@@ -48,11 +48,12 @@ class DashboardWidgetOrderMigrationTest {
                 DashboardWidgetId.SLEEP,
                 DashboardWidgetId.CYCLE,
                 DashboardWidgetId.MEDICAL_RECORDS,
+                DashboardWidgetId.STRENGTH,
             ),
             result,
         )
         // Only the new ids moved: the kept widgets stay in the user's order.
-        val added = setOf(DashboardWidgetId.MEDICAL_RECORDS.name, DashboardWidgetId.OPENWATCH.name)
+        val added = setOf(DashboardWidgetId.MEDICAL_RECORDS.name, DashboardWidgetId.OPENWATCH.name, DashboardWidgetId.STRENGTH.name)
         assertEquals(
             listOf(DashboardWidgetId.STEPS.name, DashboardWidgetId.SLEEP.name, DashboardWidgetId.CYCLE.name),
             recorder.order?.filterNot { it in added },

@@ -16,4 +16,6 @@ enum class PeriodRangePreferenceKey(
     MINDFULNESS("detail_range_mindfulness", TimeRange.WEEK),
     // The day first: active caffeine and tonight's forecast are why the screen is opened.
     CAFFEINE("detail_range_caffeine", TimeRange.DAY),
+    // The month first: the calendar of training days is what the screen is for.
+    STRENGTH("detail_range_strength", TimeRange.MONTH),
 }

@@ -533,6 +533,7 @@ internal fun dashboardTileDestination(
     DashboardWidgetId.WEEKLY_CARDIO_LOAD,
     DashboardWidgetId.CARDIO_LOAD -> CardioLoadDetailRoute.withSelectedDay(selectedDate)
     DashboardWidgetId.MEDICAL_RECORDS -> Screen.MedicalRecords.route
+    DashboardWidgetId.STRENGTH -> Screen.Strength.route.withSelectedDay(selectedDate)
     else -> Screen.Metric.createRoute(metricId.name).withSelectedDay(selectedDate)
 }
 

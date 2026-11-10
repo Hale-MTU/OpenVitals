@@ -137,7 +137,7 @@ internal fun DashboardWidgetDisplayModel.showsNoDataMessage(): Boolean = when {
     isNotSetUp -> true
     id == DashboardWidgetId.CYCLE -> cycle == null
     // Static: it has no data to lack, so it never sinks.
-    id == DashboardWidgetId.MEDICAL_RECORDS -> false
+    id == DashboardWidgetId.MEDICAL_RECORDS || id == DashboardWidgetId.STRENGTH -> false
     id == DashboardWidgetId.OPENWATCH -> openWatch == null
     id == DashboardWidgetId.WEEKLY_CARDIO_LOAD || id == DashboardWidgetId.CARDIO_LOAD ->
         weeklyCardioLoad == null

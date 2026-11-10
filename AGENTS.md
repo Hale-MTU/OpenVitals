@@ -96,7 +96,7 @@ Do not break these without an explicit decision. They are app-wide, and each has
 - **Text that leaves the app is structure, not data.** Reports, the crash draft and the diagnostics log hold counts, types, reasons and masked error text, never a value, a record's time, a name or a file name. Exception text goes through `core/privacy/PrivacyRedactor`; a copy goes through `sensitiveTextClip`; a log line logs a count or passes the throwable, never a value. Seed `PrivacySentinels` in a test of any new report.
 - **Nothing waits on the main thread.** No `runBlocking` in `app/src/main` (`NoRunBlockingRatchetTest` holds the allow-list). A receiver never holds a broadcast for a Health Connect read. Composables `remember` any pass over samples.
 - **Every locale ships complete.** A new string goes to `values/strings.xml` and to every `values-*/strings.xml`, with the plural shape each locale needs; `python3 scripts/verify-translations.py` checks them. See [translations.md](docs/engineering/translations.md) and the translation-gate note in [development.md](docs/engineering/development.md).
-- **Room is at version 18.** A new entity means a `MIGRATION_18_19` and a bump, not `fallbackToDestructiveMigration`.
+- **Room is at version 19.** A new entity means a `MIGRATION_19_20` and a bump, not `fallbackToDestructiveMigration`.
 - **The docs are checked against the code.** `ArchitectureDocTest` fails when a Room table, the Room version or a package is missing from the docs. `HealthConnectLayeringTest` holds the Health Connect layering rule. `FileSizeRatchetTest` stops a file passing 800 lines, and `FunctionLengthRatchetTest` stops a new function passing 150. When one fails, fix the code or the doc in the same commit.
 
 ## Implementation Rules
