@@ -3797,6 +3797,10 @@
     <string name="openwatch_status_not_installed">Not installed</string>
     <string name="openwatch_status_unreachable">Installed, but Android did not let OpenVitals connect</string>
     <string name="openwatch_status_connecting">Connecting…</string>
+    <string name="openwatch_status_unknown_signer">Installed, but not signed by the OpenWatch project</string>
+    <string name="openwatch_unknown_signer_body">An app is installed under OpenWatch\'s name, but it was not signed by the OpenWatch project. OpenVitals has sent it nothing. If you connect, it receives your body profile and can send heart rate into your recordings. Connect only if you built or installed it yourself and trust where it came from.</string>
+    <string name="openwatch_unknown_signer_key">Its signing key (SHA-256): %1$s</string>
+    <string name="openwatch_unknown_signer_connect">Connect anyway</string>
     <string name="openwatch_status_waiting">Waiting for approval in OpenWatch</string>
     <string name="openwatch_status_blocked">Blocked in OpenWatch</string>
     <string name="openwatch_status_connected">Connected</string>

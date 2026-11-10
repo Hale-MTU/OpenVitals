@@ -71,6 +71,10 @@
     <string name="openwatch_status_not_installed">לא מותקן</string>
     <string name="openwatch_status_unreachable">מותקן, אבל Android לא אפשר ל-OpenVitals להתחבר</string>
     <string name="openwatch_status_connecting">מתחבר…</string>
+    <string name="openwatch_status_unknown_signer">מותקנת, אבל לא חתומה על ידי פרויקט OpenWatch</string>
+    <string name="openwatch_unknown_signer_body">מותקנת אפליקציה בשם OpenWatch, אבל היא לא נחתמה על ידי פרויקט OpenWatch. OpenVitals לא שלחה לה דבר. אם תתחבר, היא תקבל את פרופיל הגוף שלך ותוכל לשלוח דופק להקלטות שלך. התחבר רק אם בנית או התקנת אותה בעצמך ואתה סומך על המקור שלה.</string>
+    <string name="openwatch_unknown_signer_key">מפתח החתימה שלה (SHA-256): %1$s</string>
+    <string name="openwatch_unknown_signer_connect">להתחבר בכל זאת</string>
     <string name="openwatch_status_waiting">ממתין לאישור ב-OpenWatch</string>
     <string name="openwatch_status_blocked">חסום ב-OpenWatch</string>
     <string name="openwatch_status_connected">מחובר</string>

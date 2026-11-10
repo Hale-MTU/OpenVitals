@@ -29,6 +29,7 @@ import tech.mmarca.openlink.OpenLinkSampleType
 import tech.mmarca.openlink.client.OpenLinkClient
 import tech.mmarca.openlink.client.OpenLinkStatus
 import tech.mmarca.openvitals.BuildConfig
+import tech.mmarca.openvitals.R
 import tech.mmarca.openvitals.core.performance.AppForegroundGate
 import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
 import tech.mmarca.openvitals.features.manualentry.activity.recording.ActivityRecordingController
@@ -66,6 +67,7 @@ class OpenWatchLink @Inject constructor(
         hostPackage = hostPackage,
         requestedCapabilities = OpenLink.ALL_CAPABILITIES,
         appVersion = BuildConfig.VERSION_NAME,
+        knownHostSigners = context.resources.getStringArray(R.array.openwatch_known_signers).toSet(),
     )
 
     val status: StateFlow<OpenLinkStatus> = client.status
@@ -168,6 +170,13 @@ class OpenWatchLink @Inject constructor(
         client.setProfile(push)
         return true
     }
+
+    /**
+     * The user chose to connect to the app installed under OpenWatch's name although it is
+     * signed with [signerSha256], a key the OpenWatch project does not use (a build of their
+     * own, or another store's). The choice holds for that key only.
+     */
+    fun trustHost(signerSha256: String) = client.trustHost(signerSha256)
 
     /** Looks for OpenWatch again, for when the user may just have installed or updated it. */
     fun refresh() = client.refresh()

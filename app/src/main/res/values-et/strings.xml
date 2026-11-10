@@ -3736,6 +3736,10 @@
     <string name="openwatch_status_not_installed">Pole installitud</string>
     <string name="openwatch_status_unreachable">Installitud, kuid Android ei lubanud OpenVitalsil ühenduda</string>
     <string name="openwatch_status_connecting">Ühendan…</string>
+    <string name="openwatch_status_unknown_signer">Paigaldatud, kuid OpenWatchi projekt pole seda allkirjastanud</string>
+    <string name="openwatch_unknown_signer_body">OpenWatchi nime all on paigaldatud rakendus, mida OpenWatchi projekt pole allkirjastanud. OpenVitals pole sellele midagi saatnud. Kui ühendad, saab see sinu kehaprofiili ja võib saata pulssi sinu salvestustesse. Ühenda ainult siis, kui ehitasid või paigaldasid selle ise ja usaldad selle päritolu.</string>
+    <string name="openwatch_unknown_signer_key">Selle allkirjavõti (SHA-256): %1$s</string>
+    <string name="openwatch_unknown_signer_connect">Ühenda ikkagi</string>
     <string name="openwatch_status_waiting">Ootab OpenWatchis heakskiitu</string>
     <string name="openwatch_status_blocked">OpenWatchis blokeeritud</string>
     <string name="openwatch_status_connected">Ühendatud</string>

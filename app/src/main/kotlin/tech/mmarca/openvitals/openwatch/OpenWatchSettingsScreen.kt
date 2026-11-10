@@ -50,6 +50,8 @@ class OpenWatchSettingsViewModel @Inject constructor(
 
     fun refresh() = link.refresh()
 
+    fun trustHost(signerSha256: String) = link.trustHost(signerSha256)
+
     fun open(context: android.content.Context): Boolean = link.open(context)
 
     fun syncProfile(): Boolean = link.syncProfileNow()
@@ -100,6 +102,16 @@ fun OpenWatchSettingsScreen(viewModel: OpenWatchSettingsViewModel) {
                     OpenWatchLinkSummary.Unreachable -> {
                         Body(stringResource(R.string.openwatch_unreachable_body))
                         Button(onClick = getOpenWatch) { Text(stringResource(R.string.openwatch_move_action_get)) }
+                    }
+                    is OpenWatchLinkSummary.UnknownSigner -> {
+                        Body(stringResource(R.string.openwatch_unknown_signer_body))
+                        // No key: it could not be read, and there is nothing to approve.
+                        if (current.signerSha256.isNotEmpty()) {
+                            Body(stringResource(R.string.openwatch_unknown_signer_key, current.signerSha256))
+                            OutlinedButton(onClick = { viewModel.trustHost(current.signerSha256) }) {
+                                Text(stringResource(R.string.openwatch_unknown_signer_connect))
+                            }
+                        }
                     }
                     OpenWatchLinkSummary.Connecting -> Unit
                     OpenWatchLinkSummary.WaitingForApproval -> {
@@ -164,6 +176,7 @@ fun OpenWatchSettingsScreen(viewModel: OpenWatchSettingsViewModel) {
 fun openWatchStatusLine(summary: OpenWatchLinkSummary): String = when (summary) {
     OpenWatchLinkSummary.NotInstalled -> stringResource(R.string.openwatch_status_not_installed)
     OpenWatchLinkSummary.Unreachable -> stringResource(R.string.openwatch_status_unreachable)
+    is OpenWatchLinkSummary.UnknownSigner -> stringResource(R.string.openwatch_status_unknown_signer)
     OpenWatchLinkSummary.Connecting -> stringResource(R.string.openwatch_status_connecting)
     OpenWatchLinkSummary.WaitingForApproval -> stringResource(R.string.openwatch_status_waiting)
     OpenWatchLinkSummary.Blocked -> stringResource(R.string.openwatch_status_blocked)

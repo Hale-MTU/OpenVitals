@@ -19,6 +19,8 @@ class OpenWatchLinkSummaryTest {
     fun `each link state reads as its one status`() {
         assertThat(openWatchLinkSummary(OpenLinkStatus.HostMissing, emptyList(), 0)).isEqualTo(OpenWatchLinkSummary.NotInstalled)
         assertThat(openWatchLinkSummary(OpenLinkStatus.Unreachable, emptyList(), 0)).isEqualTo(OpenWatchLinkSummary.Unreachable)
+        assertThat(openWatchLinkSummary(OpenLinkStatus.HostUntrusted("1234"), emptyList(), 0))
+            .isEqualTo(OpenWatchLinkSummary.UnknownSigner("1234"))
         assertThat(openWatchLinkSummary(OpenLinkStatus.Stopped, emptyList(), 0)).isEqualTo(OpenWatchLinkSummary.Connecting)
         assertThat(openWatchLinkSummary(connected(OpenLinkTrust.PENDING), emptyList(), 0)).isEqualTo(OpenWatchLinkSummary.WaitingForApproval)
         assertThat(openWatchLinkSummary(connected(OpenLinkTrust.BLOCKED), emptyList(), 0)).isEqualTo(OpenWatchLinkSummary.Blocked)

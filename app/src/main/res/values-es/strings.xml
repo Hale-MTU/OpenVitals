@@ -3769,6 +3769,10 @@
     <string name="openwatch_status_not_installed">No instalado</string>
     <string name="openwatch_status_unreachable">Instalado, pero Android no dejó conectar a OpenVitals</string>
     <string name="openwatch_status_connecting">Conectando…</string>
+    <string name="openwatch_status_unknown_signer">Instalada, pero no firmada por el proyecto OpenWatch</string>
+    <string name="openwatch_unknown_signer_body">Hay una app instalada con el nombre de OpenWatch, pero no fue firmada por el proyecto OpenWatch. OpenVitals no le ha enviado nada. Si la conectas, recibirá tu perfil corporal y podrá enviar frecuencia cardiaca a tus registros. Conéctala solo si la compilaste o instalaste tú y confías en su origen.</string>
+    <string name="openwatch_unknown_signer_key">Su clave de firma (SHA-256): %1$s</string>
+    <string name="openwatch_unknown_signer_connect">Conectar de todos modos</string>
     <string name="openwatch_status_waiting">Esperando aprobación en OpenWatch</string>
     <string name="openwatch_status_blocked">Bloqueado en OpenWatch</string>
     <string name="openwatch_status_connected">Conectado</string>
