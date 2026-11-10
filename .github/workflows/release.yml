@@ -82,6 +82,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
           # The nightly skip check and the tag lookup need history and tags.
           fetch-depth: 0
 
@@ -134,7 +136,15 @@ jobs:
             echo "verify run $run_id is still going for $commit; waiting for it."
             gh run watch "$run_id" > /dev/null || true
           fi
-          run_url="$(gh api "$runs&status=success" --jq '.workflow_runs[0].html_url // empty')"
+          # The runs list catches up with a finished run a few seconds after
+          # `gh run watch` returns; ask again before calling it unverified.
+          run_url=""
+          for attempt in 1 2 3 4 5 6; do
+            run_url="$(gh api "$runs&status=success" --jq '.workflow_runs[0].html_url // empty')"
+            [ -n "$run_url" ] && break
+            [ -z "$run_id" ] && break
+            sleep 10
+          done
           if [ -z "$run_url" ]; then
             echo "::error::$commit has not passed the verify workflow on a push to main. Push it to main (or fix that run) and start the release again."
             exit 1
@@ -167,6 +177,9 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
       - uses: actions/download-artifact@v8
         with:
           name: release-context
@@ -269,6 +282,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
           fetch-depth: 0
       - uses: actions/download-artifact@v8
         with:
@@ -288,6 +303,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
       - uses: actions/download-artifact@v8
         with:
           name: release-build
@@ -305,6 +323,9 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
       - uses: actions/download-artifact@v8
         with:
           name: release-build
@@ -323,6 +344,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
       - env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -340,6 +364,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
       - uses: actions/download-artifact@v8
         with:
           name: release-build
@@ -356,6 +383,9 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
       - uses: actions/download-artifact@v8
         with:
           name: release-build
@@ -412,6 +442,9 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
       - uses: actions/download-artifact@v8
         with:
           name: release-build
@@ -435,6 +468,9 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
       - uses: actions/download-artifact@v8
         with:
           name: release-context

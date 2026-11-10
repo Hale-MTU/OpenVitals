@@ -46,6 +46,14 @@ jobs:
           echo "run_lint=$run_lint" >> "$GITHUB_OUTPUT"
           echo "plan: lint=$run_lint"
 
+  # The wiki is built from the Markdown (wiki.yml); a relative link to a file
+  # that does not exist would be a 404 there, so it fails here.
+  docs-links:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v5
+      - run: python3 scripts/sync-wiki.py --repo "$GITHUB_REPOSITORY" --check
+
   # The stock runner ships JDK 17 and the Android SDK; scripts/ci-android-setup.sh
   # installs the platform and build-tools when the image lacks them. Each job
   # gives setup-gradle a Gradle user home of its own: the action leaves caching
@@ -60,6 +68,9 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
       - run: echo "GRADLE_USER_HOME=$RUNNER_TEMP/gradle-user-home" >> "$GITHUB_ENV"
       - uses: gradle/actions/setup-gradle@v5
       - run: scripts/ci-android-gradle.sh -Popenvitals.testForks=4 verifyCiUnitTest verifyCiPreflight
@@ -72,6 +83,9 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The OpenLink library is a submodule the app builds from.
+          submodules: true
       - run: echo "GRADLE_USER_HOME=$RUNNER_TEMP/gradle-user-home" >> "$GITHUB_ENV"
       - uses: gradle/actions/setup-gradle@v5
       - run: scripts/ci-android-gradle.sh verifyCiLint

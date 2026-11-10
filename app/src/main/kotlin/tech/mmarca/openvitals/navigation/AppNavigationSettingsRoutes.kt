@@ -20,6 +20,7 @@ import tech.mmarca.openvitals.features.settings.RecoverySettingsScreen
 import tech.mmarca.openvitals.features.settings.SensorsSettingsScreen
 import tech.mmarca.openvitals.features.settings.SettingsScreen
 import tech.mmarca.openvitals.features.settings.SettingsSection
+import tech.mmarca.openvitals.openwatch.OpenWatchSettingsScreen
 
 /**
  * Each section builds only its own ViewModel. The root, Health Connect, Vitals and
@@ -126,6 +127,10 @@ internal fun NavGraphBuilder.settingsRoutes(
         DeviceSyncScreen(onDone = { navController.popBackStack() })
     }
 
+    composable(Screen.SettingsOpenWatch.route) {
+        OpenWatchSettingsScreen(viewModel = hiltViewModel())
+    }
+
     composable(Screen.SettingsHealthConnect.route) {
         SettingsSectionScreen(SettingsSection.HEALTH_CONNECT)
     }
@@ -152,6 +157,7 @@ private fun settingsSectionRoute(section: SettingsSection): String =
         SettingsSection.RECOVERY -> Screen.SettingsRecovery.route
         SettingsSection.CYCLE -> Screen.SettingsCycle.route
         SettingsSection.DATA_IMPORT -> Screen.SettingsDataImport.route
+        SettingsSection.OPENWATCH -> Screen.SettingsOpenWatch.route
         SettingsSection.DEVICE_SYNC -> Screen.SettingsDeviceSync.route
         SettingsSection.HEALTH_CONNECT -> Screen.SettingsHealthConnect.route
         SettingsSection.DEBUG_DIAGNOSTICS -> Screen.SettingsDebugDiagnostics.route

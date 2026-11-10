@@ -220,7 +220,7 @@ class DashboardPresentationMapperTest {
 
         val display = build(data)
 
-        // Every known widget materialises except WORKOUT (its own section), WATCH (no watch passed)
+        // Every known widget materialises except WORKOUT (its own section), OPENWATCH (no tile passed)
         // and MEDICAL_RECORDS (the feature is off by default).
         assertEquals(DashboardWidgetStyle.CIRCLE, display.widgets[DashboardWidgetId.STEPS]?.style)
         assertEquals(
@@ -229,7 +229,7 @@ class DashboardPresentationMapperTest {
         )
         assertEquals(
             DashboardWidgetId.entries - DashboardWidgetId.WORKOUT -
-                DashboardWidgetId.MEDICAL_RECORDS,
+                DashboardWidgetId.MEDICAL_RECORDS - DashboardWidgetId.OPENWATCH,
             display.widgets.keys.toList(),
         )
         // Including the ones a narrower mapper used to drop entirely.
@@ -253,7 +253,7 @@ class DashboardPresentationMapperTest {
         // No readings: the tiles are still there, empty, and the hero rings never disappear.
         assertEquals(
             DashboardWidgetId.entries - DashboardWidgetId.WORKOUT -
-                DashboardWidgetId.MEDICAL_RECORDS,
+                DashboardWidgetId.MEDICAL_RECORDS - DashboardWidgetId.OPENWATCH,
             display.widgets.keys.toList(),
         )
         assertNotNull(display.widgets[DashboardWidgetId.STEPS])
@@ -462,7 +462,7 @@ class DashboardPresentationMapperTest {
 
         assertEquals(
             DashboardWidgetId.entries - DashboardWidgetId.WORKOUT -
-                DashboardWidgetId.MEDICAL_RECORDS,
+                DashboardWidgetId.MEDICAL_RECORDS - DashboardWidgetId.OPENWATCH,
             display.widgets.keys.toList(),
         )
         assertEquals(display.widgets.keys, display.unsupportedIds)
@@ -501,4 +501,27 @@ class DashboardPresentationMapperTest {
             includeUnsupported = includeUnsupported,
             medicalRecordsAvailable = medicalRecordsAvailable,
         )
+
+    @Test
+    fun build_openWatchTile_materialisesOnlyWhenOpenLinkGivesOne() {
+        val tile = tech.mmarca.openvitals.openwatch.OpenWatchTileDisplay(deviceId = "w1", name = "Venu 3", batteryPercent = 64)
+
+        val without = DashboardPresentationMapper.build(
+            data = DashboardData(date = LocalDate.now()),
+            dailyGoals = DashboardDailyGoals(),
+            unitFormatter = unitFormatter,
+            dateTimeFormatterProvider = dateTimeFormatterProvider,
+        )
+        val with = DashboardPresentationMapper.build(
+            data = DashboardData(date = LocalDate.now()),
+            dailyGoals = DashboardDailyGoals(),
+            unitFormatter = unitFormatter,
+            dateTimeFormatterProvider = dateTimeFormatterProvider,
+            openWatch = tile,
+        )
+
+        assertNull(without.widgets[DashboardWidgetId.OPENWATCH])
+        assertEquals(tile, with.widgets[DashboardWidgetId.OPENWATCH]?.openWatch)
+        assertFalse(with.widgets.getValue(DashboardWidgetId.OPENWATCH).showsNoDataMessage())
+    }
 }

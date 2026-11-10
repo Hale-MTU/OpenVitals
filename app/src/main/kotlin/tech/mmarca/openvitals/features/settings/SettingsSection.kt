@@ -44,6 +44,10 @@ enum class SettingsSection(
         titleRes = R.string.settings_data_transfer_group_title,
         summaryRes = R.string.settings_data_transfer_group_body,
     ),
+    OPENWATCH(
+        titleRes = R.string.settings_openwatch_group_title,
+        summaryRes = R.string.settings_openwatch_group_body,
+    ),
     DEVICE_SYNC(
         titleRes = R.string.settings_device_sync_group_title,
         summaryRes = R.string.settings_device_sync_group_body,

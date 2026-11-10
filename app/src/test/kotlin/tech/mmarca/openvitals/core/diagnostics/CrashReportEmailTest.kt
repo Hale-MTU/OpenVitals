@@ -153,7 +153,7 @@ class CrashReportEmailTest {
 
         val shareText = CrashReportEmail.buildShareText(draft)
 
-        assertThat(shareText).startsWith("To: manuel@mmarca.tech\nSubject: OpenVitals issue report")
+        assertThat(shareText).startsWith("To: hello@hale.ngo\nSubject: OpenVitals issue report")
         assertThat(shareText).contains("Steps to reproduce:")
     }
 

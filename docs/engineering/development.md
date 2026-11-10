@@ -111,6 +111,18 @@ The local app uses Hilt in the `:app` module:
 
 AGP 9 built-in Kotlin currently requires `android.disallowKotlinSourceSets=false` so KSP generated sources are accepted. Keep this in `gradle.properties` unless the Android Gradle Plugin/KSP behavior changes.
 
+## Docs and the Wiki
+
+The [wiki](https://github.com/Hale-MTU/OpenVitals/wiki) is a mirror of the repository's Markdown, rebuilt by `.github/workflows/wiki.yml` on every push to `main` that touches a `.md` file: `README.md` is Home, every other root Markdown file and every file under `docs/` is one page, named after its first heading, with a sidebar by `docs/` folder (each folder's `README.md` first, release notes newest first). Edit the files here, never the wiki: the next run overwrites it. The published site at docs.hale.ngo is separate and unchanged.
+
+`scripts/sync-wiki.py` rewrites each relative link to the page it points at, or to the file on GitHub for anything that is not a page. Its `--check` mode is the verify gate's `docs-links` job and fails on a relative link to a file that does not exist. To see the pages locally:
+
+```bash
+python3 scripts/sync-wiki.py --repo Hale-MTU/OpenVitals --out /tmp/openvitals-wiki
+```
+
+Two Markdown files with the same first heading would become one page; the script stops and names both. The same script runs in OpenWatch, OpenLink and OpenBridge.
+
 ## CI
 
 CI is GitHub Actions on the stock `ubuntu-26.04` runner, which ships JDK 17
@@ -262,6 +274,15 @@ which builds from the tag, are unaffected. Delete the variable to resume. A
 version released while paused reaches Play only by hand, from the AAB on its
 GitHub release, or by a production run from its tag after the variable is
 gone; the next release's upload also supersedes it.
+
+### The OpenLink submodule
+
+The app builds the OpenLink client from the git submodule at `openlink/`
+(`includeBuild("openlink")` in `settings.gradle.kts`). Clone with
+`git clone --recurse-submodules`, or run `git submodule update --init` in an existing
+checkout. Every workflow checkout passes `submodules: true`. F-Droid builds from the tag
+with its own recipe in fdroiddata: that recipe needs `submodules: true` on the build entry
+from the first release that carries OpenLink, or the build fails at configuration.
 
 ## Release Checklist
 

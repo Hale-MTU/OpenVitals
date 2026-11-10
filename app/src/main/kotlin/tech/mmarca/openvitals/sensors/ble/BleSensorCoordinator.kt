@@ -18,6 +18,7 @@ import android.os.Build
 import android.os.ParcelUuid
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
@@ -60,6 +61,20 @@ class BleSensorCoordinator @Inject constructor(
     private val capabilityOwners = mutableMapOf<BleSensorCapability, BleSensorDevice>()
     private var sampleBuffer = BleRecordingSampleBuffer()
     private var recordingActive = false
+
+    /**
+     * Heart rate from outside Bluetooth GATT: a watch streaming through OpenWatch
+     * (openwatch/OpenWatchLink). Used only while no strap gives heart rate, so a strap
+     * the user added always wins.
+     */
+    private var externalHeartRate: ExternalHeartRate? = null
+
+    private data class ExternalHeartRate(
+        val sourceId: String,
+        val displayName: String,
+        val bpm: Long,
+        val at: Instant,
+    )
 
     /** Addresses of the sensors the phone forgot. Each connects once [connectScanCallback] sees it. */
     private val awaitingScan = mutableSetOf<String>()
@@ -111,8 +126,30 @@ class BleSensorCoordinator @Inject constructor(
         }
     }
 
+    /**
+     * A heart-rate reading from an external source at [at]. Recorded into the session's
+     * samples when no strap gives heart rate, and shown with the source as a sensor.
+     */
+    fun acceptExternalHeartRate(sourceId: String, displayName: String, bpm: Long, at: Instant) = synchronized(stateLock) {
+        externalHeartRate = ExternalHeartRate(sourceId, displayName, bpm, at)
+        val now = Instant.now()
+        val metrics = collectMetrics(now)
+        _metrics.value = metrics
+        if (recordingActive && connectionForCapability(BleSensorCapability.HEART_RATE)?.heartRateAggregator?.current(now) == null) {
+            sampleBuffer = sampleBuffer.withHeartRateSample(at, bpm)
+        }
+    }
+
+    /** The external source went away (its session ended): drop it from the metrics. */
+    fun clearExternalHeartRate() = synchronized(stateLock) {
+        if (externalHeartRate == null) return@synchronized
+        externalHeartRate = null
+        _metrics.value = collectMetrics()
+    }
+
     fun stopRecording(): BleRecordingSampleBuffer = synchronized(stateLock) {
         recordingActive = false
+        externalHeartRate = null
         disconnectAll()
         val buffer = sampleBuffer.trimmed()
         sampleBuffer = BleRecordingSampleBuffer()
@@ -453,6 +490,15 @@ class BleSensorCoordinator @Inject constructor(
             )
         }
         val hrConnection = connectionForCapability(BleSensorCapability.HEART_RATE)
+        val external = externalHeartRate
+        val externalBpm = external?.takeIf { Duration.between(it.at, now) <= ExternalHeartRateMaxAge }?.bpm
+        val allStatuses = if (external == null) statuses else statuses + BleDeviceConnectionStatus(
+            deviceId = external.sourceId,
+            displayName = external.displayName,
+            address = external.sourceId,
+            status = if (externalBpm != null) BleConnectionStatus.CONNECTED else BleConnectionStatus.RECONNECTING,
+            capabilities = setOf(BleSensorCapability.HEART_RATE),
+        )
         val cadenceConnection = connectionForCapability(BleSensorCapability.CYCLING_CADENCE)
             ?: connectionForCapability(BleSensorCapability.CYCLING_POWER)
         val powerConnection = connectionForCapability(BleSensorCapability.CYCLING_POWER)
@@ -460,15 +506,15 @@ class BleSensorCoordinator @Inject constructor(
         val runningConnection = connectionForCapability(BleSensorCapability.RUNNING_SPEED_CADENCE)
         val running = runningConnection?.runningAggregator?.current(now)
         return BleRecordingMetrics(
-            heartRateBpm = hrConnection?.heartRateAggregator?.current(now),
-            heartRateNoSignal = hrConnection?.heartRateNoSignal == true,
+            heartRateBpm = hrConnection?.heartRateAggregator?.current(now) ?: externalBpm,
+            heartRateNoSignal = hrConnection?.heartRateNoSignal == true && externalBpm == null,
             cyclingCadenceRpm = cadenceConnection?.cyclingCadenceAggregator?.current(now),
             powerWatts = powerConnection?.powerAggregator?.current(now),
             cyclingSpeedMetersPerSecond = speedConnection?.cyclingSpeedAggregator?.current(now),
             cyclingDistanceMeters = speedConnection?.cyclingSpeedAggregator?.distanceMeters,
             runningSpeedMetersPerSecond = running?.first,
             runningCadenceRpm = running?.second,
-            deviceStatuses = statuses,
+            deviceStatuses = allStatuses,
         )
     }
 
@@ -526,5 +572,8 @@ class BleSensorCoordinator @Inject constructor(
         private const val CONNECT_SCAN_FAST_MS = 30_000L
         private const val CONNECT_SCAN_RESTART_MS = 20 * 60_000L
         private const val CONNECT_SCAN_RETRY_MS = 30_000L
+
+        /** A watch streams about once a second; past this its value is no longer the wearer's. */
+        private val ExternalHeartRateMaxAge: Duration = Duration.ofSeconds(10)
     }
 }

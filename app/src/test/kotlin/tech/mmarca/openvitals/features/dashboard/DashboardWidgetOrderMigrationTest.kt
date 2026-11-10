@@ -40,20 +40,22 @@ class DashboardWidgetOrderMigrationTest {
             persist = recorder::persist,
         )
 
-        // The default order puts medical records after CYCLE.
+        // The default order puts the OpenWatch tile right after STEPS and medical records after CYCLE.
         assertEquals(
             listOf(
                 DashboardWidgetId.STEPS,
+                DashboardWidgetId.OPENWATCH,
                 DashboardWidgetId.SLEEP,
                 DashboardWidgetId.CYCLE,
                 DashboardWidgetId.MEDICAL_RECORDS,
             ),
             result,
         )
-        // Only the new id moved: the kept widgets stay in the user's order.
+        // Only the new ids moved: the kept widgets stay in the user's order.
+        val added = setOf(DashboardWidgetId.MEDICAL_RECORDS.name, DashboardWidgetId.OPENWATCH.name)
         assertEquals(
             listOf(DashboardWidgetId.STEPS.name, DashboardWidgetId.SLEEP.name, DashboardWidgetId.CYCLE.name),
-            recorder.order?.filterNot { it == DashboardWidgetId.MEDICAL_RECORDS.name },
+            recorder.order?.filterNot { it in added },
         )
         assertEquals(allIds, recorder.known)
     }
@@ -76,8 +78,27 @@ class DashboardWidgetOrderMigrationTest {
 
         assertEquals(1, result.count { it == DashboardWidgetId.MEDICAL_RECORDS })
         assertEquals(1, recorder.order?.count { it == DashboardWidgetId.MEDICAL_RECORDS.name } ?: 1)
-        // And it stays where the user put it.
-        assertEquals(1, result.indexOf(DashboardWidgetId.MEDICAL_RECORDS))
+        // And it stays where the user put it, between STEPS and SLEEP.
+        assertTrue(result.indexOf(DashboardWidgetId.STEPS) < result.indexOf(DashboardWidgetId.MEDICAL_RECORDS))
+        assertTrue(result.indexOf(DashboardWidgetId.MEDICAL_RECORDS) < result.indexOf(DashboardWidgetId.SLEEP))
+    }
+
+    @Test
+    fun `a layout tracked before the OpenWatch tile gains it after the hero rings`() {
+        val stored = listOf(DashboardWidgetId.STEPS.name, DashboardWidgetId.WEEKLY_CARDIO_LOAD.name, DashboardWidgetId.SLEEP.name)
+        val recorder = Recorder()
+
+        val result = dashboardWidgetIdsWithNewOnesAppended(
+            storedIds = stored,
+            knownIds = allIds - DashboardWidgetId.OPENWATCH.name,
+            persist = recorder::persist,
+        )
+
+        assertEquals(
+            listOf(DashboardWidgetId.STEPS, DashboardWidgetId.WEEKLY_CARDIO_LOAD, DashboardWidgetId.OPENWATCH, DashboardWidgetId.SLEEP),
+            result,
+        )
+        assertEquals(allIds, recorder.known)
     }
 
     @Test

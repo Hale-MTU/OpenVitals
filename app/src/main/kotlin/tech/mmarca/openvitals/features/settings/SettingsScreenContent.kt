@@ -9,6 +9,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import tech.mmarca.openvitals.BuildConfig
 import tech.mmarca.openvitals.R
+import tech.mmarca.openvitals.openwatch.OpenWatchLinkSummary
+import tech.mmarca.openvitals.openwatch.openWatchStatusLine
 import tech.mmarca.openvitals.ui.components.OpenVitalsCard
 import tech.mmarca.openvitals.ui.components.PermissionCallout
 import tech.mmarca.openvitals.ui.components.SectionHeader
@@ -19,9 +21,10 @@ internal fun LazyListScope.settingsScreenContent(
     state: SettingsUiState,
     viewModel: SettingsViewModel,
     actions: SettingsScreenActions,
+    openWatchSummary: OpenWatchLinkSummary? = null,
 ) {
     when (section) {
-        null -> settingsRootCards(actions)
+        null -> settingsRootCards(actions, openWatchSummary)
         SettingsSection.VITALS -> {
             item { SectionHeader(stringResource(section.titleRes)) }
             item {
@@ -70,17 +73,19 @@ internal fun LazyListScope.settingsScreenContent(
         SettingsSection.CYCLE,
         SettingsSection.DATA_IMPORT,
         SettingsSection.DEVICE_SYNC,
+        SettingsSection.OPENWATCH,
         -> Unit
     }
 }
 
-private fun LazyListScope.settingsRootCards(actions: SettingsScreenActions) {
+private fun LazyListScope.settingsRootCards(actions: SettingsScreenActions, openWatchSummary: OpenWatchLinkSummary?) {
     SettingsSection.entries
         .filter { BuildConfig.OPENVITALS_DIAGNOSTICS || it != SettingsSection.DEBUG_DIAGNOSTICS }
         .forEach { settingsSection ->
             item {
                 SettingsCategoryCard(
                     section = settingsSection,
+                    summary = if (settingsSection == SettingsSection.OPENWATCH) openWatchSummary?.let { openWatchStatusLine(it) } else null,
                     onClick = { actions.onOpenSection(settingsSection) },
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                 )

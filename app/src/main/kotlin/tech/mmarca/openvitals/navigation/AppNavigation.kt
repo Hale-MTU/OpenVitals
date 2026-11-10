@@ -839,5 +839,6 @@ private fun metricTitleRes(metricId: DashboardWidgetId): Int =
         DashboardWidgetId.MINDFULNESS -> R.string.metric_mindfulness
         DashboardWidgetId.CYCLE -> R.string.metric_cycle
         DashboardWidgetId.MEDICAL_RECORDS -> R.string.medical_records_title
+        DashboardWidgetId.OPENWATCH -> R.string.metric_watch
     }
 

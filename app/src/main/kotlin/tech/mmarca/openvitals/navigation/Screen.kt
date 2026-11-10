@@ -220,6 +220,7 @@ sealed class Screen(
     }
     data object SettingsReportExport : Screen("settings/data_import/report", R.string.report_builder_title)
     data object SettingsDeviceSync : Screen("settings/device_sync", R.string.settings_device_sync_group_title)
+    data object SettingsOpenWatch : Screen("settings/openwatch", R.string.settings_openwatch_group_title)
     data object SettingsHealthConnect : Screen("settings/health_connect", R.string.settings_health_connect_group_title)
     data object SettingsPermissions : Screen("settings/permissions", R.string.settings_health_connect_group_title)
     data object SettingsDebugDiagnostics : Screen("settings/debug_diagnostics", R.string.settings_debug_diagnostics_group_title)
@@ -302,6 +303,7 @@ sealed class Screen(
                 SettingsCsvImport,
                 SettingsReportExport,
                 SettingsDeviceSync,
+                SettingsOpenWatch,
                 SettingsHealthConnect,
                 SettingsPermissions,
                 SettingsDebugDiagnostics,

@@ -152,7 +152,11 @@ fun DashboardScreen(
                     onMoveWidgetToTarget = viewModel::moveDashboardWidgetToTarget,
                     onRemoveWidget = viewModel::removeDashboardWidget,
                     onAddWidget = viewModel::addDashboardWidget,
-                    onOpenMetric = onOpenMetric,
+                    // The OpenWatch tile opens OpenWatch, not a metric screen.
+                    onOpenMetric = { id ->
+                        if (id == DashboardWidgetId.OPENWATCH) viewModel.openOpenWatch(context) else onOpenMetric(id)
+                    },
+                    onSyncWatch = viewModel::syncWatchNow,
                     onOpenActivities = onOpenActivities,
                     onOpenActivity = onOpenActivity,
                     onEditActivity = onEditActivity,

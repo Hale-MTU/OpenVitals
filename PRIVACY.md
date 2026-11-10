@@ -1,12 +1,12 @@
 # OpenVitals Privacy Policy
 
-Last updated: November 6, 2026
+Last updated: November 9, 2026
 
 OpenVitals is a local-first Android app for viewing health and fitness data from Health Connect.
 
-This policy applies to the OpenVitals Android app published under the package name `tech.mmarca.openvitals`.
+This policy applies to the OpenVitals Android app published under the package name `tech.mmarca.openvitals` by Mittetulundusühing Hale (MTÜ Hale), a non-profit association registered in Estonia, registry code 80677610.
 
-Privacy contact: manuel@mmarca.tech
+Privacy contact: hello@hale.ngo
 
 ## Summary
 
@@ -21,6 +21,7 @@ OpenVitals is designed to keep health data on your device.
 - OpenVitals reads Health Connect data only after you grant the relevant Android permissions.
 - OpenVitals writes to Health Connect only through something you start or switch on: saving an entry, recording an activity, running an import, adding a medical record, syncing from another phone, or the distance backfill setting.
 - Data leaves the phone only over Bluetooth, to a second phone you paired yourself, or in a file you choose to export or share.
+- On the phone, OpenVitals shares your body profile with OpenWatch and receives your watch's state and heart rate from it, if you have OpenWatch (see "OpenWatch On The Same Phone").
 
 ## Data OpenVitals Accesses
 
@@ -84,6 +85,21 @@ OpenVitals can delete only the medical records it wrote. Records from other apps
 
 While you record an activity, OpenVitals uses location to build the route, and motion sensors and Bluetooth sensors you added to measure steps, heart rate, power, speed and cadence. A notification shows that a recording is running. The recording is kept in the app's private storage until you save it to Health Connect or discard it. If you switch on the CoMaps integration, OpenVitals reads turn guidance from the CoMaps app on your phone to show it during the recording and, if you choose, keeps it with the activity on the device.
 
+## OpenWatch On The Same Phone
+
+If OpenWatch, the companion app that pairs watches and scales, is installed, OpenVitals
+talks to it on the phone through OpenLink, an interface that works only inside the phone.
+Nothing travels over a network. OpenWatch lists OpenVitals under its Connected apps, where
+any part of this can be switched off.
+
+- Your body profile (birth year, sex, height, weight, resting and maximum heart rate) is
+  kept the same in both apps, so you enter it once. The more recent change wins.
+- OpenVitals shows the watch OpenWatch syncs on its dashboard (name, battery, last sync)
+  and can ask OpenWatch to sync it.
+- While you record an activity, OpenVitals asks OpenWatch to keep the watch streaming and
+  receives its heart rate, which is recorded with the activity like a heart rate strap's.
+  The stream stops when the recording ends.
+
 ## Phone-To-Phone Sync
 
 Sync copies Health Connect records from one phone to another over a paired Bluetooth link. Before any record moves, both phones show the same six-digit code, and you confirm on both that they match. That tells you no other device sits in between. The records are then encrypted between the two phones with a key made for that one sync, on top of Bluetooth's own encryption. You choose how far back to sync and which categories to send. Medical records always sync in full. No server or account is involved. Each phone keeps a plain-text report of its last sync in the app's private storage. If a sync stops, the reason in it is masked like any error text.
@@ -142,4 +158,4 @@ This privacy policy may be updated when OpenVitals changes how it accesses, uses
 
 For privacy questions, contact:
 
-manuel@mmarca.tech
+hello@hale.ngo
