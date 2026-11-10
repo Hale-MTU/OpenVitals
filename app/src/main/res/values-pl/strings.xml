@@ -193,6 +193,7 @@
     <string name="activity_entry_plan_preview_reps">%1$d powtórzeń</string>
     <string name="activity_entry_distance_label">Odległość %1$s</string>
     <string name="activity_entry_elevation_label">Wspinaczka %1$s</string>
+    <string name="activity_entry_calorie_estimate_needs_weight">Brak szacunku kalorii: dodaj swoją wagę do profilu ciała.</string>
     <string name="activity_entry_notes_label">Notatki</string>
     <string name="activity_entry_feeling_label">Jakie to uczucie?</string>
     <string name="activity_entry_feeling_great">Świetnie</string>

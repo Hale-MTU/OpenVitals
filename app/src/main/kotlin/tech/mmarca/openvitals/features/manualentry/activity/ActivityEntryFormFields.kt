@@ -410,4 +410,14 @@ internal fun ActivityMetricInputs(
             modifier = Modifier.weight(1f),
         )
     }
+    if (state.calorieEstimateNeedsWeight &&
+        state.activeCaloriesText.isBlank() &&
+        state.totalCaloriesText.isBlank()
+    ) {
+        Text(
+            text = stringResource(R.string.activity_entry_calorie_estimate_needs_weight),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
 }

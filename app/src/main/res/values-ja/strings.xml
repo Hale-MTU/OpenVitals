@@ -151,6 +151,7 @@
     <string name="activity_entry_plan_preview_reps">%1$d回</string>
     <string name="activity_entry_distance_label">距離%1$s</string>
     <string name="activity_entry_elevation_label">登った歩数%1$s</string>
+    <string name="activity_entry_calorie_estimate_needs_weight">カロリーの推定なし: 身体プロフィールに体重を追加してください。</string>
     <string name="activity_entry_notes_label">メモ</string>
     <string name="activity_entry_feeling_label">どう感じましたか？</string>
     <string name="activity_entry_feeling_great">最高</string>

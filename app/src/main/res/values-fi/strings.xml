@@ -280,6 +280,7 @@
     <string name="activity_entry_plan_preview_reps">%1$d toistoa</string>
     <string name="activity_entry_distance_label">Matka %1$s</string>
     <string name="activity_entry_elevation_label">Nousu %1$s</string>
+    <string name="activity_entry_calorie_estimate_needs_weight">Ei kaloriarviota: lisää painosi kehoprofiiliin.</string>
     <string name="activity_entry_notes_label">Muistiinpanot</string>
     <string name="activity_entry_feeling_label">Miltä tuntui?</string>
     <string name="activity_entry_feeling_great">Loistavalta</string>

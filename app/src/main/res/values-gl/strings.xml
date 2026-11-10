@@ -210,6 +210,7 @@
     <string name="activity_entry_plan_preview_reps">%1$d reps</string>
     <string name="activity_entry_distance_label">Distancia %1$s</string>
     <string name="activity_entry_elevation_label">Desnivel %1$s</string>
+    <string name="activity_entry_calorie_estimate_needs_weight">Sen estimación de calorías: engade o teu peso ao perfil corporal.</string>
     <string name="activity_entry_notes_label">Notas</string>
     <string name="activity_entry_feeling_label">Como foi?</string>
     <string name="activity_entry_feeling_great">Xenial</string>

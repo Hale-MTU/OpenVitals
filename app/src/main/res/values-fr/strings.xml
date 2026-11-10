@@ -151,6 +151,7 @@
     <string name="activity_entry_plan_preview_reps">%1$d reps</string>
     <string name="activity_entry_distance_label">Distance %1$s</string>
     <string name="activity_entry_elevation_label">Dénivelé %1$s</string>
+    <string name="activity_entry_calorie_estimate_needs_weight">Pas d\'estimation des calories : ajoutez votre poids au profil corporel.</string>
     <string name="activity_entry_notes_label">Notes</string>
     <string name="activity_entry_feeling_label">Comment vous êtes-vous senti ?</string>
     <string name="activity_entry_feeling_great">Excellent</string>

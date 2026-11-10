@@ -163,6 +163,8 @@ data class ActivityEntryUiState(
     val elevationText: String = "",
     val activeCaloriesText: String = "",
     val totalCaloriesText: String = "",
+    /** A session came in without calories and could have been estimated, but the body profile has no weight. */
+    val calorieEstimateNeedsWeight: Boolean = false,
     val repetitionMode: ActivityRepetitionEntryMode = ActivityRepetitionEntryMode.TOTAL,
     val repetitionTotalText: String = "",
     val repetitionSets: List<ActivityRepetitionSetInput> = listOf(ActivityRepetitionSetInput()),

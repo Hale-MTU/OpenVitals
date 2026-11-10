@@ -229,11 +229,28 @@ class BodyEnergyTimelineTest {
 
     @Test
     fun `steps without active calories still drain through a gap`() {
-        // Phone steps have no calorie series and no heart rate; the steps stand in for the calories.
+        // Phone steps have no calorie series and no heart rate; the steps stand in for the calories
+        // (Moore et al. 2021 at the bucket's cadence), which takes the profile's weight.
         val wornStart = dayStart.plus(Duration.ofHours(8))
         val wornEnd = wornStart.plus(Duration.ofHours(4))
         val now = dayStart.plus(Duration.ofHours(18))
         val walkHourEnd = dayStart.plus(Duration.ofHours(15))
+        val weighed = BodyProfile(weightKg = 70.0)
+        // Cumulative steps: 0 by 14:00, 4000 by 15:00; no kcal series.
+        val walkProgress = listOf(
+            ActivityProgressPoint(
+                time = dayStart.plus(Duration.ofHours(14)),
+                totalSteps = 0L,
+                totalDistanceMeters = null,
+                totalCaloriesBurnedKcal = null,
+            ),
+            ActivityProgressPoint(
+                time = walkHourEnd,
+                totalSteps = 4000L,
+                totalDistanceMeters = null,
+                totalCaloriesBurnedKcal = null,
+            ),
+        )
         val base = calculateBodyEnergyTimeline(
             inputs(
                 now = now,
@@ -241,6 +258,7 @@ class BodyEnergyTimelineTest {
                 samples = heartRateSamples(wornStart, wornEnd, bpm = 58),
                 restingHeartRateBpm = restfulResting,
                 observedMaxHeartRateBpm = restfulMax,
+                bodyProfile = weighed,
             )
         )
         val withWalk = calculateBodyEnergyTimeline(
@@ -250,21 +268,18 @@ class BodyEnergyTimelineTest {
                 samples = heartRateSamples(wornStart, wornEnd, bpm = 58),
                 restingHeartRateBpm = restfulResting,
                 observedMaxHeartRateBpm = restfulMax,
-                progress = listOf(
-                    // Cumulative steps: 0 by 14:00, 4000 by 15:00; no kcal series.
-                    ActivityProgressPoint(
-                        time = dayStart.plus(Duration.ofHours(14)),
-                        totalSteps = 0L,
-                        totalDistanceMeters = null,
-                        totalCaloriesBurnedKcal = null,
-                    ),
-                    ActivityProgressPoint(
-                        time = walkHourEnd,
-                        totalSteps = 4000L,
-                        totalDistanceMeters = null,
-                        totalCaloriesBurnedKcal = null,
-                    ),
-                ),
+                bodyProfile = weighed,
+                progress = walkProgress,
+            )
+        )
+        val withWalkNoWeight = calculateBodyEnergyTimeline(
+            inputs(
+                now = now,
+                previousEndScore = 80,
+                samples = heartRateSamples(wornStart, wornEnd, bpm = 58),
+                restingHeartRateBpm = restfulResting,
+                observedMaxHeartRateBpm = restfulMax,
+                progress = walkProgress,
             )
         )
 
@@ -274,6 +289,12 @@ class BodyEnergyTimelineTest {
             it.time >= dayStart.plus(Duration.ofHours(14)) && it.time < walkHourEnd
         }
         assertTrue(walkPoints.any { it.activityEnergyDrain > 0.0 })
+        // Without a weight the steps are not turned into calories: no guess.
+        assertTrue(
+            withWalkNoWeight.points
+                .filter { it.time >= dayStart.plus(Duration.ofHours(14)) && it.time < walkHourEnd }
+                .none { it.activityEnergyDrain > 0.0 }
+        )
     }
 
     @Test

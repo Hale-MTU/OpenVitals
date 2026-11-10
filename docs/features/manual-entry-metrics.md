@@ -33,3 +33,12 @@ Write permissions can be granted during onboarding or requested when an entry fl
 Records created by other apps stay read-only in OpenVitals. OpenVitals checks ownership before allowing edits or deletes of records it created.
 
 Editing an activity follows the same line. The edit form is filled with the steps, distance, elevation and calories that OpenVitals itself stored for that session, never with the total across apps or a calorie estimate. A save replaces only the totals the user changed. A total the user left alone keeps its stored value, including one the form does not show for that activity type, such as the steps of a run imported from a watch. The stored heart rate, power, cadence and speed series are kept too.
+
+## Calorie Estimate For A Workout
+
+A recorded or imported workout that measured no calories gets an estimate in the form, which the user can change before saving. It is never made without a weight in the body profile: the form then says that the weight is missing.
+
+- **From the heart rate**, when the session has one and the body profile has sex and birth year: Keytel et al., "Prediction of energy expenditure from heart rate monitoring during submaximal exercise", J Sports Sci 23(3):289–297 (2005), doi:10.1080/02640410470001730089, the model without VO2max. The coefficients were read in Keytel's PhD thesis (University of Cape Town, 2004), chapter 4. It is used only while the mean heart rate is between 57 % and 90 % of the maximum (the profile's, or the age-predicted one), the range the equation was derived on; that limit is this project's rule.
+- **From the activity**, otherwise: the MET value of the 2024 Adult Compendium of Physical Activities (Herrmann et al., J Sport Health Sci 13(1):6–12, 2024, doi:10.1016/j.jshs.2023.10.010). `domain/insights/CompendiumMet.kt` keeps the Compendium code beside each Health Connect exercise type; a type with no matching activity gets no estimate.
+- **The resting share** is the body profile's basal metabolic rate (Mifflin-St Jeor) for the session's length, or 1 MET when the profile cannot give one. Active calories are the gross estimate minus that share.
+- **A distance on foot** can still raise a running or walking estimate (about 1 and 0.5 kcal per kg per km). Those two constants have not been checked against their source yet.

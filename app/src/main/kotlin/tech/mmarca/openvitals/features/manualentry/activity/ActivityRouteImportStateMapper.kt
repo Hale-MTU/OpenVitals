@@ -10,6 +10,7 @@ internal fun ActivityEntryUiState.withRouteImport(
     routeImport: RouteFileImport,
     units: ActivityEntryUnits,
     clock: Clock,
+    calorieContext: CalorieEstimateContext,
 ): ActivityEntryUiState {
     val start = routeImport.startTime.atZone(clock.zone)
     val selectedActivityType = inferActivityType(routeImport, selectedActivityType)
@@ -44,13 +45,14 @@ internal fun ActivityEntryUiState.withRouteImport(
     // Estimate both, or neither.
     val fileMeasuredCalories =
         importedActiveCaloriesText != null || importedTotalCaloriesText != null
+    val wantsEstimate = activeCaloriesText.isBlank() && totalCaloriesText.isBlank() && !fileMeasuredCalories
     val calorieEstimate = activityCalorieEstimate(
         activityType = selectedActivityType,
         distanceMeters = routeImport.distanceMeters,
         durationMinutesText = routeDurationMinutes,
-    ).takeIf {
-        activeCaloriesText.isBlank() && totalCaloriesText.isBlank() && !fileMeasuredCalories
-    }
+        heartRateSamples = routeImport.bleSamples.heartRateSamples,
+        context = calorieContext,
+    ).takeIf { wantsEstimate }
 
     return copy(
         mode = ActivityEntryMode.ROUTE_IMPORT,
@@ -69,6 +71,7 @@ internal fun ActivityEntryUiState.withRouteImport(
         totalCaloriesText = totalCaloriesText.ifBlank {
             importedTotalCaloriesText ?: calorieEstimate?.totalCaloriesText.orEmpty()
         },
+        calorieEstimateNeedsWeight = wantsEstimate && calorieEstimateNeedsWeight(selectedActivityType, calorieContext),
         importedRoute = routeImport,
         recordedPauseIntervals = emptyList(),
         recordedLaps = emptyList(),

@@ -39,6 +39,10 @@ time. Sleep charges per minute slept, scaled by three things:
 **Drain** comes from basal metabolism (a gentle downward slope whenever nothing
 else is happening, scaled by measured BMR), from active energy expenditure, from
 heart-rate-derived stress, and from recovery debt after a hard session.
+Where a stretch has steps but no active-calorie record, the steps stand in: the
+walking cost at that stretch's cadence (Moore et al. 2021,
+doi:10.1249/MSS.0000000000002430) and the body profile's weight. Without a
+weight the steps add no drain.
 
 Each component is scaled by a personal gain — see [Calibration](#calibration).
 The gains are the only per-user tuning; everything else above is the same model

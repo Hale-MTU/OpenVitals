@@ -48,6 +48,8 @@ import tech.mmarca.openvitals.data.repository.contract.CoMapsNavigationRepositor
 import tech.mmarca.openvitals.data.repository.contract.HeartRepository
 import tech.mmarca.openvitals.data.repository.contract.RecordingPreferences
 import tech.mmarca.openvitals.data.repository.contract.UnitPreferences
+import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
+import tech.mmarca.openvitals.domain.preferences.BodyProfile
 import tech.mmarca.openvitals.domain.model.ActivityRecordingLap
 import tech.mmarca.openvitals.domain.model.ActivityRecordingMarker
 import tech.mmarca.openvitals.domain.model.CoMapsNavigationState
@@ -82,6 +84,7 @@ class ActivityEntryViewModel(
     private val unitPreferences: UnitPreferences? = null,
     private val markerRepository: ActivityMarkerRepository? = null,
     private val coMapsNavigationRepository: CoMapsNavigationRepository? = null,
+    private val bodyProfilePreferences: BodyProfilePreferences? = null,
     private val clock: Clock = Clock.systemDefaultZone(),
     private val editActivityId: String? = null,
     private val launchMode: String? = null,
@@ -102,6 +105,7 @@ class ActivityEntryViewModel(
         unitPreferences: UnitPreferences,
         markerRepository: ActivityMarkerRepository,
         coMapsNavigationRepository: CoMapsNavigationRepository,
+        bodyProfilePreferences: BodyProfilePreferences,
         savedStateHandle: SavedStateHandle,
         @ApplicationContext context: Context,
     ) : this(
@@ -115,6 +119,7 @@ class ActivityEntryViewModel(
         unitPreferences = unitPreferences,
         markerRepository = markerRepository,
         coMapsNavigationRepository = coMapsNavigationRepository,
+        bodyProfilePreferences = bodyProfilePreferences,
         clock = Clock.systemDefaultZone(),
         editActivityId = savedStateHandle[ACTIVITY_ENTRY_ID_ARG],
         launchMode = savedStateHandle[ACTIVITY_ENTRY_MODE_ARG],
@@ -1376,8 +1381,13 @@ class ActivityEntryViewModel(
         _uiState.value = _uiState.value.copy(saveCompleted = false)
     }
 
+    private fun calorieContext() = CalorieEstimateContext(
+        profile = bodyProfilePreferences?.bodyProfile() ?: BodyProfile(),
+        today = LocalDate.now(clock),
+    )
+
     private fun applyRouteImport(routeImport: RouteFileImport, units: ActivityEntryUnits) {
-        _uiState.value = _uiState.value.withRouteImport(routeImport, units, clock)
+        _uiState.value = _uiState.value.withRouteImport(routeImport, units, clock, calorieContext())
         refreshPermission()
     }
 
@@ -1415,13 +1425,15 @@ class ActivityEntryViewModel(
             ?: currentState.selectedActivityType
         // A wheel sensor measures distance without a position.
         val sensorDistanceMeters = snapshot.distanceMeters.takeIf { it > 0.0 && selectedActivityType.supportsDistance }
+        val calorieContext = calorieContext()
+        val wantsCalorieEstimate = currentState.activeCaloriesText.isBlank() && currentState.totalCaloriesText.isBlank()
         val calorieEstimate = activityCalorieEstimate(
             activityType = selectedActivityType,
             distanceMeters = sensorDistanceMeters,
             durationMinutesText = durationMinutes.toString(),
-        ).takeIf {
-            currentState.activeCaloriesText.isBlank() && currentState.totalCaloriesText.isBlank()
-        }
+            heartRateSamples = snapshot.bleSamples.heartRateSamples,
+            context = calorieContext,
+        ).takeIf { wantsCalorieEstimate }
         val recordedSets = snapshot.repetitionSets.map { set ->
             ActivityRepetitionSetInput(
                 repetitionsText = if (set.isDuration) {
@@ -1463,6 +1475,8 @@ class ActivityEntryViewModel(
             } else {
                 ""
             },
+            calorieEstimateNeedsWeight = wantsCalorieEstimate &&
+                calorieEstimateNeedsWeight(selectedActivityType, calorieContext),
             activeCaloriesText = calorieEstimate?.activeCaloriesText ?: currentState.activeCaloriesText,
             totalCaloriesText = calorieEstimate?.totalCaloriesText ?: currentState.totalCaloriesText,
             repetitionMode = if (recordedSets.isNotEmpty()) {

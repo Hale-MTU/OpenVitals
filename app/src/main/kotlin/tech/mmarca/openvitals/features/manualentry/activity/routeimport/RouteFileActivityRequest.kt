@@ -6,6 +6,7 @@ import tech.mmarca.openvitals.domain.model.ActivityRecordSource
 import tech.mmarca.openvitals.domain.model.ActivityWriteRequest
 import tech.mmarca.openvitals.domain.model.BleRecordingSampleBuffer
 import tech.mmarca.openvitals.features.manualentry.activity.ActivityEntryType
+import tech.mmarca.openvitals.features.manualentry.activity.CalorieEstimateContext
 import tech.mmarca.openvitals.features.manualentry.activity.MaxActivityDurationMinutes
 import tech.mmarca.openvitals.features.manualentry.activity.activityCalorieEstimate
 import tech.mmarca.openvitals.features.manualentry.activity.inferActivityType
@@ -26,6 +27,7 @@ import tech.mmarca.openvitals.features.manualentry.activity.inferActivityType
 internal fun RouteFileImport.toImportWriteRequest(
     fallbackType: ActivityEntryType,
     source: ActivityRecordSource,
+    calorieContext: CalorieEstimateContext,
 ): ActivityWriteRequest? {
     if (!hasImportedTimeRange) return null
     val key = contentKey ?: return null
@@ -53,6 +55,8 @@ internal fun RouteFileImport.toImportWriteRequest(
             activityType = type,
             distanceMeters = distanceMeters,
             durationMinutesText = minutes.coerceAtLeast(1).toString(),
+            heartRateSamples = bleSamples.heartRateSamples,
+            context = calorieContext,
         )
     } else {
         null

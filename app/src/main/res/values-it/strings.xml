@@ -150,6 +150,7 @@
     <string name="activity_entry_plan_preview_reps">%1$d ripetizioni</string>
     <string name="activity_entry_distance_label">Distanza %1$s</string>
     <string name="activity_entry_elevation_label">Salita %1$s</string>
+    <string name="activity_entry_calorie_estimate_needs_weight">Nessuna stima delle calorie: aggiungi il tuo peso al profilo corporeo.</string>
     <string name="activity_entry_notes_label">Note</string>
     <string name="activity_entry_feeling_label">Come ti sei sentito?</string>
     <string name="activity_entry_feeling_great">Ottimo</string>

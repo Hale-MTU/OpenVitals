@@ -150,6 +150,7 @@
     <string name="activity_entry_plan_preview_reps">%1$d opakování</string>
     <string name="activity_entry_distance_label">Vzdálenost %1$s</string>
     <string name="activity_entry_elevation_label">Stoupání %1$s</string>
+    <string name="activity_entry_calorie_estimate_needs_weight">Žádný odhad kalorií: zadejte svou hmotnost do tělesného profilu.</string>
     <string name="activity_entry_notes_label">Poznámky</string>
     <string name="activity_entry_feeling_label">Jaké to bylo?</string>
     <string name="activity_entry_feeling_great">Skvělé</string>

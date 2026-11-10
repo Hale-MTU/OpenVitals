@@ -15,6 +15,7 @@ import androidx.health.connect.client.records.ExerciseSegment
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import java.time.Clock
 import java.time.Duration
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.ceil
@@ -26,7 +27,13 @@ import tech.mmarca.openvitals.domain.model.ExerciseLapData
 import tech.mmarca.openvitals.domain.model.ExerciseRoutePoint
 import tech.mmarca.openvitals.domain.model.ExerciseRouteStatus
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
+import tech.mmarca.openvitals.domain.insights.CompendiumMet
+import tech.mmarca.openvitals.domain.insights.WorkoutEnergyMethod
+import tech.mmarca.openvitals.domain.insights.WorkoutEnergyResult
+import tech.mmarca.openvitals.domain.insights.estimateWorkoutEnergy
 import tech.mmarca.openvitals.domain.insights.heartRateRecoveryWindowFor
+import tech.mmarca.openvitals.domain.model.BleHeartRateSample
+import tech.mmarca.openvitals.domain.preferences.BodyProfile
 import tech.mmarca.openvitals.domain.model.ActivityFormMetric
 import tech.mmarca.openvitals.features.activity.exerciseTypeLabelRes
 
@@ -366,25 +373,43 @@ internal data class ActivityCalorieEstimate(
     val totalCaloriesText: String,
 )
 
+/** What a workout's calorie estimate reads besides the session: the wearer and the day. */
+internal data class CalorieEstimateContext(
+    val profile: BodyProfile,
+    val today: LocalDate,
+)
+
+/**
+ * The estimate for a session that recorded no calories: [estimateWorkoutEnergy]
+ * from the session's mean heart rate or the activity's Compendium MET, with the
+ * body profile's weight. Null without a weight: the form says so
+ * ([calorieEstimateNeedsWeight]) rather than guess one.
+ */
 internal fun activityCalorieEstimate(
     activityType: ActivityEntryType,
     distanceMeters: Double?,
     durationMinutesText: String,
+    heartRateSamples: List<BleHeartRateSample>,
+    context: CalorieEstimateContext,
 ): ActivityCalorieEstimate? {
-    if (!activityType.supportsGpsRoute) return null
     val durationMinutes = durationMinutesText.trim().toLongOrNull()
         ?.takeIf { it in 1..MaxActivityDurationMinutes }
         ?: return null
-    val hours = durationMinutes / 60.0
-    val met = activityMet(activityType.exerciseType) ?: return null
-    val restingCalories = DefaultCalorieEstimateWeightKg * hours * RestingMet
-    val activeByMet = (met - RestingMet)
-        .coerceAtLeast(0.0) * DefaultCalorieEstimateWeightKg * hours
+    val estimate = estimateWorkoutEnergy(
+        exerciseType = activityType.exerciseType,
+        durationMinutes = durationMinutes.toDouble(),
+        meanHeartRateBpm = heartRateSamples.takeIf { it.isNotEmpty() }?.map { it.beatsPerMinute }?.average(),
+        profile = context.profile,
+        today = context.today,
+    ) as? WorkoutEnergyResult.Estimate ?: return null
+    // A route's distance can say a fast run cost more than the Compendium's general running.
     val activeByDistance = distanceBasedActiveCalories(
         exerciseType = activityType.exerciseType,
         distanceMeters = distanceMeters,
-    ) ?: 0.0
-    val activeCalories = maxOf(activeByMet, activeByDistance).takeIf { it > 0.0 } ?: return null
+        weightKg = context.profile.weightKg,
+    )?.takeIf { estimate.method == WorkoutEnergyMethod.COMPENDIUM_MET } ?: 0.0
+    val activeCalories = maxOf(estimate.activeKcal, activeByDistance)
+    val restingCalories = estimate.totalKcal - estimate.activeKcal
 
     return ActivityCalorieEstimate(
         activeCaloriesText = activeCalories.toCaloriesInputText(),
@@ -392,32 +417,21 @@ internal fun activityCalorieEstimate(
     )
 }
 
-internal fun activityMet(exerciseType: Int): Double? =
-    when (exerciseType) {
-        ExerciseSessionRecord.EXERCISE_TYPE_RUNNING -> 9.8
-        ExerciseSessionRecord.EXERCISE_TYPE_BIKING -> 7.5
-        ExerciseSessionRecord.EXERCISE_TYPE_WALKING -> 3.5
-        ExerciseSessionRecord.EXERCISE_TYPE_HIKING -> 6.0
-        ExerciseSessionRecord.EXERCISE_TYPE_WHEELCHAIR -> 4.0
-        ExerciseSessionRecord.EXERCISE_TYPE_ROWING,
-        ExerciseSessionRecord.EXERCISE_TYPE_PADDLING -> 7.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SKIING -> 7.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SNOWBOARDING -> 5.3
-        ExerciseSessionRecord.EXERCISE_TYPE_SNOWSHOEING -> 8.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SKATING,
-        ExerciseSessionRecord.EXERCISE_TYPE_ICE_SKATING -> 7.0
-        ExerciseSessionRecord.EXERCISE_TYPE_ROCK_CLIMBING -> 8.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SAILING -> 3.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SURFING -> 3.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SWIMMING_OPEN_WATER -> 8.0
-        ExerciseSessionRecord.EXERCISE_TYPE_GOLF -> 4.8
-        else -> null
-    }
+/** True when a session could be estimated but the body profile has no weight to do it with. */
+internal fun calorieEstimateNeedsWeight(activityType: ActivityEntryType, context: CalorieEstimateContext): Boolean =
+    context.profile.weightKg == null && CompendiumMet.forExerciseType(activityType.exerciseType) != null
 
+/**
+ * The net cost of covering a distance on foot, in kcal per kg per km: about 1 for
+ * running and 0.5 for walking. Not yet checked against its source (the ACSM
+ * metabolic equations); kept as it was until it is.
+ */
 internal fun distanceBasedActiveCalories(
     exerciseType: Int,
     distanceMeters: Double?,
+    weightKg: Double?,
 ): Double? {
+    val weight = weightKg ?: return null
     val distanceKm = distanceMeters?.takeIf { it > 0.0 }?.div(1000.0) ?: return null
     val kcalPerKgKm = when (exerciseType) {
         ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
@@ -427,7 +441,7 @@ internal fun distanceBasedActiveCalories(
         ExerciseSessionRecord.EXERCISE_TYPE_WHEELCHAIR -> WalkingKcalPerKgKm
         else -> return null
     }
-    return DefaultCalorieEstimateWeightKg * distanceKm * kcalPerKgKm
+    return weight * distanceKm * kcalPerKgKm
 }
 
 internal fun parseDistanceMeters(text: String, unitSystem: UnitSystem): Double? {

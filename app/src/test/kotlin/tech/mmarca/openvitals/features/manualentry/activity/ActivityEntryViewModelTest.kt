@@ -1,5 +1,7 @@
 package tech.mmarca.openvitals.features.manualentry.activity
 
+import tech.mmarca.openvitals.domain.preferences.BodyProfile
+import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
 import tech.mmarca.openvitals.data.repository.PreferencesRepository
 import tech.mmarca.openvitals.data.repository.contract.FakePreferences
 import tech.mmarca.openvitals.R
@@ -1060,6 +1062,7 @@ class ActivityEntryViewModelTest {
             repository = repo,
             activityRecorder = recorder,
             recordingPreferences = prefs,
+            bodyProfilePreferences = bodyProfile(TestCalorieContext.profile),
             clock = Clock.fixed(start, ZoneId.of("UTC")),
         )
         advanceUntilIdle()
@@ -1067,11 +1070,46 @@ class ActivityEntryViewModelTest {
         vm.finishGpsRecording(ActivityEntryUnits.uniform(UnitSystem.METRIC))
         advanceUntilIdle()
 
+        // Compendium 12150, 8.0 MET: 8 * 3.5 * 70 * 30 * 5 / 1000 = 294 kcal gross.
+        // Mifflin-St Jeor at 36: 1618.75 kcal/day, 33.7 kcal of it in 30 minutes.
         assertEquals(ActivityEntryMode.MANUAL, vm.uiState.value.mode)
-        assertEquals("308", vm.uiState.value.activeCaloriesText)
-        assertEquals("343", vm.uiState.value.totalCaloriesText)
+        assertEquals("260", vm.uiState.value.activeCaloriesText)
+        assertEquals("294", vm.uiState.value.totalCaloriesText)
+        assertFalse(vm.uiState.value.calorieEstimateNeedsWeight)
         assertEquals(ExerciseSessionRecord.EXERCISE_TYPE_RUNNING, prefs.lastActivityExerciseType)
     }
+
+    @Test fun `a recording without a weight in the body profile is not estimated, and says so`() = runTest {
+        val start = Instant.parse("2026-05-26T08:30:00Z")
+        val recorder = recorderMock()
+        every { recorder.finishRecording() } returns ActivityRecordingSnapshot(
+            exerciseType = ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
+            startTime = start,
+            endTime = start.plusSeconds(30 * 60),
+            points = emptyList(),
+            pauseIntervals = emptyList(),
+            distanceMeters = 0.0,
+            elevationGainedMeters = 0.0,
+        )
+        val vm = ActivityEntryViewModel(
+            repository = activityRepo(canWrite = true),
+            activityRecorder = recorder,
+            recordingPreferences = activityPrefs(),
+            bodyProfilePreferences = bodyProfile(TestCalorieContext.profile.copy(weightKg = null)),
+            clock = Clock.fixed(start, ZoneId.of("UTC")),
+        )
+        advanceUntilIdle()
+
+        vm.finishGpsRecording(ActivityEntryUnits.uniform(UnitSystem.METRIC))
+        advanceUntilIdle()
+
+        assertEquals("", vm.uiState.value.activeCaloriesText)
+        assertEquals("", vm.uiState.value.totalCaloriesText)
+        assertTrue(vm.uiState.value.calorieEstimateNeedsWeight)
+    }
+
+    private fun bodyProfile(profile: BodyProfile): BodyProfilePreferences =
+        mockk { every { bodyProfile() } returns profile }
 
     @Test fun `a timed ride fills the review form with the wheel sensor distance`() = runTest {
         val repo = activityRepo(canWrite = true)
@@ -1328,6 +1366,7 @@ class ActivityEntryViewModelTest {
         val vm = ActivityEntryViewModel(
             repository = repo,
             routeFileImporter = importer,
+            bodyProfilePreferences = bodyProfile(TestCalorieContext.profile),
             clock = Clock.fixed(start, ZoneId.of("UTC")),
         )
         advanceUntilIdle()
@@ -1335,12 +1374,13 @@ class ActivityEntryViewModelTest {
         vm.importRouteFile(uri, ActivityEntryUnits.uniform(UnitSystem.IMPERIAL))
         advanceUntilIdle()
 
+        // 11 minutes at 8.0 MET: 107.8 kcal gross, 12.4 of it resting; the 0.4 miles say less.
         assertEquals(ActivityEntryMode.ROUTE_IMPORT, vm.uiState.value.mode)
         assertEquals("0.4", vm.uiState.value.distanceText)
         assertEquals("12", vm.uiState.value.elevationText)
         assertEquals("11", vm.uiState.value.durationMinutesText)
-        assertEquals("113", vm.uiState.value.activeCaloriesText)
-        assertEquals("126", vm.uiState.value.totalCaloriesText)
+        assertEquals("95", vm.uiState.value.activeCaloriesText)
+        assertEquals("108", vm.uiState.value.totalCaloriesText)
     }
 
     @Test fun `FIT import without route fills manual activity fields`() = runTest {
