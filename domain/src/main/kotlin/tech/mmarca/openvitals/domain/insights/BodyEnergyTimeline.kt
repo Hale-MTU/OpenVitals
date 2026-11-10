@@ -707,11 +707,16 @@ private data class IntensityContext(
             }
         }
         val reserve = reserveFor(heartRateBpm) ?: return 0
+        // The ACSM's intensity classes on the heart rate reserve: light from 30 %,
+        // moderate from 40 %, vigorous from 60 %, near-maximal from 90 %. Garber et
+        // al., ACSM position stand, Med Sci Sports Exerc 2011;43(7):1334-1359,
+        // doi:10.1249/MSS.0b013e318213fefb, table 4. The split of vigorous at 75 %
+        // has no source: it keeps the five zones, and the manual zones' meaning.
         return when {
             reserve >= 0.90 -> 5
             reserve >= 0.75 -> 4
             reserve >= 0.60 -> 3
-            reserve >= 0.45 -> 2
+            reserve >= 0.40 -> 2
             reserve >= 0.30 -> 1
             else -> 0
         }
