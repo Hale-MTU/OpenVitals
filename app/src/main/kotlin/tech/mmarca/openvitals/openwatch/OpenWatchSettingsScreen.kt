@@ -105,9 +105,12 @@ fun OpenWatchSettingsScreen(viewModel: OpenWatchSettingsViewModel) {
                     }
                     is OpenWatchLinkSummary.UnknownSigner -> {
                         Body(stringResource(R.string.openwatch_unknown_signer_body))
-                        Body(stringResource(R.string.openwatch_unknown_signer_key, current.signerSha256))
-                        OutlinedButton(onClick = { viewModel.trustHost(current.signerSha256) }) {
-                            Text(stringResource(R.string.openwatch_unknown_signer_connect))
+                        // No key: it could not be read, and there is nothing to approve.
+                        if (current.signerSha256.isNotEmpty()) {
+                            Body(stringResource(R.string.openwatch_unknown_signer_key, current.signerSha256))
+                            OutlinedButton(onClick = { viewModel.trustHost(current.signerSha256) }) {
+                                Text(stringResource(R.string.openwatch_unknown_signer_connect))
+                            }
                         }
                     }
                     OpenWatchLinkSummary.Connecting -> Unit
