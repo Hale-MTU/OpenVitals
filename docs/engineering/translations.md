@@ -65,6 +65,33 @@ the greater-than-70% coverage threshold, placeholder safety, plural shape, and
   dashboard widgets.
 - Do not translate resources marked `translatable="false"` in the base file.
 
+## Merging Weblate Pull Requests
+
+Weblate keeps its own clone of `main` and pushes its commits to the
+`weblate-translations` branch; the `weblate-pr.yml` workflow opens the pull
+request. Merge that pull request with a **merge commit**. A squash or a
+rebase-merge rewrites Weblate's commits, so on its next update Weblate cannot
+rebase its branch onto `main`, the component locks, and the alerts page shows
+"could not merge the repository".
+
+When that has happened, the translations Weblate holds are only in its clone,
+so do not press Reset first. Recover them like this:
+
+```bash
+git remote add weblate https://translate.codeberg.org/git/openvitals/mobile-app/
+git fetch weblate main
+git checkout -b weblate-recovery origin/main
+git merge --no-ff weblate/main
+```
+
+Resolve `values-*/strings.xml` by keeping both sides (both usually append at
+the end of the file), run `python3 scripts/verify-translations.py`, commit,
+open a pull request and merge it with a merge commit. Weblate's commits are then
+ancestors of `main`, and Manage → Repository maintenance → Update on
+translate.codeberg.org fast-forwards and unlocks the component. If it still
+reports a conflict after that, Reset is now safe: everything it held is on
+`main`.
+
 ## Local Verification
 
 Run the translation validator before merging Weblate pull requests:
