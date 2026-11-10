@@ -3802,6 +3802,10 @@
     <string name="openwatch_status_not_installed">Není nainstalováno</string>
     <string name="openwatch_status_unreachable">Nainstalováno, ale Android nedovolil OpenVitals se připojit</string>
     <string name="openwatch_status_connecting">Připojování…</string>
+    <string name="openwatch_status_unknown_signer">Nainstalováno, ale nepodepsáno projektem OpenWatch</string>
+    <string name="openwatch_unknown_signer_body">Pod názvem OpenWatch je nainstalována aplikace, kterou nepodepsal projekt OpenWatch. OpenVitals jí nic neposlal. Pokud se připojíte, získá váš tělesný profil a bude moci posílat tepovou frekvenci do vašich záznamů. Připojte se jen tehdy, pokud jste ji sami sestavili nebo nainstalovali a důvěřujete jejímu původu.</string>
+    <string name="openwatch_unknown_signer_key">Její podpisový klíč (SHA-256): %1$s</string>
+    <string name="openwatch_unknown_signer_connect">Přesto připojit</string>
     <string name="openwatch_status_waiting">Čeká na schválení v OpenWatch</string>
     <string name="openwatch_status_blocked">Zablokováno v OpenWatch</string>
     <string name="openwatch_status_connected">Připojeno</string>

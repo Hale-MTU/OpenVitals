@@ -3804,6 +3804,10 @@
     <string name="openwatch_status_not_installed">未インストール</string>
     <string name="openwatch_status_unreachable">インストール済みですが、Android が OpenVitals の接続を許可しませんでした</string>
     <string name="openwatch_status_connecting">接続中…</string>
+    <string name="openwatch_status_unknown_signer">インストール済みですが、OpenWatch プロジェクトの署名がありません</string>
+    <string name="openwatch_unknown_signer_body">OpenWatch の名前でアプリがインストールされていますが、OpenWatch プロジェクトによる署名がありません。OpenVitals はこのアプリに何も送信していません。接続すると、このアプリはあなたの身体プロフィールを受け取り、記録に心拍数を送れるようになります。自分でビルドまたはインストールし、入手元を信頼できる場合にのみ接続してください。</string>
+    <string name="openwatch_unknown_signer_key">署名鍵 (SHA-256): %1$s</string>
+    <string name="openwatch_unknown_signer_connect">それでも接続</string>
     <string name="openwatch_status_waiting">OpenWatch で承認待ち</string>
     <string name="openwatch_status_blocked">OpenWatch でブロック中</string>
     <string name="openwatch_status_connected">接続済み</string>

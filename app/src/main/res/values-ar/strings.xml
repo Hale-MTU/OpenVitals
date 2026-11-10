@@ -71,6 +71,10 @@
     <string name="openwatch_status_not_installed">غير مثبت</string>
     <string name="openwatch_status_unreachable">مثبت، لكن Android لم يسمح لـ OpenVitals بالاتصال</string>
     <string name="openwatch_status_connecting">جارٍ الاتصال…</string>
+    <string name="openwatch_status_unknown_signer">مثبّت، لكنه غير موقّع من مشروع OpenWatch</string>
+    <string name="openwatch_unknown_signer_body">يوجد تطبيق مثبّت باسم OpenWatch، لكنه لم يُوقَّع من مشروع OpenWatch. لم يرسل OpenVitals إليه أي شيء. إذا اتصلت به، فسيتلقى ملفك الجسدي ويمكنه إرسال معدل ضربات القلب إلى تسجيلاتك. لا تتصل إلا إذا بنيته أو ثبّته بنفسك وتثق بمصدره.</string>
+    <string name="openwatch_unknown_signer_key">مفتاح توقيعه (SHA-256): %1$s</string>
+    <string name="openwatch_unknown_signer_connect">الاتصال على أي حال</string>
     <string name="openwatch_status_waiting">في انتظار الموافقة في OpenWatch</string>
     <string name="openwatch_status_blocked">محظور في OpenWatch</string>
     <string name="openwatch_status_connected">متصل</string>

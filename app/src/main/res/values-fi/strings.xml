@@ -3736,6 +3736,10 @@
     <string name="openwatch_status_not_installed">Ei asennettu</string>
     <string name="openwatch_status_unreachable">Asennettu, mutta Android ei antanut OpenVitalsin yhdistää</string>
     <string name="openwatch_status_connecting">Yhdistetään…</string>
+    <string name="openwatch_status_unknown_signer">Asennettu, mutta OpenWatch-projekti ei ole allekirjoittanut sitä</string>
+    <string name="openwatch_unknown_signer_body">OpenWatchin nimellä on asennettu sovellus, jota OpenWatch-projekti ei ole allekirjoittanut. OpenVitals ei ole lähettänyt sille mitään. Jos yhdistät, se saa kehoprofiilisi ja voi lähettää sykettä tallenteisiisi. Yhdistä vain, jos olet itse koonnut tai asentanut sen ja luotat sen alkuperään.</string>
+    <string name="openwatch_unknown_signer_key">Sen allekirjoitusavain (SHA-256): %1$s</string>
+    <string name="openwatch_unknown_signer_connect">Yhdistä silti</string>
     <string name="openwatch_status_waiting">Odottaa hyväksyntää OpenWatchissa</string>
     <string name="openwatch_status_blocked">Estetty OpenWatchissa</string>
     <string name="openwatch_status_connected">Yhdistetty</string>

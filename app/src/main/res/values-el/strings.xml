@@ -421,6 +421,10 @@
     <string name="openwatch_status_not_installed">Δεν είναι εγκατεστημένο</string>
     <string name="openwatch_status_unreachable">Εγκατεστημένο, αλλά το Android δεν άφησε το OpenVitals να συνδεθεί</string>
     <string name="openwatch_status_connecting">Σύνδεση…</string>
+    <string name="openwatch_status_unknown_signer">Εγκατεστημένη, αλλά δεν έχει υπογραφεί από το έργο OpenWatch</string>
+    <string name="openwatch_unknown_signer_body">Μια εφαρμογή είναι εγκατεστημένη με το όνομα του OpenWatch, αλλά δεν έχει υπογραφεί από το έργο OpenWatch. Το OpenVitals δεν της έχει στείλει τίποτα. Αν συνδεθείτε, θα λάβει το προφίλ σώματός σας και θα μπορεί να στέλνει καρδιακό ρυθμό στις καταγραφές σας. Συνδεθείτε μόνο αν τη δημιουργήσατε ή την εγκαταστήσατε εσείς και εμπιστεύεστε την προέλευσή της.</string>
+    <string name="openwatch_unknown_signer_key">Το κλειδί υπογραφής της (SHA-256): %1$s</string>
+    <string name="openwatch_unknown_signer_connect">Σύνδεση ούτως ή άλλως</string>
     <string name="openwatch_status_waiting">Αναμένει έγκριση στο OpenWatch</string>
     <string name="openwatch_status_blocked">Αποκλεισμένο στο OpenWatch</string>
     <string name="openwatch_status_connected">Συνδεδεμένο</string>

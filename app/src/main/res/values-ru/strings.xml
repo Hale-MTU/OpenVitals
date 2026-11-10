@@ -3803,6 +3803,10 @@
     <string name="openwatch_status_not_installed">Не установлено</string>
     <string name="openwatch_status_unreachable">Установлено, но Android не разрешил OpenVitals подключиться</string>
     <string name="openwatch_status_connecting">Подключение…</string>
+    <string name="openwatch_status_unknown_signer">Установлено, но не подписано проектом OpenWatch</string>
+    <string name="openwatch_unknown_signer_body">Под именем OpenWatch установлено приложение, не подписанное проектом OpenWatch. OpenVitals ничего ему не отправлял. Если вы подключитесь, оно получит ваш профиль тела и сможет передавать пульс в ваши записи. Подключайтесь, только если вы сами собрали или установили его и доверяете его источнику.</string>
+    <string name="openwatch_unknown_signer_key">Его ключ подписи (SHA-256): %1$s</string>
+    <string name="openwatch_unknown_signer_connect">Всё равно подключить</string>
     <string name="openwatch_status_waiting">Ожидает одобрения в OpenWatch</string>
     <string name="openwatch_status_blocked">Заблокировано в OpenWatch</string>
     <string name="openwatch_status_connected">Подключено</string>

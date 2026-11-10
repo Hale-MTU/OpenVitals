@@ -3737,6 +3737,10 @@
     <string name="openwatch_status_not_installed">未安装</string>
     <string name="openwatch_status_unreachable">已安装，但 Android 未允许 OpenVitals 连接</string>
     <string name="openwatch_status_connecting">正在连接…</string>
+    <string name="openwatch_status_unknown_signer">已安装，但不是由 OpenWatch 项目签名</string>
+    <string name="openwatch_unknown_signer_body">有一个以 OpenWatch 名义安装的应用，但它不是由 OpenWatch 项目签名的。OpenVitals 没有向它发送任何内容。如果连接，它将获得你的身体资料，并可以向你的记录发送心率。只有在你自己构建或安装了它并信任其来源时才连接。</string>
+    <string name="openwatch_unknown_signer_key">其签名密钥 (SHA-256)：%1$s</string>
+    <string name="openwatch_unknown_signer_connect">仍然连接</string>
     <string name="openwatch_status_waiting">等待在 OpenWatch 中批准</string>
     <string name="openwatch_status_blocked">已在 OpenWatch 中屏蔽</string>
     <string name="openwatch_status_connected">已连接</string>
