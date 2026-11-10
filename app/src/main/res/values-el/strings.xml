@@ -1105,4 +1105,5 @@
     <string name="interpretation_bp_hypertension">Υπέρταση</string>
     <string name="interpretation_bp_severe">Εύρος σοβαρής υπέρτασης</string>
     <string name="interpretation_bp_body">Αυτή η μέτρηση εμπίπτει στο εύρος %1$s . Μία μόνο μέτρηση από την εφαρμογή δεν αποτελεί διάγνωση.</string>
+    <string name="interpretation_bp_severe_body">Αυτή η μέτρηση υπερβαίνει το όριο σοβαρής υπέρτασης. Ελέγξτε την ξανά· αν υπάρχουν συμπτώματα ή η μέτρηση παραμένει πολύ υψηλή, αναζητήστε άμεσα ιατρική βοήθεια.</string>
 </resources>
