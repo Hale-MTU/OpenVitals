@@ -13,6 +13,12 @@ sealed interface OpenWatchLinkSummary {
     /** OpenWatch is installed but Android refused the connection (an older OpenWatch). */
     data object Unreachable : OpenWatchLinkSummary
 
+    /**
+     * An app is installed under OpenWatch's name, but signed with a key that is neither the
+     * OpenWatch project's nor one the user approved. Nothing was sent to it; the user decides.
+     */
+    data class UnknownSigner(val signerSha256: String) : OpenWatchLinkSummary
+
     /** Binding, or OpenVitals is in the background and not bound. */
     data object Connecting : OpenWatchLinkSummary
 
@@ -51,6 +57,7 @@ internal fun openWatchLinkSummary(
 ): OpenWatchLinkSummary = when (status) {
     OpenLinkStatus.HostMissing -> OpenWatchLinkSummary.NotInstalled
     OpenLinkStatus.Unreachable -> OpenWatchLinkSummary.Unreachable
+    is OpenLinkStatus.HostUntrusted -> OpenWatchLinkSummary.UnknownSigner(status.signerSha256)
     OpenLinkStatus.Stopped, OpenLinkStatus.Connecting -> OpenWatchLinkSummary.Connecting
     is OpenLinkStatus.Connected -> when (status.state.trust) {
         OpenLinkTrust.PENDING -> OpenWatchLinkSummary.WaitingForApproval

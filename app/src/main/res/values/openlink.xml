@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        SHA-256 of the signing certificates OpenVitals takes for OpenWatch without asking.
+        Lowercase hex, no colons. An app under OpenWatch's package name with any other key is
+        not bound until the user says so in Settings, OpenWatch (openlink/docs/spec.md, "The
+        client checks its host too").
+    -->
+    <string-array name="openwatch_known_signers" translatable="false">
+        <!-- OpenWatch release, nightly and debug builds (GitHub), CN=OpenWatch, O=OpenVitals -->
+        <item>7463d9c860f00ce90cb9173675a0d5015687710cbfa712a642f033463c42a0ce</item>
+        <!-- OpenWatch from Google Play: add Play's app-signing certificate here once Play has issued it. -->
+    </string-array>
+</resources>
