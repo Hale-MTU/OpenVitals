@@ -206,6 +206,8 @@ private val CsvUnit.reportName: String
         CsvUnit.BEATS_PER_MINUTE -> "beatsPerMinute"
         CsvUnit.MILLISECONDS -> "milliseconds"
         CsvUnit.SECONDS -> "seconds"
+        CsvUnit.MINUTES -> "minutes"
+        CsvUnit.HOURS -> "hours"
         CsvUnit.BREATHS_PER_MINUTE -> "breathsPerMinute"
         CsvUnit.MILLIMOLES_PER_LITER -> "millimolesPerLiter"
         CsvUnit.MILLIGRAMS_PER_DECILITER -> "milligramsPerDeciliter"
@@ -311,6 +313,14 @@ private fun roleLabel(column: CsvColumnMapping): String = when (column.role) {
         CsvBloodPressurePart.DIASTOLIC -> "blood pressure diastolic (millimetersOfMercury)"
         CsvBloodPressurePart.BODY_POSITION -> "blood pressure body position"
         CsvBloodPressurePart.CUFF_LOCATION -> "blood pressure cuff location"
+        null -> "not imported"
+    }
+    CsvColumnRole.SLEEP -> when (column.sleepPart) {
+        CsvSleepPart.WOKE_UP -> "sleep woke up (date and time)"
+        CsvSleepPart.TIME_IN_BED -> "sleep time in bed (${interpretationLabel(column.effectiveInterpretation)})"
+        CsvSleepPart.TIME_TO_FALL_ASLEEP -> "sleep time to fall asleep (${interpretationLabel(column.effectiveInterpretation)})"
+        CsvSleepPart.TIME_ASLEEP -> "sleep time asleep (${interpretationLabel(column.effectiveInterpretation)})"
+        CsvSleepPart.NOTES -> "sleep notes"
         null -> "not imported"
     }
 }

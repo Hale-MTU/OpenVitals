@@ -2391,11 +2391,11 @@
     <string name="settings_fit_import_folder_grant">Myönnä tuontioikeudet</string>
     <string name="settings_fit_import_error">FIT-tuontivaroitus: %1$s</string>
     <string name="settings_csv_import_title">CSV-tuonti</string>
-    <string name="settings_csv_import_body">Tuo mittauksia tai ravintotietoja CSV-tiedostosta — esimerkiksi älyvaa\'an painovienti tai taulukko, jossa on rivi jokaista ateriaa kohden. Sinä päätät, mitä kukin sarake tarkoittaa.</string>
+    <string name="settings_csv_import_body">Tuo mittauksia, unta tai ravintotietoja CSV-tiedostosta — esimerkiksi älyvaa\'an painovienti, unisovelluksen historia tai taulukko, jossa on rivi jokaista ateriaa kohden. Sinä päätät, mitä kukin sarake tarkoittaa.</string>
     <string name="settings_csv_import_action">Tuo CSV-tiedosto</string>
     <string name="settings_csv_import_screen_title">CSV-tuonti</string>
     <string name="settings_csv_import_pick_title">Valitse CSV-tiedosto</string>
-    <string name="settings_csv_import_pick_body">Valitse CSV-tiedosto ja yhdistä sen sarakkeet mittauksiin tai ravintoaineisiin. Mitään ei kirjoiteta ennen vahvistustasi.</string>
+    <string name="settings_csv_import_pick_body">Valitse CSV-tiedosto ja yhdistä sen sarakkeet mittauksiin, uneen tai ravintoaineisiin. Mitään ei kirjoiteta ennen vahvistustasi.</string>
     <string name="settings_csv_import_pick_action">Valitse CSV-tiedosto</string>
     <string name="settings_csv_import_file_label">%1$s · %2$d saraketta</string>
     <string name="settings_csv_import_continue">Jatka</string>
@@ -2453,6 +2453,8 @@
     <string name="settings_csv_import_unit_beats_per_minute">Lyöntiä minuutissa (bpm)</string>
     <string name="settings_csv_import_unit_milliseconds">Millisekunteja (ms)</string>
     <string name="settings_csv_import_unit_seconds">Sekunteja (s)</string>
+    <string name="settings_csv_import_unit_minutes">Minuutteja (min)</string>
+    <string name="settings_csv_import_unit_hours">Tunteja (h)</string>
     <string name="settings_csv_import_unit_breaths_per_minute">Hengitystä minuutissa</string>
     <string name="settings_csv_import_unit_millimoles_per_liter">Millimoolia litrassa (mmol/l)</string>
     <string name="settings_csv_import_unit_milligrams_per_deciliter">Milligrammaa desilitrassa (mg/dl)</string>
@@ -2498,6 +2500,13 @@
     <string name="settings_csv_import_issue_multiple_end_timestamps">Vain yksi sarake voi sisältää loppupäivän ja -ajan.</string>
     <string name="settings_csv_import_issue_multiple_food_names">Vain yksi sarake voi sisältää ruoan nimen.</string>
     <string name="settings_csv_import_issue_bp_needs_both">Verenpaine tarvitsee sekä systolisen että diastolisen sarakkeen.</string>
+    <string name="settings_csv_import_issue_sleep_needs_end">Uni tarvitsee ”Heräämisaika”- tai ”Aika sängyssä” -sarakkeen.</string>
+    <string name="settings_csv_import_sleep_woke_up">Heräämisaika</string>
+    <string name="settings_csv_import_sleep_time_to_fall_asleep">Nukahtamisaika</string>
+    <string name="settings_csv_import_sleep_time_asleep">Nukuttu aika</string>
+    <string name="settings_csv_import_sleep_notes">Unimuistiinpanot</string>
+    <string name="settings_csv_import_sleep_hint">Rivin unisarakkeet muodostavat yhden unijakson rivin päivästä ja ajasta ”Heräämisaika”-sarakkeeseen tai ”Aika sängyssä” -sarakkeen keston ajan. Uni alkaa ”Nukahtamisaika”-sarakkeen ajan jälkeen ja kestää ”Nukuttu aika” -sarakkeen verran; loppu jaksosta lasketaan hereillä sängyssä vietetyksi.</string>
+    <string name="settings_csv_import_sleep_duration_hint">Solu kuten 7:30 luetaan tunteina ja minuutteina yksiköstä riippumatta.</string>
     <string name="settings_csv_import_confirm_title">Valmis tuotavaksi</string>
     <string name="settings_csv_import_confirm_summary">%1$s · %2$d mittausta riviä kohden</string>
     <string name="settings_csv_import_confirm_range">%1$s: %2$s – %3$s</string>

@@ -2042,11 +2042,11 @@
     <string name="settings_fit_import_folder_grant">授予导入权限</string>
     <string name="settings_fit_import_error">FIT 导入警告：%1$s</string>
     <string name="settings_csv_import_title">CSV 导入器</string>
-    <string name="settings_csv_import_body">从 CSV 文件导入测量数据或营养数据 — 例如智能体脂秤的体重导出，或每餐一行的电子表格。你选择每列代表什么。</string>
+    <string name="settings_csv_import_body">从 CSV 文件导入测量数据、睡眠或营养数据 — 例如智能体脂秤的体重导出、睡眠应用的历史记录，或每餐一行的电子表格。你选择每列代表什么。</string>
     <string name="settings_csv_import_action">导入 CSV 文件</string>
     <string name="settings_csv_import_screen_title">CSV 导入器</string>
     <string name="settings_csv_import_pick_title">选择 CSV 文件</string>
-    <string name="settings_csv_import_pick_body">选择 CSV 文件并将其列匹配到测量数据或营养素。确认前不会写入任何内容。</string>
+    <string name="settings_csv_import_pick_body">选择 CSV 文件并将其列匹配到测量数据、睡眠或营养素。确认前不会写入任何内容。</string>
     <string name="settings_csv_import_pick_action">选择 CSV 文件</string>
     <string name="settings_csv_import_file_label">%1$s · %2$d 列</string>
     <string name="settings_csv_import_continue">继续</string>
@@ -2104,6 +2104,8 @@
     <string name="settings_csv_import_unit_beats_per_minute">每分钟心跳数 (bpm)</string>
     <string name="settings_csv_import_unit_milliseconds">毫秒 (ms)</string>
     <string name="settings_csv_import_unit_seconds">秒 (s)</string>
+    <string name="settings_csv_import_unit_minutes">分钟 (min)</string>
+    <string name="settings_csv_import_unit_hours">小时 (h)</string>
     <string name="settings_csv_import_unit_breaths_per_minute">每分钟呼吸次数</string>
     <string name="settings_csv_import_unit_millimoles_per_liter">毫摩尔每升 (mmol/L)</string>
     <string name="settings_csv_import_unit_milligrams_per_deciliter">毫克每分升 (mg/dL)</string>
@@ -2149,6 +2151,13 @@
     <string name="settings_csv_import_issue_multiple_end_timestamps">只能有一列持有结束日期和时间。</string>
     <string name="settings_csv_import_issue_multiple_food_names">只能有一列持有食物名称。</string>
     <string name="settings_csv_import_issue_bp_needs_both">血压需要收缩压列和舒张压列。</string>
+    <string name="settings_csv_import_issue_sleep_needs_end">睡眠需要“起床”列或“在床时间”列。</string>
+    <string name="settings_csv_import_sleep_woke_up">起床</string>
+    <string name="settings_csv_import_sleep_time_to_fall_asleep">入睡所需时间</string>
+    <string name="settings_csv_import_sleep_time_asleep">睡眠时长</string>
+    <string name="settings_csv_import_sleep_notes">睡眠备注</string>
+    <string name="settings_csv_import_sleep_hint">一行中的睡眠列组成一次睡眠，从该行的日期和时间到“起床”，或持续“在床时间”。睡眠在“入睡所需时间”过后开始，持续“睡眠时长”；其余时间计为床上清醒。</string>
+    <string name="settings_csv_import_sleep_duration_hint">像 7:30 这样的单元格无论单位如何都按小时和分钟读取。</string>
     <string name="settings_csv_import_confirm_title">准备导入</string>
     <string name="settings_csv_import_confirm_summary">%1$s · 每行 %2$d 项测量</string>
     <string name="settings_csv_import_confirm_range">%1$s：%2$s 到 %3$s</string>

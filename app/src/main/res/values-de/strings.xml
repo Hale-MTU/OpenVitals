@@ -2402,11 +2402,11 @@
     <string name="settings_apple_health_import_progress_with_scan_percent">%1$d%%. %2$s. %3$d/%4$d Elemente gelesen. Ausgewählt %5$d/%6$d Datensätze, importiert %7$d.</string>
     <string name="settings_apple_health_import_notification_text_with_scan_percent">%1$d%%. %2$s. Gelesen %3$d/%4$d, importiert %5$d.</string>
     <string name="settings_csv_import_title">CSV-Importer</string>
-    <string name="settings_csv_import_body">Importiere Messungen oder Ernährung aus einer CSV-Datei, zum Beispiel den Gewichtsexport einer smarten Waage oder eine Tabelle mit einer Zeile pro Mahlzeit. Du legst fest, was jede Spalte bedeutet.</string>
+    <string name="settings_csv_import_body">Importiere Messungen, Schlaf oder Ernährung aus einer CSV-Datei, zum Beispiel den Gewichtsexport einer smarten Waage, den Verlauf einer Schlaf-App oder eine Tabelle mit einer Zeile pro Mahlzeit. Du legst fest, was jede Spalte bedeutet.</string>
     <string name="settings_csv_import_action">CSV-Datei importieren</string>
     <string name="settings_csv_import_screen_title">CSV-Importer</string>
     <string name="settings_csv_import_pick_title">CSV-Datei auswählen</string>
-    <string name="settings_csv_import_pick_body">Wähle eine CSV-Datei und ordne ihre Spalten Messungen oder Nährstoffen zu. Es wird nichts geschrieben, bis du bestätigst.</string>
+    <string name="settings_csv_import_pick_body">Wähle eine CSV-Datei und ordne ihre Spalten Messungen, Schlaf oder Nährstoffen zu. Es wird nichts geschrieben, bis du bestätigst.</string>
     <string name="settings_csv_import_pick_action">CSV-Datei wählen</string>
     <string name="settings_csv_import_file_label">%1$s · %2$d Spalten</string>
     <string name="settings_csv_import_continue">Weiter</string>
@@ -2463,6 +2463,8 @@
     <string name="settings_csv_import_unit_beats_per_minute">Schläge pro Minute (bpm)</string>
     <string name="settings_csv_import_unit_milliseconds">Millisekunden (ms)</string>
     <string name="settings_csv_import_unit_seconds">Sekunden (s)</string>
+    <string name="settings_csv_import_unit_minutes">Minuten (min)</string>
+    <string name="settings_csv_import_unit_hours">Stunden (h)</string>
     <string name="settings_csv_import_unit_breaths_per_minute">Atemzüge pro Minute</string>
     <string name="settings_csv_import_unit_millimoles_per_liter">Millimol pro Liter (mmol/L)</string>
     <string name="settings_csv_import_unit_milligrams_per_deciliter">Milligramm pro Deziliter (mg/dL)</string>
@@ -2508,6 +2510,13 @@
     <string name="settings_csv_import_issue_multiple_end_timestamps">Nur eine Spalte kann Enddatum und -uhrzeit enthalten.</string>
     <string name="settings_csv_import_issue_multiple_food_names">Nur eine Spalte kann den Lebensmittelnamen enthalten.</string>
     <string name="settings_csv_import_issue_bp_needs_both">Blutdruck braucht sowohl eine systolische als auch eine diastolische Spalte.</string>
+    <string name="settings_csv_import_issue_sleep_needs_end">Schlaf braucht eine Spalte „Aufgewacht“ oder „Zeit im Bett“.</string>
+    <string name="settings_csv_import_sleep_woke_up">Aufgewacht</string>
+    <string name="settings_csv_import_sleep_time_to_fall_asleep">Einschlafdauer</string>
+    <string name="settings_csv_import_sleep_time_asleep">Schlafdauer</string>
+    <string name="settings_csv_import_sleep_notes">Schlafnotizen</string>
+    <string name="settings_csv_import_sleep_hint">Die Schlafspalten einer Zeile ergeben eine Schlafsitzung, von Datum und Uhrzeit bis „Aufgewacht“ oder für die „Zeit im Bett“. Der Schlaf beginnt nach der „Einschlafdauer“ und dauert die „Schlafdauer“; der Rest der Sitzung zählt als wach im Bett.</string>
+    <string name="settings_csv_import_sleep_duration_hint">Eine Zelle wie 7:30 wird unabhängig von der Einheit als Stunden und Minuten gelesen.</string>
     <string name="settings_csv_import_confirm_title">Bereit zum Import</string>
     <string name="settings_csv_import_confirm_summary">%1$s · %2$d Messwerte pro Zeile</string>
     <string name="settings_csv_import_confirm_range">%1$s: %2$s bis %3$s</string>

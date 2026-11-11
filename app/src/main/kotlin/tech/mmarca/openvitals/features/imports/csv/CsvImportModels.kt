@@ -16,16 +16,16 @@ enum class CsvImportDiagnosticReason {
     /** A metric cell was not a number. Costs that metric only. */
     UNPARSABLE_NUMBER,
 
-    /** The converted value is outside what a human body can be. That metric only. */
+    /** The converted value is outside what a human body can be, or a night longer than a day. That value only. */
     OUT_OF_RANGE,
 
     /** Body fat was mapped as a mass but the row has no weight. That metric only. */
     DERIVATION_MISSING_WEIGHT,
 
-    /** The end-timestamp cell did not parse. Interval metrics only. A blank end is not an error. */
+    /** The end-timestamp or Woke up cell did not parse. Interval records only. A blank end is not an error. */
     UNPARSABLE_END_TIMESTAMP,
 
-    /** The end is not after the start, usually TimeFrom and TimeTo swapped. Interval metrics only. */
+    /** The end is not after the start, usually TimeFrom and TimeTo swapped. Interval records only. */
     END_NOT_AFTER_START,
 
     /** Only one of the systolic and diastolic cells is filled. That blood pressure reading only. */
@@ -43,7 +43,7 @@ enum class CsvImportDiagnosticReason {
     /** The activity type named nothing the app knows, so the workout is stored as an "other" workout. The row still imports. */
     ACTIVITY_TYPE_DEFAULTED,
 
-    /** A workout row with neither an end time nor a duration. Whole row. */
+    /** A workout row, or a row's sleep session, with neither an end time nor a duration. The row, or its sleep. */
     MISSING_END,
 
     /** A total the activity type cannot carry, a distance on a yoga session. That total only. */

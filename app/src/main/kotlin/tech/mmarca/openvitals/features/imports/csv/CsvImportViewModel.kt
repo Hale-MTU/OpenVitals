@@ -250,6 +250,25 @@ class CsvImportViewModel @Inject constructor(
         )
     }
 
+    /** Points column [columnIndex] at one part of the row's sleep session, a duration's unit defaulting from the header. */
+    fun setColumnSleepPart(columnIndex: Int, part: CsvSleepPart) {
+        val mapping = _uiState.value.mapping ?: return
+        val interpretation = headerUnit(columnIndex)
+            ?.let { csvSleepInterpretationForUnit(part, it) }
+            ?: csvSleepInterpretations(part)?.first()
+
+        applyMapping(
+            mapping.withColumn(
+                CsvColumnMapping(
+                    columnIndex = columnIndex,
+                    role = CsvColumnRole.SLEEP,
+                    interpretation = interpretation,
+                    sleepPart = part,
+                ),
+            ),
+        )
+    }
+
     /** The body position a reading takes when its file does not say. Remembered for the next import. */
     fun setDefaultBodyPosition(position: Int) {
         val mapping = _uiState.value.mapping ?: return

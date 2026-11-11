@@ -2388,11 +2388,11 @@
     <string name="settings_fit_import_folder_grant">Przyznaj uprawnienia importu</string>
     <string name="settings_fit_import_error">Ostrzeżenie importu FIT: %1$s</string>
     <string name="settings_csv_import_title">Importer CSV</string>
-    <string name="settings_csv_import_body">Importuj pomiary lub dane o odżywianiu z pliku CSV — na przykład eksport wagi z inteligentnej wagi albo arkusz z jednym wierszem na posiłek. Sam decydujesz, co oznacza każda kolumna.</string>
+    <string name="settings_csv_import_body">Importuj pomiary, sen lub dane o odżywianiu z pliku CSV — na przykład eksport wagi z inteligentnej wagi, historię aplikacji do snu albo arkusz z jednym wierszem na posiłek. Sam decydujesz, co oznacza każda kolumna.</string>
     <string name="settings_csv_import_action">Importuj plik CSV</string>
     <string name="settings_csv_import_screen_title">Importer CSV</string>
     <string name="settings_csv_import_pick_title">Wybierz plik CSV</string>
-    <string name="settings_csv_import_pick_body">Wybierz plik CSV i dopasuj jego kolumny do pomiarów lub składników odżywczych. Nic nie jest zapisywane, dopóki nie potwierdzisz.</string>
+    <string name="settings_csv_import_pick_body">Wybierz plik CSV i dopasuj jego kolumny do pomiarów, snu lub składników odżywczych. Nic nie jest zapisywane, dopóki nie potwierdzisz.</string>
     <string name="settings_csv_import_pick_action">Wybierz plik CSV</string>
     <string name="settings_csv_import_file_label">%1$s · %2$d kolumn</string>
     <string name="settings_csv_import_continue">Dalej</string>
@@ -2450,6 +2450,8 @@
     <string name="settings_csv_import_unit_beats_per_minute">Uderzeniach na minutę (bpm)</string>
     <string name="settings_csv_import_unit_milliseconds">Milisekundach (ms)</string>
     <string name="settings_csv_import_unit_seconds">Sekundach (s)</string>
+    <string name="settings_csv_import_unit_minutes">Minutach (min)</string>
+    <string name="settings_csv_import_unit_hours">Godzinach (h)</string>
     <string name="settings_csv_import_unit_breaths_per_minute">Oddechach na minutę</string>
     <string name="settings_csv_import_unit_millimoles_per_liter">Milimolach na litr (mmol/l)</string>
     <string name="settings_csv_import_unit_milligrams_per_deciliter">Miligramach na decylitr (mg/dl)</string>
@@ -2522,6 +2524,13 @@
     <string name="settings_csv_import_issue_multiple_end_timestamps">Tylko jedna kolumna może zawierać datę i godzinę zakończenia.</string>
     <string name="settings_csv_import_issue_multiple_food_names">Tylko jedna kolumna może zawierać nazwę produktu.</string>
     <string name="settings_csv_import_issue_bp_needs_both">Ciśnienie krwi wymaga kolumny skurczowej i rozkurczowej.</string>
+    <string name="settings_csv_import_issue_sleep_needs_end">Sen wymaga kolumny „Pobudka” lub „Czas w łóżku”.</string>
+    <string name="settings_csv_import_sleep_woke_up">Pobudka</string>
+    <string name="settings_csv_import_sleep_time_to_fall_asleep">Czas zasypiania</string>
+    <string name="settings_csv_import_sleep_time_asleep">Czas snu</string>
+    <string name="settings_csv_import_sleep_notes">Notatki o śnie</string>
+    <string name="settings_csv_import_sleep_hint">Kolumny snu w wierszu tworzą jedną sesję snu: od daty i godziny do kolumny „Pobudka” albo przez czas z kolumny „Czas w łóżku”. Sen zaczyna się po czasie z kolumny „Czas zasypiania” i trwa tyle, ile podaje „Czas snu”; reszta sesji liczy się jako czuwanie w łóżku.</string>
+    <string name="settings_csv_import_sleep_duration_hint">Komórka taka jak 7:30 jest odczytywana jako godziny i minuty, niezależnie od jednostki.</string>
     <string name="settings_csv_import_confirm_title">Gotowe do importu</string>
     <string name="settings_csv_import_confirm_summary">%1$s · %2$d pomiarów na wiersz</string>
     <string name="settings_csv_import_confirm_range">%1$s: od %2$s do %3$s</string>

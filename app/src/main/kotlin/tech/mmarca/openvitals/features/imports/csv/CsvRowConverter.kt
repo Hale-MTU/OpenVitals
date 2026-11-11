@@ -43,19 +43,19 @@ import tech.mmarca.openvitals.domain.model.NutritionNutrient
 const val CSV_CLIENT_RECORD_ID_NAMESPACE = "csv"
 
 /**
- * A record built from one CSV cell, or from a row's nutrient or blood pressure
- * cells, with everything the import loop needs.
+ * A record built from one CSV cell, or from a row's nutrient, blood pressure
+ * or sleep cells, with everything the import loop needs.
  */
 data class CsvConvertedRecord(
-    /** Null for a nutrition or blood pressure record, which no single metric makes. */
+    /** Null for a nutrition, blood pressure or sleep record, which no single metric makes. */
     val metric: CsvImportMetric?,
     /** Mirrors [CsvMetricSpec.targetType]; a segment of [clientRecordId]. */
     val targetType: String,
     val recordType: kotlin.reflect.KClass<out Record>,
     val clientRecordId: String,
-    /** The measurement's instant, used to bound the duplicate-lookup window. */
+    /** The measurement's instant, used to bound the duplicate-lookup window. An interval's start. */
     val instant: Instant,
-    /** The value in the metric's canonical unit, for the confirm-step preview. Null for nutrition and blood pressure. */
+    /** The value in the metric's canonical unit, for the confirm-step preview. Null for nutrition, blood pressure and sleep. */
     val canonicalValue: Double?,
     val record: Record,
     /** A nutrition record's amounts, grams or kcal, for the confirm-step preview. Empty for a metric. */
@@ -74,9 +74,9 @@ data class CsvRowConversion(
 
 /**
  * Converts [row] under [mapping]. A bad timestamp costs the row, a bad value
- * only that metric, nutrient or blood pressure reading, a bad end timestamp
- * only the interval records. [nutritionOccurrences] numbers nutrition records
- * across one run.
+ * only that metric, nutrient, blood pressure reading or sleep session, a bad
+ * end timestamp only the interval records. [nutritionOccurrences] numbers
+ * nutrition records across one run.
  */
 fun convertCsvRow(
     row: CsvRow,
@@ -92,9 +92,13 @@ fun convertCsvRow(
     // are normal. The end, food-name, body position and cuff location columns
     // are not counted; a missing end falls back to the one-minute span, a
     // missing name to none, a missing position or location to its default.
+    // Of the sleep columns, only the first that can end the session counts:
+    // the other one stands in for it, and the durations and notes are optional.
     val endTimestampColumn = mapping.endTimestampColumn
     val pressureColumns = mapping.bloodPressureColumns.filter { it.bloodPressurePart?.isPressure == true }
-    val readColumns = metricColumns + mapping.nutrientColumns + pressureColumns + timestampColumn
+    val sleepSpanColumn = mapping.sleepColumns.filter { it.sleepPart?.isSpan == true }.minByOrNull { it.columnIndex }
+    val readColumns = metricColumns + mapping.nutrientColumns + pressureColumns + listOfNotNull(sleepSpanColumn) +
+        timestampColumn
     val highestIndex = readColumns.maxOf { it.columnIndex }
     if (row.fields.size <= highestIndex) {
         return CsvRowConversion(
@@ -204,6 +208,7 @@ fun convertCsvRow(
     convertCsvNutritionRow(row, mapping, instant, endText, endInstant, nutritionOccurrences, diagnostics)
         ?.let { records += it }
     convertCsvBloodPressureRow(row, mapping, instant, diagnostics)?.let { records += it }
+    convertCsvSleepRow(row, mapping, instant, diagnostics)?.let { records += it }
 
     return CsvRowConversion(records = records, diagnostics = diagnostics)
 }
