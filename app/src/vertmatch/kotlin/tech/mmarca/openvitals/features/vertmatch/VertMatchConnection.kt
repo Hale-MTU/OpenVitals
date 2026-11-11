@@ -50,6 +50,8 @@ internal data class VertMatchUiState(
     val busy: Boolean = false,
     val summary: VertMatchSummary? = null,
     val sent: Set<String> = emptySet(),
+    /** Deleted on VertMatch by the runner: VertMatch keeps them deleted, so the app offers no Send. */
+    val known: Set<String> = emptySet(),
     @param:StringRes val message: Int? = null,
 )
 
@@ -146,7 +148,10 @@ internal class VertMatchConnection @Inject constructor(
                     publish(R.string.vertmatch_message_sent)
                 }
                 // The runner deleted it in VertMatch; it stays deleted and is not sent again.
-                is UploadOutcome.Known -> publish(R.string.vertmatch_message_known)
+                is UploadOutcome.Known -> {
+                    vault.markKnown(externalId)
+                    publish(R.string.vertmatch_message_known)
+                }
                 is UploadOutcome.Duplicate -> publish(R.string.vertmatch_message_duplicate)
             }
             is VertMatchResult.Failure -> publish(messageFor(result.error))
@@ -159,6 +164,7 @@ internal class VertMatchConnection @Inject constructor(
         val externalId = externalIdFor(id) ?: return
         scope.launch {
             serial {
+                vault.forgetKnown(externalId)
                 if (externalId !in vault.sent) return@serial
                 vault.forgetSent(externalId)
                 vault.addPendingDelete(externalId)
@@ -176,7 +182,7 @@ internal class VertMatchConnection @Inject constructor(
         flushPendingDeletes()
     }
 
-    private fun refresh() = _state.update { it.copy(status = currentStatus(), sent = vault.sent) }
+    private fun refresh() = _state.update { it.fromVault() }
 
     fun clearMessage() = _state.update { it.copy(message = null) }
 
@@ -256,8 +262,10 @@ internal class VertMatchConnection @Inject constructor(
         else -> VertMatchStatus.Disconnected
     }
 
-    private fun publish(@StringRes message: Int) =
-        _state.update { it.copy(status = currentStatus(), sent = vault.sent, message = message) }
+    private fun publish(@StringRes message: Int) = _state.update { it.fromVault().copy(message = message) }
+
+    /** What the vault says now. Called on IO only, like every other vault read. */
+    private fun VertMatchUiState.fromVault() = copy(status = currentStatus(), sent = vault.sent, known = vault.known)
 
     /** One call at a time, on [Dispatchers.IO] wherever it was started: every step reads the vault. */
     private suspend fun serial(block: suspend () -> Unit) = withContext(Dispatchers.IO) {
@@ -265,7 +273,7 @@ internal class VertMatchConnection @Inject constructor(
         try {
             mutex.withLock { block() }
         } finally {
-            _state.update { it.copy(busy = false, status = currentStatus(), sent = vault.sent) }
+            _state.update { it.fromVault().copy(busy = false) }
         }
     }
 

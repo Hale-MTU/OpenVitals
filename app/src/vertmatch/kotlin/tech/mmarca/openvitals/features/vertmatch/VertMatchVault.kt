@@ -65,6 +65,9 @@ internal class VertMatchVault(context: Context) {
     /** External ids whose delete on VertMatch has not gone through yet. */
     val pendingDeletes: Set<String> get() = prefs.getStringSet(KEY_PENDING_DELETES, emptySet()).orEmpty().toSet()
 
+    /** External ids VertMatch answered `known` for: the runner deleted them there, so they are not sent again. */
+    val known: Set<String> get() = prefs.getStringSet(KEY_KNOWN, emptySet()).orEmpty().toSet()
+
     /**
      * Set when VertMatch answered `client_not_allowed` or `app_suspended`: the document says to stop
      * every call. Cleared when the runner connects again.
@@ -80,6 +83,10 @@ internal class VertMatchVault(context: Context) {
     fun addPendingDelete(externalId: String) = updateSet(KEY_PENDING_DELETES) { it + externalId }
 
     fun removePendingDelete(externalId: String) = updateSet(KEY_PENDING_DELETES) { it - externalId }
+
+    fun markKnown(externalId: String) = updateSet(KEY_KNOWN) { it + externalId }
+
+    fun forgetKnown(externalId: String) = updateSet(KEY_KNOWN) { it - externalId }
 
     /** Disconnect: everything goes, the Keystore key included. */
     fun clear() {
@@ -150,6 +157,7 @@ internal class VertMatchVault(context: Context) {
         const val KEY_PENDING = "pending_sign_in"
         const val KEY_SENT = "sent"
         const val KEY_PENDING_DELETES = "pending_deletes"
+        const val KEY_KNOWN = "known"
         const val KEY_STOPPED = "app_stopped"
         const val KEY_ALIAS = "openvitals_vertmatch"
         const val ANDROID_KEYSTORE = "AndroidKeyStore"

@@ -25,6 +25,7 @@
     <string name="vertmatch_card_body">Send this activity to your VertMatch training.</string>
     <string name="vertmatch_card_sent">This activity is on VertMatch. Deleting it here deletes it there too.</string>
     <string name="vertmatch_card_connect_first">Connect VertMatch to send this activity.</string>
+    <string name="vertmatch_card_no_distance">This activity has no distance, so VertMatch cannot match it with a copy it may already have from Health Connect. If the VertMatch app also reads Health Connect, the activity can show up there twice.</string>
 
     <string name="vertmatch_summary_title">Training summary</string>
     <string name="vertmatch_summary_none">No summary loaded yet.</string>

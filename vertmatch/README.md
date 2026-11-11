@@ -64,7 +64,10 @@ holds the line: it fails if the default build could reach the integration or los
   - Transient failures say "try later".
 - **Logging.** Nothing logs: no token, file or id.
 - **Duplicates.** A runner who also syncs Health Connect into VertMatch already has the activity there. The
-  upload then answers `duplicate` and stores nothing.
+  upload then answers `duplicate` and stores nothing. VertMatch matches by start time and distance, so an
+  activity without a distance (a strength session) cannot be matched: the card says it may show up twice.
+- **Deleted on VertMatch.** When the upload answers `known`, the runner deleted that activity on VertMatch.
+  The app remembers it and offers no Send for it again.
 
 ## Known gaps
 

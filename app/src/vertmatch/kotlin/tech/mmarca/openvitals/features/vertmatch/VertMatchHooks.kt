@@ -65,33 +65,44 @@ internal class VertMatchActivityCard @Inject constructor(
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
         val externalId = VertMatchConnection.externalIdFor(workout.id)
+        val connected = state.status == VertMatchStatus.Connected
         val alreadySent = externalId != null && externalId in state.sent
+        val deletedThere = externalId != null && externalId in state.known
+        val body = when {
+            !connected -> R.string.vertmatch_card_connect_first
+            deletedThere -> R.string.vertmatch_message_known
+            alreadySent -> R.string.vertmatch_card_sent
+            else -> R.string.vertmatch_card_body
+        }
         DetailSectionCard(title = stringResource(R.string.vertmatch_title), modifier = modifier) {
             Text(
-                text = stringResource(
-                    when {
-                        state.status != VertMatchStatus.Connected -> R.string.vertmatch_card_connect_first
-                        alreadySent -> R.string.vertmatch_card_sent
-                        else -> R.string.vertmatch_card_body
-                    },
-                ),
+                text = stringResource(body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            state.message?.let { message ->
+            // VertMatch finds a copy it already has from Health Connect by start time and distance.
+            if (connected && !alreadySent && !deletedThere && (workout.totalDistanceMeters ?: 0.0) <= 0.0) {
+                Text(
+                    text = stringResource(R.string.vertmatch_card_no_distance),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            state.message?.takeIf { it != body }?.let { message ->
                 Text(text = stringResource(message), style = MaterialTheme.typography.bodyMedium)
             }
             Column(modifier = Modifier.padding(top = Spacing.xs)) {
-                if (state.status == VertMatchStatus.Connected && externalId != null) {
-                    OpenVitalsButton(
+                when {
+                    // Nothing to offer: VertMatch keeps it deleted.
+                    connected && deletedThere -> Unit
+                    connected && externalId != null -> OpenVitalsButton(
                         onClick = { scope.launch { connection.send(workout, series) } },
                         enabled = !state.busy,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(stringResource(if (alreadySent) R.string.vertmatch_send_again else R.string.vertmatch_send))
                     }
-                } else {
-                    OpenVitalsOutlinedButton(onClick = context::openVertMatchScreen, modifier = Modifier.fillMaxWidth()) {
+                    else -> OpenVitalsOutlinedButton(onClick = context::openVertMatchScreen, modifier = Modifier.fillMaxWidth()) {
                         Text(stringResource(R.string.vertmatch_open))
                     }
                 }
