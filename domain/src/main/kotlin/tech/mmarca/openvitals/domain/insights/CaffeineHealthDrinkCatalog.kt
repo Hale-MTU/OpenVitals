@@ -91,7 +91,8 @@ object CaffeineHealthDrinkCatalog : HydrationDrinkCatalog {
             name = "Cappuccino",
             category = CaffeineSourceCategory.COFFEE,
             typicalCaffeineMg = 77.0,
-            defaultServingMilliliters = 200.0,
+            // INEI brochure: 25 ml espresso and 100 ml milk, served in a 150-160 ml cup.
+            defaultServingMilliliters = 160.0,
             aliases = listOf("capuccino"),
         ),
         CaffeineCatalogItem(
@@ -241,7 +242,8 @@ object CaffeineHealthDrinkCatalog : HydrationDrinkCatalog {
             name = "Nescaf\u00e9 Dolce Gusto - Espresso Intenso",
             category = CaffeineSourceCategory.COFFEE,
             typicalCaffeineMg = 115.0,
-            defaultServingMilliliters = 240.0,
+            // nescafe.com Dolce Gusto Espresso: small cup, 30-50 ml.
+            defaultServingMilliliters = 40.0,
         ),
         CaffeineCatalogItem(
             id = "costa-latte",
@@ -339,8 +341,9 @@ object CaffeineHealthDrinkCatalog : HydrationDrinkCatalog {
             id = "starbucks-espresso",
             name = "Starbucks Espresso",
             category = CaffeineSourceCategory.COFFEE,
-            typicalCaffeineMg = 33.0,
-            defaultServingMilliliters = 33.0,
+            typicalCaffeineMg = 75.0,
+            // Starbucks solo shot: 75 mg caffeine in 1 fl oz (caffeineinformer.com/the-complete-guide-to-starbucks-caffeine).
+            defaultServingMilliliters = 29.6,
         ),
         CaffeineCatalogItem(
             id = "red-bull-coconut-edition",
@@ -375,7 +378,8 @@ object CaffeineHealthDrinkCatalog : HydrationDrinkCatalog {
             name = "Nescaf\u00e9 Dolce Gusto - Espresso",
             category = CaffeineSourceCategory.COFFEE,
             typicalCaffeineMg = 80.0,
-            defaultServingMilliliters = 240.0,
+            // nescafe.com Dolce Gusto Espresso: small cup, 30-50 ml.
+            defaultServingMilliliters = 40.0,
         ),
         CaffeineCatalogItem(
             id = "monster-energy-ultra-fiesta",
@@ -969,7 +973,8 @@ object CaffeineHealthDrinkCatalog : HydrationDrinkCatalog {
             name = "Nescaf\u00e9 Dolce Gusto - Lungo Intenso",
             category = CaffeineSourceCategory.COFFEE,
             typicalCaffeineMg = 147.0,
-            defaultServingMilliliters = 240.0,
+            // nescafe.com/sg Dolce Gusto Lungo: 120 ml cup.
+            defaultServingMilliliters = 120.0,
         ),
         CaffeineCatalogItem(
             id = "v8-energy-tropical-green",
@@ -1108,14 +1113,16 @@ object CaffeineHealthDrinkCatalog : HydrationDrinkCatalog {
             name = "Nescaf\u00e9 Dolce Gusto - Lungo",
             category = CaffeineSourceCategory.COFFEE,
             typicalCaffeineMg = 89.0,
-            defaultServingMilliliters = 240.0,
+            // nescafe.com/sg Dolce Gusto Lungo: 120 ml cup.
+            defaultServingMilliliters = 120.0,
         ),
         CaffeineCatalogItem(
             id = "nespresso-classic-pod-110-ml",
             name = "Nespresso Classic Pod (110 ml)",
             category = CaffeineSourceCategory.COFFEE,
             typicalCaffeineMg = 95.0,
-            defaultServingMilliliters = 240.0,
+            // Nespresso FAQ (contact.nespresso.com/faq/nz/en/detail/1166): espresso 40 ml, lungo 110 ml.
+            defaultServingMilliliters = 110.0,
         ),
         CaffeineCatalogItem(
             id = "nespresso-classic-pod-25-ml",
@@ -1455,7 +1462,8 @@ object CaffeineHealthDrinkCatalog : HydrationDrinkCatalog {
             name = "Nespresso Vertuo Pod (230 ml)",
             category = CaffeineSourceCategory.COFFEE,
             typicalCaffeineMg = 177.0,
-            defaultServingMilliliters = 240.0,
+            // The pod name gives the cup size.
+            defaultServingMilliliters = 230.0,
         ),
         CaffeineCatalogItem(
             id = "nespresso-vertuo-pod-230-ml-20-caffeine",
