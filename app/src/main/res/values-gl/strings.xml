@@ -210,6 +210,8 @@
     <string name="activity_entry_plan_preview_reps">%1$d reps</string>
     <string name="activity_entry_distance_label">Distancia %1$s</string>
     <string name="activity_entry_elevation_label">Desnivel %1$s</string>
+    <string name="body_profile_prompt_message">Para estimar as calorías, engade ao teu perfil corporal: %1$s.</string>
+    <string name="body_profile_prompt_action">Abrir perfil corporal</string>
     <string name="activity_entry_notes_label">Notas</string>
     <string name="activity_entry_feeling_label">Como foi?</string>
     <string name="activity_entry_feeling_great">Xenial</string>

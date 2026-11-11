@@ -1,5 +1,6 @@
 package tech.mmarca.openvitals.features.manualentry.activity.routeimport
 
+import tech.mmarca.openvitals.features.manualentry.activity.TestCalorieContext
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import java.time.Instant
 import org.junit.Assert.assertEquals
@@ -28,7 +29,7 @@ class RouteFileActivityRequestTest {
 
     @Test
     fun `the start keeps its seconds and the end is not rounded up to a minute`() {
-        val request = RouteFileParser.parseFile(ride()).toImportWriteRequest(cycling, ActivityRecordSource.WATCH)!!
+        val request = RouteFileParser.parseFile(ride()).toImportWriteRequest(cycling, ActivityRecordSource.WATCH, TestCalorieContext)!!
 
         // Through the entry form this became 08:30:00 to 09:13:00.
         assertEquals(Instant.parse("2026-05-26T08:30:17Z"), request.startTime)
@@ -39,11 +40,11 @@ class RouteFileActivityRequestTest {
     @Test
     fun `the same file gives the same key whatever it is called`() {
         val first = RouteFileParser.parseFile(ride(), fileName = "activity_7.fit")
-            .toImportWriteRequest(cycling, ActivityRecordSource.WATCH)!!
+            .toImportWriteRequest(cycling, ActivityRecordSource.WATCH, TestCalorieContext)!!
         val again = RouteFileParser.parseFile(ride(), fileName = "2026-05-26 ride.fit")
-            .toImportWriteRequest(cycling, ActivityRecordSource.FILE)!!
+            .toImportWriteRequest(cycling, ActivityRecordSource.FILE, TestCalorieContext)!!
         val other = RouteFileParser.parseFile(ride(endSecond = 44))
-            .toImportWriteRequest(cycling, ActivityRecordSource.WATCH)!!
+            .toImportWriteRequest(cycling, ActivityRecordSource.WATCH, TestCalorieContext)!!
 
         assertNotNull(first.importKey)
         assertEquals(first.importKey, again.importKey)
@@ -54,15 +55,15 @@ class RouteFileActivityRequestTest {
     fun `the request says where the file came from`() {
         val parsed = RouteFileParser.parseFile(ride())
 
-        assertEquals(ActivityRecordSource.WATCH, parsed.toImportWriteRequest(cycling, ActivityRecordSource.WATCH)!!.source)
-        assertEquals(ActivityRecordSource.FILE, parsed.toImportWriteRequest(cycling, ActivityRecordSource.FILE)!!.source)
+        assertEquals(ActivityRecordSource.WATCH, parsed.toImportWriteRequest(cycling, ActivityRecordSource.WATCH, TestCalorieContext)!!.source)
+        assertEquals(ActivityRecordSource.FILE, parsed.toImportWriteRequest(cycling, ActivityRecordSource.FILE, TestCalorieContext)!!.source)
     }
 
     @Test
     fun `a route with no time of its own is left to the entry form`() {
         val untimed = RouteFileParser.parseFile(ride()).copy(hasImportedTimeRange = false)
 
-        assertNull(untimed.toImportWriteRequest(cycling, ActivityRecordSource.FILE))
+        assertNull(untimed.toImportWriteRequest(cycling, ActivityRecordSource.FILE, TestCalorieContext))
     }
 
     @Test
@@ -70,6 +71,6 @@ class RouteFileActivityRequestTest {
         val keyless = RouteFileParser.parseFile(ride()).copy(contentKey = null)
 
         // A random id here would bring the duplicates back.
-        assertNull(keyless.toImportWriteRequest(cycling, ActivityRecordSource.FILE))
+        assertNull(keyless.toImportWriteRequest(cycling, ActivityRecordSource.FILE, TestCalorieContext))
     }
 }

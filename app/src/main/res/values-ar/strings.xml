@@ -108,4 +108,6 @@
     <string name="body_profile_openwatch_synced_updated">متزامن مع OpenWatch · حُدّث %1$s</string>
     <string name="openwatch_profile_sync_now">مزامنة الملف الجسدي الآن</string>
     <string name="openwatch_profile_nothing_to_sync">أدخل ملفك الجسدي أولاً من الإعدادات، الملف الجسدي</string>
+    <string name="body_profile_prompt_message">لتقدير السعرات الحرارية، أضف إلى ملفك الجسدي: %1$s.</string>
+    <string name="body_profile_prompt_action">افتح الملف الجسدي</string>
 </resources>

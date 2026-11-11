@@ -151,6 +151,8 @@
     <string name="activity_entry_plan_preview_reps">%1$d回</string>
     <string name="activity_entry_distance_label">距離%1$s</string>
     <string name="activity_entry_elevation_label">登った歩数%1$s</string>
+    <string name="body_profile_prompt_message">カロリーを推定するには、体のプロフィールに次の項目を追加してください：%1$s。</string>
+    <string name="body_profile_prompt_action">体のプロフィールを開く</string>
     <string name="activity_entry_notes_label">メモ</string>
     <string name="activity_entry_feeling_label">どう感じましたか？</string>
     <string name="activity_entry_feeling_great">最高</string>

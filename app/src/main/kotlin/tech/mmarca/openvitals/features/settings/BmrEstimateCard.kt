@@ -21,6 +21,7 @@ import tech.mmarca.openvitals.R
 import tech.mmarca.openvitals.domain.insights.BmrInput
 import tech.mmarca.openvitals.ui.components.OpenVitalsCard
 import tech.mmarca.openvitals.ui.components.OpenVitalsTonalButton
+import tech.mmarca.openvitals.ui.components.labelRes
 import tech.mmarca.openvitals.ui.theme.LayoutMetrics
 import tech.mmarca.openvitals.ui.theme.Spacing
 
@@ -124,11 +125,3 @@ private fun BmrEstimateStatus(todayKcal: Int?, missingInputs: Set<BmrInput>) {
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }
-
-private val BmrInput.labelRes: Int
-    get() = when (this) {
-        BmrInput.SEX -> R.string.settings_body_profile_sex
-        BmrInput.BIRTH_YEAR -> R.string.body_energy_calibration_birth_year
-        BmrInput.WEIGHT -> R.string.settings_body_profile_weight
-        BmrInput.HEIGHT -> R.string.settings_body_profile_height
-    }

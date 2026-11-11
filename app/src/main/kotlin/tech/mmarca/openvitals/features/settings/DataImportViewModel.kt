@@ -13,6 +13,9 @@ import tech.mmarca.openvitals.data.repository.contract.HealthRepository
 import tech.mmarca.openvitals.data.repository.contract.MedicalRecordsRepository
 import tech.mmarca.openvitals.data.repository.contract.RecordingPreferences
 import tech.mmarca.openvitals.data.repository.contract.UnitPreferences
+import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
+import tech.mmarca.openvitals.domain.preferences.BodyProfile
+import tech.mmarca.openvitals.features.manualentry.activity.CalorieEstimateContext
 import tech.mmarca.openvitals.features.manualentry.activity.ActivityEntryType
 import tech.mmarca.openvitals.features.manualentry.activity.ActivityEntryUnits
 import tech.mmarca.openvitals.features.manualentry.activity.DefaultActivityEntryTypes
@@ -44,6 +47,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import androidx.work.WorkInfo
 import androidx.compose.runtime.Immutable
+import java.time.LocalDate
 import java.time.Clock
 
 /**
@@ -129,6 +133,7 @@ class DataImportViewModel @Inject constructor(
     private val fitHrvImportService: FitHrvImportService,
     private val routeFolderScanner: RouteFolderScanner,
     private val medicalRecords: MedicalRecordsRepository? = null,
+    private val bodyProfilePreferences: BodyProfilePreferences? = null,
 ) : ViewModel() {
     companion object {
         private const val TAG = "DataImportViewModel"
@@ -560,7 +565,11 @@ class DataImportViewModel @Inject constructor(
                 val preferredType = preferredActivityType(requireGpsRoute = routeImport.points.isNotEmpty())
                 // Straight from the file: exact times, and a client id that is a function of
                 // the file, so picking the same folder twice does not store each workout twice.
-                val request = routeImport.toImportWriteRequest(preferredType, ActivityRecordSource.FILE)
+                val request = routeImport.toImportWriteRequest(
+                    preferredType,
+                    ActivityRecordSource.FILE,
+                    calorieContext(),
+                )
                     ?: formWriteRequest(routeImport, preferredType)
                     ?: throw IllegalArgumentException("Imported route could not be converted into an activity.")
                 val hasPermission = activityRepository.hasActivityWritePermission(request)
@@ -617,9 +626,15 @@ class DataImportViewModel @Inject constructor(
             routeImport = routeImport,
             units = importUnits,
             clock = clock,
+            calorieContext = calorieContext(),
         )
         return buildWriteRequest(routeState, importUnits)
     }
+
+    private fun calorieContext() = CalorieEstimateContext(
+        profile = bodyProfilePreferences?.bodyProfile() ?: BodyProfile(),
+        today = LocalDate.now(clock),
+    )
 
     private fun preferredActivityType(requireGpsRoute: Boolean = false) =
         DefaultActivityEntryTypes

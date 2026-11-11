@@ -1,5 +1,6 @@
 package tech.mmarca.openvitals.features.manualentry.activity.routeimport
 
+import tech.mmarca.openvitals.features.manualentry.activity.TestCalorieContext
 import tech.mmarca.openvitals.features.manualentry.*
 import tech.mmarca.openvitals.features.manualentry.activity.ActivityEntryUnits
 import tech.mmarca.openvitals.features.manualentry.activity.*
@@ -50,7 +51,7 @@ class IndoorFitImportTest {
     private fun import(parsed: RouteFileImport): ImportOutcome {
         val clock = Clock.systemDefaultZone()
         val state = ActivityEntryUiState()
-            .withRouteImport(parsed, ActivityEntryUnits.uniform(UnitSystem.METRIC), clock)
+            .withRouteImport(parsed, ActivityEntryUnits.uniform(UnitSystem.METRIC), clock, TestCalorieContext)
         return ImportOutcome(
             type = state.selectedActivityType,
             request = buildWriteRequest(state, ActivityEntryUnits.uniform(UnitSystem.METRIC)),
@@ -119,6 +120,7 @@ class IndoorFitImportTest {
                 ),
                 ActivityEntryUnits.uniform(UnitSystem.METRIC),
                 clock,
+                TestCalorieContext,
             )
 
         assertTrue(state.activeCaloriesText.isNotEmpty())

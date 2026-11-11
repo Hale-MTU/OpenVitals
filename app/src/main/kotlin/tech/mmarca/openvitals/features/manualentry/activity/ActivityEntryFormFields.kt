@@ -58,6 +58,7 @@ import tech.mmarca.openvitals.features.manualentry.ManualEntryWritePermissionCal
 import tech.mmarca.openvitals.domain.preferences.UnitSystem
 import tech.mmarca.openvitals.ui.components.OpenVitalsOutlinedButton
 import tech.mmarca.openvitals.ui.components.AutoResizeText
+import tech.mmarca.openvitals.ui.components.BodyProfilePrompt
 import tech.mmarca.openvitals.ui.components.HealthDatePickerDialog
 import tech.mmarca.openvitals.ui.components.OpenVitalsTextButton
 import tech.mmarca.openvitals.ui.theme.Spacing
@@ -409,5 +410,9 @@ internal fun ActivityMetricInputs(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.weight(1f),
         )
+    }
+    if (state.activeCaloriesText.isBlank() && state.totalCaloriesText.isBlank()) {
+        // No button: leaving the form for the profile would lose the draft.
+        BodyProfilePrompt(missing = state.calorieEstimateMissingInputs)
     }
 }
