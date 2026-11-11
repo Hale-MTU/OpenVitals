@@ -6,7 +6,7 @@
 > **Navigation:** `Screen.SettingsDataImport`, then `Screen.SettingsCsvImport`.
 > **Related:** [Feature map](feature-map.md), [Settings and preferences](settings-and-preferences.md), [Body metrics](body-metrics.md), [Apple Health import](apple-health-import.md).
 
-CSV import brings body measurements, vitals, blood pressure, steps, nutrition and workouts from a plain CSV file into Health Connect. It is meant for exports that have no importer of their own, such as a smart scale's weight and body-composition history, a blood pressure monitor's log, a temperature log, a glucose export, a pedometer's step history, a spreadsheet of meals copied from nutrition labels, or a workout history rebuilt by hand from other apps' exports.
+CSV import brings body measurements, vitals, blood pressure, sleep, steps, nutrition and workouts from a plain CSV file into Health Connect. It is meant for exports that have no importer of their own, such as a smart scale's weight and body-composition history, a blood pressure monitor's log, a sleep app's history such as Sleep Cycle's, a temperature log, a glucose export, a pedometer's step history, a spreadsheet of meals copied from nutrition labels, or a workout history rebuilt by hand from other apps' exports.
 
 There are two presets, recognised by their header: the drip cycle tracker's export, see [drip Export](#drip-export), and OpenVitals' own workout export, see [OpenVitals Workout Export](#openvitals-workout-export). Every other file is read through the column mapping: the user says what each column means, which is why a file OpenVitals has never seen still imports.
 
@@ -15,8 +15,8 @@ There are two presets, recognised by their header: the drip cycle tracker's expo
 CSV import lives in Settings, Data Importers, CSV Importer, and opens its own five-step screen.
 
 1. **Choose a file.** The file picker accepts CSV and plain-text documents. Only the head of the file is read at this point, so a large export opens immediately and nothing is written yet.
-2. **Map the columns.** OpenVitals shows the detected column separator, a "first row contains column names" switch, a short preview table, the date and time settings, and one row per column. Each column is set to not imported, date and time, an optional end date and time, a supported measurement, a part of a blood pressure reading, a nutrient, or a food name. A measurement or nutrient column also picks what its numbers are.
-3. **Confirm.** The confirm step shows the date range the file covers and the value range each measurement, nutrient, and blood pressure's systolic and diastolic will actually be written with, so a mis-mapped column is visible before anything lands. The count of measurements per row counts records: a blood pressure reading is one, however many of its columns are mapped, and so is a food. Missing Health Connect write permissions are requested here.
+2. **Map the columns.** OpenVitals shows the detected column separator, a "first row contains column names" switch, a short preview table, the date and time settings, and one row per column. Each column is set to not imported, date and time, an optional end date and time, a supported measurement, a part of a blood pressure reading or of a sleep session, a nutrient, or a food name. A measurement, nutrient or sleep duration column also picks what its numbers are.
+3. **Confirm.** The confirm step shows the date range the file covers and the value range each measurement, nutrient, and blood pressure's systolic and diastolic will actually be written with, and for sleep the range of time in bed and time asleep, so a mis-mapped column is visible before anything lands. The count of measurements per row counts records: a blood pressure reading is one, however many of its columns are mapped, and so are a food and a night. Missing Health Connect write permissions are requested here.
 4. **Import.** Progress shows the current row with running written, already-present, and rejected counts. The import can be cancelled; what was already written is kept.
 5. **Read the result.** The result step keeps three tallies apart, because they do not add up to each other: the rows of the file (read, imported, rejected, nothing to import, which do add up to the rows read), the Health Connect records (written, and how many of those replaced an earlier import), and, for a drip export, the cycle journal days. A row can produce several records or none. Rejections are grouped by reason below the tallies, and the full report can be copied or saved.
 
@@ -45,6 +45,8 @@ Heart and vitals:
 - VO2 max.
 - Blood pressure, from a systolic and a diastolic column. See [Blood Pressure](#blood-pressure) below.
 
+Sleep: one sleep session per row, from the row's date and time to a wake time or for a time in bed, with an awake stage for the time it took to fall asleep and an asleep stage for the time asleep. See [Sleep](#sleep) below.
+
 Activity:
 
 - Steps.
@@ -55,7 +57,8 @@ Most supported measurements are a single value at a single instant, because that
 
 ## What Is Not Supported
 
-- **Interval records beyond steps and nutrition are not mapped.** Sleep needs stages as well as a start and an end, so it is out of scope for the column mapping. Steps and nutrition are the exceptions, carried by the single optional "End date and time" column. Workouts come in through the [workout export preset](#openvitals-workout-export), not through the mapping.
+- **Interval records beyond steps, nutrition and sleep are not mapped.** Steps and nutrition are carried by the single optional "End date and time" column, and sleep by its own "Woke up" or "Time in bed" column. Workouts come in through the [workout export preset](#openvitals-workout-export), not through the mapping.
+- **A sleep app's other figures have nowhere to go.** Health Connect keeps a sleep session's span, its stages and its notes. A sleep quality or regularity score, snoring, coughing, breathing disruptions, room noise and light, movements, an alertness test, the alarm's wake-up window, and the weather are not Health Connect data, so those columns stay unmapped.
 - **Meal type is not mapped.** An imported food has no breakfast, lunch, dinner or snack label.
 
 ## drip Export
@@ -125,11 +128,36 @@ A blood pressure section on the mapping step chooses a default body position and
 
 A row whose systolic and diastolic cells are both blank has no reading, which is not an error. A reading is rejected when only one of them is filled, when one is not a number, when either is outside what Health Connect accepts (systolic 20 to 200 mmHg, diastolic 10 to 180 mmHg), or when the systolic is not above the diastolic, which usually means the two columns are swapped. A rejected reading counts as one rejection, under its first fault in column order, and costs nothing else in the row: a weight in the same row still imports. A reading is identified by its instant, like any measurement, so re-importing replaces it.
 
+## Sleep
+
+A sleep session is one Health Connect record made from several columns, so its columns are mapped under their own "Sleep" section of the column menu:
+
+- **Woke up.** When the session ends, read with the same date and time settings as the date and time column.
+- **Time in bed.** How long the session lasts from its date and time. It is the end only when Woke up is not mapped or its cell is blank; a filled Woke up wins.
+- **Time to fall asleep.** Optional. Sleep Cycle calls it "Time before sleep".
+- **Time asleep.** Optional.
+- **Sleep notes.** Optional free text, kept as the session's notes.
+
+The session starts at the row's date and time, so for Sleep Cycle's export the "Went to bed" column is the date and time column, which the mapping pre-selects because it is the first column of dates. A mapping with any sleep column needs Woke up or Time in bed, or it cannot continue.
+
+The durations are read in minutes by default. Seconds and hours can be chosen instead, and a header such as `Time asleep (seconds)`, `(min)` or `(h)` pre-selects its unit. A cell written as a clock, `7:32` or `7:32:10`, always reads as hours and minutes, which is how older Sleep Cycle exports and many spreadsheets write a duration.
+
+Health Connect stores how a night was spent as stages, not as totals, so the two durations become stages:
+
+- The time to fall asleep is awake in bed from the start of the session.
+- Sleep follows for the time asleep, or up to the end of the session without one.
+- What is left of the session is awake in bed at its end. The file says how long the night's awake time was but not when it fell, so it is placed after the sleep; the time in bed, the time asleep and the time awake are the file's either way, and that is what the sleep screen counts.
+- With neither duration, the session has no stages and counts as asleep from start to end, like an unstaged session from any app.
+
+A row whose sleep cells are all blank has no session, which is not an error. A session is rejected, as one rejection, when its wake time cannot be read, when it is not after the start, when the night is longer than a day, which means a misread date, or when the row has notes or durations but neither a wake time nor a time in bed. A time to fall asleep or a time asleep that is not a duration, is negative or is longer than the night costs only the stages it would have made; the session is still written. A zero is a gap. None of this costs anything else in the row.
+
+A session is identified by its start, like a measurement by its instant, so re-importing replaces it: a corrected wake time, duration or note ends up as the file says. The sessions appear on the sleep screen and its charts like any other app's.
+
 ## Units Come From The File
 
 The unit chosen for a column describes the file, not the app's display unit system. A file in pounds imports correctly while the app displays kilograms, and neither setting affects the other. Values are converted once, on import, and stored in the units Health Connect uses.
 
-Accepted units per measurement include kilograms, pounds, stones, and grams for masses; centimetres, metres, inches, and feet for height; kilocalories and kilojoules per day for basal metabolic rate; Celsius and Fahrenheit for temperatures; millimoles per litre and milligrams per decilitre for glucose; milliseconds and seconds for HRV; and percent or a 0–1 fraction where a share is meaningful.
+Accepted units per measurement include kilograms, pounds, stones, and grams for masses; centimetres, metres, inches, and feet for height; kilocalories and kilojoules per day for basal metabolic rate; Celsius and Fahrenheit for temperatures; millimoles per litre and milligrams per decilitre for glucose; milliseconds and seconds for HRV; minutes, seconds and hours for sleep durations; and percent or a 0–1 fraction where a share is meaningful.
 
 Nutrients take kilocalories or kilojoules for energy and grams, milligrams or micrograms for the rest.
 
@@ -159,12 +187,12 @@ Every column starts as not imported, so a column is only ever included on purpos
 
 The first column whose sampled values all parse as a date is pre-selected as the timestamp column. Measurements are never guessed from header text; the date guess is safe only because it is checked against the data.
 
-The step will not continue until the mapping is valid. It reports a missing or duplicated timestamp column, a duplicated end date and time column, a duplicated food-name column, no measurement, nutrient or blood pressure columns at all, two columns mapped to the same measurement, nutrient or part of a blood pressure reading, a blood pressure column without both a systolic and a diastolic one, a body-fat mass column with no weight column to derive from, and a date format that matches none of the sampled rows.
+The step will not continue until the mapping is valid. It reports a missing or duplicated timestamp column, a duplicated end date and time column, a duplicated food-name column, no measurement, nutrient, blood pressure or sleep columns at all, two columns mapped to the same measurement, nutrient or part of a blood pressure reading or sleep session, a blood pressure column without both a systolic and a diastolic one, a sleep column without a Woke up or a Time in bed one, a body-fat mass column with no weight column to derive from, and a date format that matches none of the sampled rows, in the date and time, end date and time, or Woke up column.
 
 ## What Gets Rejected
 
-- A bad timestamp, or a row with fewer columns than the mapping needs, costs the whole row. The end date and time, food name, body position and cuff location columns are not counted, so a row that stops before an empty trailing cell of theirs still imports.
-- A bad value costs only that measurement, nutrient or blood pressure reading, so one unreadable body-fat cell does not throw away a good weight in the same row, and one unreadable sodium cell does not throw away the rest of the food.
+- A bad timestamp, or a row with fewer columns than the mapping needs, costs the whole row. The end date and time, food name, body position and cuff location columns are not counted, nor are the sleep durations and notes, so a row that stops before an empty trailing cell of theirs still imports.
+- A bad value costs only that measurement, nutrient, blood pressure reading or sleep session, so one unreadable body-fat cell does not throw away a good weight in the same row, and one unreadable sodium cell does not throw away the rest of the food.
 - A blank cell is a gap in the data, not an error. Scales routinely skip measurements.
 - Values outside a plausible human range are rejected rather than stored. This is the guard against a mis-mapped column.
 

@@ -389,6 +389,47 @@ class CsvImportReportTest {
     }
 
     @Test
+    fun `sleep columns name their part and unit, and a night's notes and times never reach the report`() {
+        val mapping = CsvImportMapping(
+            columns = listOf(
+                CsvColumnMapping(columnIndex = 0, role = CsvColumnRole.TIMESTAMP),
+                CsvColumnMapping(1, CsvColumnRole.SLEEP, sleepPart = CsvSleepPart.WOKE_UP),
+                CsvColumnMapping(2, CsvColumnRole.SLEEP, interpretation = CsvDirectValue(CsvUnit.SECONDS), sleepPart = CsvSleepPart.TIME_ASLEEP),
+                CsvColumnMapping(3, CsvColumnRole.SLEEP, sleepPart = CsvSleepPart.TIME_TO_FALL_ASLEEP),
+                CsvColumnMapping(4, CsvColumnRole.SLEEP, sleepPart = CsvSleepPart.NOTES),
+            ),
+            dateTime = CsvDateTimeSettings(format = CsvDateTimeFormat.YEAR_FIRST, zone = CsvTimeZoneMode.UTC),
+        )
+        val rows = listOf(
+            // A fine night whose notes are health data: no diagnostic, so nothing of it is reported.
+            CsvRow(2, listOf("2026-11-01 23:10", "2026-11-02 07:04", "25200", "15", PrivacySentinels.Sentence)),
+            // A wake time that will not read, carrying a name.
+            CsvRow(3, listOf("2026-11-01 23:10", "${PrivacySentinels.Name} at ${PrivacySentinels.Value}", "", "", PrivacySentinels.Name)),
+            // A time asleep that is no duration.
+            CsvRow(4, listOf("2026-11-01 23:10", "2026-11-02 07:04", "${PrivacySentinels.Value}:${PrivacySentinels.Date}", "", "")),
+            // A wake time that reads, but before bedtime.
+            CsvRow(5, listOf("2026-11-01 23:10", "2026-11-01 22:00", "", "", PrivacySentinels.Sentence)),
+        )
+        val diagnostics = rows.flatMap { convertCsvRow(it, mapping).diagnostics }
+
+        val report = report(
+            mapping = mapping,
+            result = runResult(diagnostics = diagnostics, counts = diagnostics.groupingBy { it.reason }.eachCount()),
+        )
+
+        assertThat(diagnostics.map { it.reason }).containsExactly(
+            CsvImportDiagnosticReason.UNPARSABLE_END_TIMESTAMP,
+            CsvImportDiagnosticReason.UNPARSABLE_NUMBER,
+            CsvImportDiagnosticReason.END_NOT_AFTER_START,
+        )
+        assertThat(report).contains("[1] -> sleep woke up (date and time)")
+        assertThat(report).contains("[2] -> sleep time asleep (seconds)")
+        assertThat(report).contains("[3] -> sleep time to fall asleep (minutes)")
+        assertThat(report).contains("[4] -> sleep notes")
+        PrivacySentinels.assertNoneIn(report)
+    }
+
+    @Test
     fun `cells and errors carrying health data come out as shapes, reasons and masked text`() {
         val cell = "${PrivacySentinels.Value} kg ${PrivacySentinels.Date}"
         val rows = listOf(

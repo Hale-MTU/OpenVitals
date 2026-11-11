@@ -26,8 +26,9 @@ import kotlin.reflect.KClass
  * canonical value. Every metric is one number at one instant, except
  * [STEPS], the first interval record: an END_TIMESTAMP column ends each
  * row's span, and a missing end means one minute. Blood pressure is absent:
- * it needs two columns per record. Nutrients are not metrics: every nutrient
- * column of a row folds into one record, see CsvNutrition.kt.
+ * it needs two columns per record, and so is sleep, see CsvSleep.kt. Nutrients
+ * are not metrics: every nutrient column of a row folds into one record, see
+ * CsvNutrition.kt.
  *
  * The order, catalog and conversions mirror the Flutter build, so both apps
  * produce the same clientRecordIds. STEPS keys on the interval's start.
@@ -71,6 +72,10 @@ enum class CsvUnit {
     BEATS_PER_MINUTE,
     MILLISECONDS,
     SECONDS,
+
+    // Sleep durations, besides seconds.
+    MINUTES,
+    HOURS,
     BREATHS_PER_MINUTE,
     MILLIMOLES_PER_LITER,
     MILLIGRAMS_PER_DECILITER,
@@ -357,6 +362,9 @@ fun convertCsvValueToCanonical(value: Double, unit: CsvUnit): Double = when (uni
     CsvUnit.BEATS_PER_MINUTE -> value
     CsvUnit.MILLISECONDS -> value
     CsvUnit.SECONDS -> value * 1000
+    // Durations are canonical in milliseconds, like HRV.
+    CsvUnit.MINUTES -> value * 60_000
+    CsvUnit.HOURS -> value * 3_600_000
     CsvUnit.BREATHS_PER_MINUTE -> value
     CsvUnit.MILLIMOLES_PER_LITER -> value
     CsvUnit.MILLIGRAMS_PER_DECILITER -> value / MilligramsPerDeciliterPerMillimolePerLiter
@@ -373,13 +381,18 @@ fun convertCsvValueToCanonical(value: Double, unit: CsvUnit): Double = when (uni
 private val HeaderUnitTokens: List<Pair<String, CsvUnit>> = listOf(
     "kilograms" to CsvUnit.KILOGRAMS,
     "kilogram" to CsvUnit.KILOGRAMS,
+    "seconds" to CsvUnit.SECONDS,
+    "minutes" to CsvUnit.MINUTES,
     "pounds" to CsvUnit.POUNDS,
+    "hours" to CsvUnit.HOURS,
     "ml/kg/min" to CsvUnit.MILLILITERS_PER_KG_PER_MINUTE,
     "mmol/l" to CsvUnit.MILLIMOLES_PER_LITER,
     "mg/dl" to CsvUnit.MILLIGRAMS_PER_DECILITER,
     "breaths/min" to CsvUnit.BREATHS_PER_MINUTE,
     "brpm" to CsvUnit.BREATHS_PER_MINUTE,
     "kcal" to CsvUnit.KILOCALORIES_PER_DAY,
+    "min" to CsvUnit.MINUTES,
+    "sec" to CsvUnit.SECONDS,
     "mcg" to CsvUnit.MICROGRAMS,
     "kj" to CsvUnit.KILOJOULES_PER_DAY,
     "mg" to CsvUnit.MILLIGRAMS,
@@ -401,6 +414,7 @@ private val HeaderUnitTokens: List<Pair<String, CsvUnit>> = listOf(
     "c" to CsvUnit.CELSIUS,
     "f" to CsvUnit.FAHRENHEIT,
     "g" to CsvUnit.GRAMS,
+    "h" to CsvUnit.HOURS,
     "m" to CsvUnit.METERS,
     "s" to CsvUnit.SECONDS,
 )

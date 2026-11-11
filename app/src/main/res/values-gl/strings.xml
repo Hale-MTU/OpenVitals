@@ -2379,11 +2379,11 @@ Se Acceder a rutas de exercicio non aparece no diálogo de acceso, abre os axust
     <string name="settings_fit_import_folder_grant">Conceder permisos de importación</string>
     <string name="settings_fit_import_error">Aviso da importación FIT: %1$s</string>
     <string name="settings_csv_import_title">Importador CSV</string>
-    <string name="settings_csv_import_body">Importa medidas ou nutrición desde un ficheiro CSV, por exemplo unha exportación de peso dunha báscula intelixente ou unha folla de cálculo cunha fila por comida. Ti escolles que significa cada columna.</string>
+    <string name="settings_csv_import_body">Importa medidas, sono ou nutrición desde un ficheiro CSV, por exemplo unha exportación de peso dunha báscula intelixente, o historial dunha app de sono ou unha folla de cálculo cunha fila por comida. Ti escolles que significa cada columna.</string>
     <string name="settings_csv_import_action">Importar un ficheiro CSV</string>
     <string name="settings_csv_import_screen_title">Importador CSV</string>
     <string name="settings_csv_import_pick_title">Escolle un ficheiro CSV</string>
-    <string name="settings_csv_import_pick_body">Escolle un ficheiro CSV e asocia as súas columnas a medidas ou nutrientes. Non se escribe nada ata que confirmes.</string>
+    <string name="settings_csv_import_pick_body">Escolle un ficheiro CSV e asocia as súas columnas a medidas, sono ou nutrientes. Non se escribe nada ata que confirmes.</string>
     <string name="settings_csv_import_pick_action">Escoller ficheiro CSV</string>
     <string name="settings_csv_import_file_label">%1$s · %2$d columnas</string>
     <string name="settings_csv_import_continue">Continuar</string>
@@ -2441,6 +2441,8 @@ Se Acceder a rutas de exercicio non aparece no diálogo de acceso, abre os axust
     <string name="settings_csv_import_unit_beats_per_minute">Pulsacións por minuto (ppm)</string>
     <string name="settings_csv_import_unit_milliseconds">Milisegundos (ms)</string>
     <string name="settings_csv_import_unit_seconds">Segundos (s)</string>
+    <string name="settings_csv_import_unit_minutes">Minutos (min)</string>
+    <string name="settings_csv_import_unit_hours">Horas (h)</string>
     <string name="settings_csv_import_unit_breaths_per_minute">Respiracións por minuto</string>
     <string name="settings_csv_import_unit_millimoles_per_liter">Milimoles por litro (mmol/L)</string>
     <string name="settings_csv_import_unit_milligrams_per_deciliter">Miligramos por decilitro (mg/dL)</string>
@@ -2486,6 +2488,13 @@ Se Acceder a rutas de exercicio non aparece no diálogo de acceso, abre os axust
     <string name="settings_csv_import_issue_multiple_end_timestamps">Só unha columna pode conter a data e a hora de fin.</string>
     <string name="settings_csv_import_issue_multiple_food_names">Só unha columna pode conter o nome do alimento.</string>
     <string name="settings_csv_import_issue_bp_needs_both">A presión arterial necesita unha columna sistólica e outra diastólica.</string>
+    <string name="settings_csv_import_issue_sleep_needs_end">O sono necesita unha columna «Hora de espertar» ou «Tempo na cama».</string>
+    <string name="settings_csv_import_sleep_woke_up">Hora de espertar</string>
+    <string name="settings_csv_import_sleep_time_to_fall_asleep">Tempo ata durmir</string>
+    <string name="settings_csv_import_sleep_time_asleep">Tempo durmido</string>
+    <string name="settings_csv_import_sleep_notes">Notas do sono</string>
+    <string name="settings_csv_import_sleep_hint">As columnas de sono dunha fila forman unha sesión de sono, desde a súa data e hora ata «Hora de espertar», ou durante o «Tempo na cama». O sono comeza cando pasa o «Tempo ata durmir» e dura o «Tempo durmido»; o resto da sesión conta como esperto na cama.</string>
+    <string name="settings_csv_import_sleep_duration_hint">Unha cela como 7:30 lese como horas e minutos, sexa cal sexa a unidade.</string>
     <string name="settings_csv_import_confirm_title">Listo para importar</string>
     <string name="settings_csv_import_confirm_summary">%1$s · %2$d medidas por fila</string>
     <string name="settings_csv_import_confirm_range">%1$s: de %2$s a %3$s</string>
