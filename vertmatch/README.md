@@ -2,8 +2,8 @@
 
 OpenVitals can send an activity to [VertMatch](https://vertmatch.run) and show the runner's VertMatch
 training summary, through the [VertMatch partner API](https://vertmatch.run/developers)
-([machine-readable spec](https://vertmatch.run/partner-api.llm.txt), v1, early access, may change before
-v1.0).
+([machine-readable spec](https://vertmatch.run/partner-api.llm.txt), document version 2 of 2026-11-11: any
+activity type, classified from the file's sport). The API is in early access and may change before v1.0.
 
 **It is off by default.** OpenVitals ships without the `INTERNET` permission ([AGENTS.md](../AGENTS.md),
 "No `INTERNET` permission") and this integration needs a socket. So the default build contains no VertMatch

@@ -19,7 +19,7 @@ public fun interface AccessTokenProvider {
     public fun accessToken(): String?
 }
 
-/** What the upload answered, for a stored ride. */
+/** What the upload answered, for a stored activity. */
 public class StoredActivity(
     public val activityId: String,
     public val externalId: String,
@@ -33,7 +33,7 @@ public class StoredActivity(
 
 /**
  * The four answers to an upload (HTTP 200 each). All four are success: treat them so
- * and move on. Only [Known] means "do not send this ride again".
+ * and move on. Only [Known] means "do not send this activity again".
  */
 public sealed interface UploadOutcome {
     public val activityId: String
@@ -54,7 +54,7 @@ public sealed interface UploadOutcome {
     /** The runner deleted it in VertMatch, so it was NOT recreated. Do not resend it. */
     public class Known(override val activityId: String, override val externalId: String) : UploadOutcome
 
-    /** The same ride already arrived from another source; [activityId] is that other copy. */
+    /** The same activity already arrived from another source; [activityId] is that other copy. */
     public class Duplicate(
         override val activityId: String,
         override val externalId: String,
@@ -91,7 +91,7 @@ public class VertMatchSummary(
 )
 
 /**
- * The partner API: upload a ride, delete it, read the summary. Every call is blocking
+ * The partner API: upload an activity, delete it, read the summary. Every call is blocking
  * and returns a [VertMatchResult]; run it off the main thread. Nothing here logs.
  *
  * `workouts.write` and `summary.read` are checked against [VertMatchConfig.scopes]
@@ -104,8 +104,8 @@ public class VertMatchApi(
     private val random: SecureRandom = SecureRandom(),
 ) {
     /**
-     * Uploads [fit] under a stable [externalId]: the same ride must always carry the same one,
-     * and when the FIT file names its ride (`virtual_ride_id`, else `ride_id`) it must equal it,
+     * Uploads [fit] under a stable [externalId]: the same activity must always carry the same one,
+     * and when the FIT file carries an id of its own (`virtual_ride_id`, else `ride_id`) it must equal it,
      * or VertMatch answers 422 `external_id_mismatch`.
      */
     public fun uploadActivity(externalId: String, fit: ByteArray): VertMatchResult<UploadOutcome> {
@@ -126,7 +126,7 @@ public class VertMatchApi(
     }
 
     /**
-     * Deletes the ride the runner deleted in the app. Idempotent: false means it was already gone
+     * Deletes the activity the runner deleted in the app. Idempotent: false means it was already gone
      * or never reached VertMatch, which is the same outcome for the app.
      */
     public fun deleteActivity(externalId: String): VertMatchResult<Boolean> {

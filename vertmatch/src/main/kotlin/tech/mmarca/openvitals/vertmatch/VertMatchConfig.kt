@@ -2,7 +2,7 @@ package tech.mmarca.openvitals.vertmatch
 
 /** The two scopes the partner API defines. An app only ever asks for the ones VertMatch approved. */
 public enum class VertMatchScope(public val value: String) {
-    /** Upload a ride (FIT) and delete it again. */
+    /** Upload an activity (FIT) and delete the ones this app uploaded. */
     WorkoutsWrite("workouts.write"),
 
     /** Read the training summary. */

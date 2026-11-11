@@ -79,7 +79,7 @@ class SettingsViewModel @Inject constructor(
     private val openWatchLink: tech.mmarca.openvitals.openwatch.OpenWatchLink? = null,
     extensionSet: Set<@JvmSuppressWildcards SettingsExtension> = emptySet(),
 ) : ViewModel() {
-    /** Entries optional integrations add below the root; none in the default build. */
+    /** Entries optional integrations add after the root's categories; none in the default build. */
     val extensions: List<SettingsExtension> = extensionSet.toList()
 
     companion object {
