@@ -218,7 +218,8 @@ android {
         getByName("main") {
             res.srcDir(translationCoverageResDir)
             if (vertMatchEnabled) {
-                java.srcDir("src/vertmatch/kotlin")
+                // kotlin, not java: AGP's built-in Kotlin compiles only Kotlin source directories.
+                kotlin.srcDir("src/vertmatch/kotlin")
                 res.srcDir("src/vertmatch/res")
             }
         }
