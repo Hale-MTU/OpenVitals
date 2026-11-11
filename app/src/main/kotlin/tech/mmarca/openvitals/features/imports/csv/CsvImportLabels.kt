@@ -40,6 +40,17 @@ internal fun csvBloodPressurePartLabel(part: CsvBloodPressurePart): String = str
 )
 
 @Composable
+internal fun csvSleepPartLabel(part: CsvSleepPart): String = stringResource(
+    when (part) {
+        CsvSleepPart.WOKE_UP -> R.string.settings_csv_import_sleep_woke_up
+        CsvSleepPart.TIME_IN_BED -> R.string.sleep_time_in_bed
+        CsvSleepPart.TIME_TO_FALL_ASLEEP -> R.string.settings_csv_import_sleep_time_to_fall_asleep
+        CsvSleepPart.TIME_ASLEEP -> R.string.settings_csv_import_sleep_time_asleep
+        CsvSleepPart.NOTES -> R.string.settings_csv_import_sleep_notes
+    },
+)
+
+@Composable
 internal fun csvUnitLabel(unit: CsvUnit): String = stringResource(
     when (unit) {
         CsvUnit.KILOGRAMS -> R.string.settings_csv_import_unit_kilograms
@@ -59,6 +70,8 @@ internal fun csvUnitLabel(unit: CsvUnit): String = stringResource(
         CsvUnit.BEATS_PER_MINUTE -> R.string.settings_csv_import_unit_beats_per_minute
         CsvUnit.MILLISECONDS -> R.string.settings_csv_import_unit_milliseconds
         CsvUnit.SECONDS -> R.string.settings_csv_import_unit_seconds
+        CsvUnit.MINUTES -> R.string.settings_csv_import_unit_minutes
+        CsvUnit.HOURS -> R.string.settings_csv_import_unit_hours
         CsvUnit.BREATHS_PER_MINUTE -> R.string.settings_csv_import_unit_breaths_per_minute
         CsvUnit.MILLIMOLES_PER_LITER -> R.string.settings_csv_import_unit_millimoles_per_liter
         CsvUnit.MILLIGRAMS_PER_DECILITER -> R.string.settings_csv_import_unit_milligrams_per_deciliter
@@ -128,6 +141,7 @@ internal fun csvIssueLabel(issue: CsvMappingIssue): String = stringResource(
         CsvMappingIssue.MULTIPLE_END_TIMESTAMP_COLUMNS -> R.string.settings_csv_import_issue_multiple_end_timestamps
         CsvMappingIssue.MULTIPLE_FOOD_NAME_COLUMNS -> R.string.settings_csv_import_issue_multiple_food_names
         CsvMappingIssue.BLOOD_PRESSURE_NEEDS_SYSTOLIC_AND_DIASTOLIC -> R.string.settings_csv_import_issue_bp_needs_both
+        CsvMappingIssue.SLEEP_NEEDS_END -> R.string.settings_csv_import_issue_sleep_needs_end
     },
 )
 

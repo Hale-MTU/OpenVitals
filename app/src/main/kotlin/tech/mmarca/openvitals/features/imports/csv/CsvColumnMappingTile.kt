@@ -43,13 +43,17 @@ internal fun CsvColumnMappingTile(
     onSetRole: (CsvColumnRole, CsvImportMetric?) -> Unit,
     onSetNutrient: (NutritionNutrient) -> Unit,
     onSetBloodPressurePart: (CsvBloodPressurePart) -> Unit,
+    onSetSleepPart: (CsvSleepPart) -> Unit,
     onSetInterpretation: (CsvValueInterpretation) -> Unit,
     modifier: Modifier = Modifier,
     labelHint: CsvBloodPressureLabelHint? = null,
 ) {
     val spec = mapping.metric?.takeIf { mapping.isMetric }?.let { CsvMetricCatalog[it] }
     val nutrient = mapping.nutrient?.takeIf { mapping.isNutrient }
-    val interpretations = spec?.interpretations ?: nutrient?.let(::csvNutrientInterpretations)
+    val sleepPart = mapping.sleepPart?.takeIf { mapping.isSleep }
+    val interpretations = spec?.interpretations
+        ?: nutrient?.let(::csvNutrientInterpretations)
+        ?: sleepPart?.let(::csvSleepInterpretations)
 
     OpenVitalsCard(modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -68,9 +72,13 @@ internal fun CsvColumnMappingTile(
                 onSetRole = onSetRole,
                 onSetNutrient = onSetNutrient,
                 onSetBloodPressurePart = onSetBloodPressurePart,
+                onSetSleepPart = onSetSleepPart,
             )
             if (mapping.isBloodPressure && mapping.bloodPressurePart?.isPressure == true) {
                 CsvColumnHint(R.string.settings_csv_import_bp_pressure_hint)
+            }
+            if (sleepPart != null) {
+                CsvColumnHint(R.string.settings_csv_import_sleep_hint)
             }
             if (labelHint != null) {
                 CsvBloodPressureLabelHintText(labelHint)
@@ -92,12 +100,18 @@ internal fun CsvColumnMappingTile(
                 if (nutrient != null) {
                     CsvColumnHint(R.string.settings_csv_import_nutrient_hint)
                 }
+                if (sleepPart != null) {
+                    CsvColumnHint(R.string.settings_csv_import_sleep_duration_hint)
+                }
             }
         }
     }
 }
 
-/** The column's role: not imported, a timestamp, a metric, a blood pressure part, or a nutrient under its section. */
+/**
+ * The column's role: not imported, a timestamp, a metric, a blood pressure
+ * or sleep part, or a nutrient under its section.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CsvColumnRoleField(
@@ -105,6 +119,7 @@ private fun CsvColumnRoleField(
     onSetRole: (CsvColumnRole, CsvImportMetric?) -> Unit,
     onSetNutrient: (NutritionNutrient) -> Unit,
     onSetBloodPressurePart: (CsvBloodPressurePart) -> Unit,
+    onSetSleepPart: (CsvSleepPart) -> Unit,
 ) {
     var roleExpanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
@@ -170,6 +185,19 @@ private fun CsvColumnRoleField(
                     onClick = {
                         roleExpanded = false
                         onSetBloodPressurePart(part)
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                )
+            }
+            HorizontalDivider()
+            // The parts of one session, which the row's columns make together.
+            CsvRoleMenuHeader(stringResource(R.string.metric_sleep))
+            CsvSleepPart.entries.forEach { part ->
+                DropdownMenuItem(
+                    text = { Text(csvSleepPartLabel(part)) },
+                    onClick = {
+                        roleExpanded = false
+                        onSetSleepPart(part)
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
@@ -301,6 +329,8 @@ private fun roleValueLabel(mapping: CsvColumnMapping): String = when (mapping.ro
     )
     CsvColumnRole.FOOD_NAME -> stringResource(R.string.settings_csv_import_role_food_name)
     CsvColumnRole.BLOOD_PRESSURE -> mapping.bloodPressurePart?.let { csvBloodPressurePartLabel(it) }
+        ?: stringResource(R.string.settings_csv_import_role_ignore)
+    CsvColumnRole.SLEEP -> mapping.sleepPart?.let { csvSleepPartLabel(it) }
         ?: stringResource(R.string.settings_csv_import_role_ignore)
     CsvColumnRole.IGNORE -> stringResource(R.string.settings_csv_import_role_ignore)
 }

@@ -26,6 +26,9 @@ enum class CsvColumnRole {
 
     /** One part of the row's blood pressure reading. A row's systolic and diastolic columns make one record. */
     BLOOD_PRESSURE,
+
+    /** One part of the row's sleep session. A row's sleep columns make one record, starting at its date and time. */
+    SLEEP,
 }
 
 /** One column's assignment. */
@@ -40,6 +43,8 @@ data class CsvColumnMapping(
     val nutrient: NutritionNutrient? = null,
     /** Set only when [role] is [CsvColumnRole.BLOOD_PRESSURE]. */
     val bloodPressurePart: CsvBloodPressurePart? = null,
+    /** Set only when [role] is [CsvColumnRole.SLEEP]. */
+    val sleepPart: CsvSleepPart? = null,
 ) {
     val isMetric: Boolean get() = role == CsvColumnRole.METRIC && metric != null
 
@@ -47,16 +52,19 @@ data class CsvColumnMapping(
 
     val isBloodPressure: Boolean get() = role == CsvColumnRole.BLOOD_PRESSURE && bloodPressurePart != null
 
+    val isSleep: Boolean get() = role == CsvColumnRole.SLEEP && sleepPart != null
+
     val isTimestamp: Boolean get() = role == CsvColumnRole.TIMESTAMP
 
     val isEndTimestamp: Boolean get() = role == CsvColumnRole.END_TIMESTAMP
 
     val isFoodName: Boolean get() = role == CsvColumnRole.FOOD_NAME
 
-    /** The interpretation to use, falling back to the metric's or nutrient's default. */
+    /** The interpretation to use, falling back to the metric's, nutrient's or sleep duration's default. */
     val effectiveInterpretation: CsvValueInterpretation?
         get() {
             if (isNutrient) return interpretation ?: csvNutrientDefaultInterpretation(nutrient!!)
+            if (isSleep) return interpretation ?: csvSleepInterpretations(sleepPart!!)?.first()
             val selected = metric ?: return null
             return interpretation ?: CsvMetricCatalog[selected]?.defaultInterpretation
         }
@@ -77,19 +85,28 @@ data class CsvImportMapping(
     /** Every column mapped to a part of the blood pressure reading, in column order. */
     val bloodPressureColumns: List<CsvColumnMapping> get() = columns.filter { it.isBloodPressure }
 
-    /** Whether any column produces a record: a metric, a nutrient, or a blood pressure part. */
-    val importsAnything: Boolean
-        get() = metricColumns.isNotEmpty() || nutrientColumns.isNotEmpty() || bloodPressureColumns.isNotEmpty()
+    /** Every column mapped to a part of the sleep session, in column order. */
+    val sleepColumns: List<CsvColumnMapping> get() = columns.filter { it.isSleep }
 
-    /** The most records one row can make: one per metric, one food, one blood pressure reading. */
+    /** Whether any column produces a record: a metric, a nutrient, a blood pressure part, or a sleep part. */
+    val importsAnything: Boolean
+        get() = metricColumns.isNotEmpty() || nutrientColumns.isNotEmpty() || bloodPressureColumns.isNotEmpty() ||
+            sleepColumns.isNotEmpty()
+
+    /** The most records one row can make: one per metric, one food, one blood pressure reading, one sleep session. */
     val recordsPerRow: Int
         get() = metricColumns.size +
             (if (nutrientColumns.isNotEmpty()) 1 else 0) +
-            (if (bloodPressureColumns.isNotEmpty()) 1 else 0)
+            (if (bloodPressureColumns.isNotEmpty()) 1 else 0) +
+            (if (sleepColumns.isNotEmpty()) 1 else 0)
 
     /** The column holding [part], or null when none does. */
     fun bloodPressureColumn(part: CsvBloodPressurePart): CsvColumnMapping? =
         bloodPressureColumns.firstOrNull { it.bloodPressurePart == part }
+
+    /** The column holding [part], or null when none does. */
+    fun sleepColumn(part: CsvSleepPart): CsvColumnMapping? =
+        sleepColumns.firstOrNull { it.sleepPart == part }
 
     /** The single food-name column, or null when none or several are set. */
     val foodNameColumn: CsvColumnMapping?
@@ -111,13 +128,14 @@ data class CsvImportMapping(
     val needsWeightColumn: Boolean
         get() = metricColumns.any { it.effectiveInterpretation?.needsRowWeight == true }
 
-    /** The write permissions this mapping needs: only the metrics in use, nutrition and blood pressure. */
+    /** The write permissions this mapping needs: only the metrics in use, nutrition, blood pressure and sleep. */
     val requiredWritePermissions: Set<String>
         get() = metricColumns.mapNotNullTo(mutableSetOf()) { column ->
             column.metric?.let { CsvMetricCatalog[it]?.writePermission }
         }.apply {
             if (nutrientColumns.isNotEmpty()) add(CsvNutritionWritePermission)
             if (bloodPressureColumns.isNotEmpty()) add(CsvBloodPressureWritePermission)
+            if (sleepColumns.isNotEmpty()) add(CsvSleepWritePermission)
         }
 
     /** Replaces the mapping for one column. */
@@ -139,7 +157,7 @@ enum class CsvMappingIssue {
     /** Nothing to import. */
     NO_METRIC_COLUMNS,
 
-    /** Two columns map to the same metric, nutrient or blood pressure part, so one would overwrite the other. */
+    /** Two columns map to the same metric, nutrient, blood pressure part or sleep part, so one would overwrite the other. */
     DUPLICATE_METRIC,
 
     /** More than one column claims to be the interval end. */
@@ -150,6 +168,9 @@ enum class CsvMappingIssue {
 
     /** A blood pressure column is mapped without both a systolic and a diastolic one. */
     BLOOD_PRESSURE_NEEDS_SYSTOLIC_AND_DIASTOLIC,
+
+    /** A sleep column is mapped without a Woke up or a Time in bed one, so no session has an end. */
+    SLEEP_NEEDS_END,
 
     /** Body fat is given as a mass but no weight column is mapped to divide by. */
     MASS_SHARE_NEEDS_WEIGHT_COLUMN,
@@ -182,9 +203,11 @@ fun validateCsvMapping(
     val metrics = mapping.metricColumns.map { it.metric }
     val nutrients = mapping.nutrientColumns.map { it.nutrient }
     val bloodPressureParts = mapping.bloodPressureColumns.map { it.bloodPressurePart }
+    val sleepParts = mapping.sleepColumns.map { it.sleepPart }
     if (metrics.size != metrics.toSet().size ||
         nutrients.size != nutrients.toSet().size ||
-        bloodPressureParts.size != bloodPressureParts.toSet().size
+        bloodPressureParts.size != bloodPressureParts.toSet().size ||
+        sleepParts.size != sleepParts.toSet().size
     ) {
         issues += CsvMappingIssue.DUPLICATE_METRIC
     }
@@ -193,6 +216,10 @@ fun validateCsvMapping(
         !bloodPressureParts.containsAll(listOf(CsvBloodPressurePart.SYSTOLIC, CsvBloodPressurePart.DIASTOLIC))
     ) {
         issues += CsvMappingIssue.BLOOD_PRESSURE_NEEDS_SYSTOLIC_AND_DIASTOLIC
+    }
+
+    if (sleepParts.isNotEmpty() && sleepParts.none { it?.isSpan == true }) {
+        issues += CsvMappingIssue.SLEEP_NEEDS_END
     }
 
     if (mapping.columns.count { it.isFoodName } > 1) {
@@ -230,21 +257,27 @@ fun validateCsvMapping(
         }
     }
 
-    // The end column uses the same settings; the day/month question is asked once.
-    if (endTimestamps.size == 1 && sample.isNotEmpty()) {
-        val index = endTimestamps.single().columnIndex
-        val values = sample.mapNotNull { row ->
-            row.getOrNull(index)?.trim()?.takeIf { it.isNotEmpty() }
-        }
-        if (values.isNotEmpty() &&
-            values.none { parseCsvWallClock(it, mapping.dateTime.format, mapping.dateTime.customPattern) != null } &&
-            CsvMappingIssue.TIMESTAMP_FORMAT_MATCHES_NO_SAMPLE_ROW !in issues
-        ) {
-            issues += CsvMappingIssue.TIMESTAMP_FORMAT_MATCHES_NO_SAMPLE_ROW
-        }
+    // The end and Woke up columns use the same settings; the day/month question is asked once.
+    val endColumns = listOfNotNull(
+        endTimestamps.singleOrNull(),
+        mapping.sleepColumns.singleOrNull { it.sleepPart == CsvSleepPart.WOKE_UP },
+    )
+    if (sample.isNotEmpty() && endColumns.any { column -> sampleMatchesNoRow(column.columnIndex, mapping, sample) } &&
+        CsvMappingIssue.TIMESTAMP_FORMAT_MATCHES_NO_SAMPLE_ROW !in issues
+    ) {
+        issues += CsvMappingIssue.TIMESTAMP_FORMAT_MATCHES_NO_SAMPLE_ROW
     }
 
     return issues
+}
+
+/** Whether column [index] holds something in [sample] and the chosen format reads none of it as a date. */
+private fun sampleMatchesNoRow(index: Int, mapping: CsvImportMapping, sample: List<List<String>>): Boolean {
+    val values = sample.mapNotNull { row ->
+        row.getOrNull(index)?.trim()?.takeIf { it.isNotEmpty() }
+    }
+    return values.isNotEmpty() &&
+        values.none { parseCsvWallClock(it, mapping.dateTime.format, mapping.dateTime.customPattern) != null }
 }
 
 /**

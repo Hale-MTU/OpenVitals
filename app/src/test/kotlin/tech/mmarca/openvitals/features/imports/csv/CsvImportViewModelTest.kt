@@ -9,6 +9,7 @@ import androidx.health.connect.client.records.BloodPressureRecord
 import androidx.health.connect.client.records.BodyFatRecord
 import androidx.health.connect.client.records.NutritionRecord
 import androidx.health.connect.client.records.Record
+import androidx.health.connect.client.records.SleepSessionRecord
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -38,6 +39,7 @@ private const val WriteWeight = "android.permission.health.WRITE_WEIGHT"
 private const val WriteBodyWaterMass = "android.permission.health.WRITE_BODY_WATER_MASS"
 private const val WriteNutrition = "android.permission.health.WRITE_NUTRITION"
 private const val WriteBloodPressure = "android.permission.health.WRITE_BLOOD_PRESSURE"
+private const val WriteSleep = "android.permission.health.WRITE_SLEEP"
 
 /** The Withings shape, three rows. */
 private const val WithingsCsv =
@@ -51,6 +53,12 @@ private const val MonitorCsv =
     "timestamp,systolic,diastolic,position\n" +
         "2026-10-03 00:03,123,88,Sitting\n" +
         "2026-10-03 10:40,149,97,seated\n"
+
+/** Sleep Cycle's export: semicolons, durations in seconds, and columns Health Connect has no field for. */
+private const val SleepCycleCsv =
+    "Went to bed;Woke up;Sleep Quality;Time asleep (seconds);Time before sleep (seconds);Did snore;Notes\n" +
+        "2026-11-01 23:10:00;2026-11-02 07:04:00;82%;25200;900;true;Coffee\n" +
+        "2026-11-02 23:40:00;2026-11-03 06:50:00;74%;24000;600;false;\n"
 
 /** The two preferences in memory, as the store would keep them between imports. */
 private class InMemoryCsvImportPreferences : CsvImportPreferences {
@@ -96,6 +104,7 @@ class CsvImportViewModelTest {
         CsvMetricCatalog.values.mapTo(mutableSetOf()) { it.writePermission } +
             CsvNutritionWritePermission +
             CsvBloodPressureWritePermission +
+            CsvSleepWritePermission +
             WorkoutWritePermissions
 
     @Before
@@ -432,6 +441,30 @@ class CsvImportViewModelTest {
                 zone = CsvTimeZoneMode.UTC,
             ),
         )
+    }
+
+    @Test
+    fun `a Sleep Cycle export maps to a night a row, its durations read in the seconds its headers name`() = runTest {
+        val vm = viewModel()
+        vm.pickFile(documentUri("sleepdata.csv", SleepCycleCsv))
+        assertEquals(0, vm.awaitLoaded().mapping?.timestampColumn?.columnIndex)
+
+        vm.setColumnSleepPart(1, CsvSleepPart.WOKE_UP)
+        vm.setColumnSleepPart(3, CsvSleepPart.TIME_ASLEEP)
+        vm.setColumnSleepPart(4, CsvSleepPart.TIME_TO_FALL_ASLEEP)
+        vm.setColumnSleepPart(6, CsvSleepPart.NOTES)
+        val mapping = vm.uiState.value.mapping!!
+        assertEquals(CsvDirectValue(CsvUnit.SECONDS), mapping.sleepColumn(CsvSleepPart.TIME_ASLEEP)?.interpretation)
+        assertNull(mapping.sleepColumn(CsvSleepPart.WOKE_UP)?.interpretation)
+        assertEquals(setOf(WriteSleep), vm.uiState.value.missingPermissions)
+        assertTrue(vm.uiState.value.canContinue)
+
+        vm.startImport()
+        vm.awaitDone()
+
+        val nights = inserted.filterIsInstance<SleepSessionRecord>()
+        assertEquals(listOf("Coffee", null), nights.map { it.notes })
+        assertEquals(listOf(3, 3), nights.map { it.stages.size })
     }
 
     @Test

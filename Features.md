@@ -380,19 +380,20 @@ For the route, widget, package, and documentation mapping, see [`docs/features/f
 
 ### CSV Import
 
-- Import body measurements and vitals from a CSV file through a five-step wizard: choose a file, map the columns, confirm, import, read the result.
+- Import body measurements, vitals and sleep from a CSV file through a five-step wizard: choose a file, map the columns, confirm, import, read the result.
 - Choose the column separator and whether the first row holds column names, both detected and both overridable.
 - Map each column to nothing, to the date and time, or to one of the supported measurements.
 - Import weight, body fat, lean body mass, bone mass, body water, height, basal metabolic rate, heart rate, resting heart rate, heart rate variability, blood oxygen, respiratory rate, body temperature, basal body temperature, blood glucose, VO2 max, and blood pressure.
 - Import blood pressure from a systolic and a diastolic column, with optional body position and cuff location columns read as the app's own words in its language or in English. Choose a default position and cuff location, remembered between imports, for a file without them or a word not recognised; the mapping lists the accepted words and names the sampled values it does not know.
 - Choose the unit of each column, which describes the file rather than the app's display unit system.
+- Import sleep sessions, such as Sleep Cycle's export, one per row: the start from the date and time column, the end from a "Woke up" or a "Time in bed" column, an awake stage for the time to fall asleep and an asleep stage for the time asleep, and the notes. Durations read in minutes, seconds or hours, or as `7:32`.
 - Read a body-fat column given as a mass, converting it to a percentage using the weight in the same row.
 - Choose the date format, or detect it from the data, and pick which of day-first and month-first the file uses when both fit.
 - Choose how a timestamp without an offset is interpreted: this phone's time zone, UTC, or a fixed offset. A timestamp that states its own offset is used as written.
 - Reject a row for an unusable timestamp or too few columns, and reject a single value for an unusable number or an implausible value, keeping the rest of the row.
 - Read the result as written, already present, and rejected counts, with rejections grouped by reason.
 - Copy or save the import report: the parsing settings and the column mapping actually used, and each rejected row's number, column and reason, with the shape of a cell that could not be read and never its text.
-- Interval records such as sleep and workouts are deliberately not supported.
+- Workouts are not mapped column by column; they come in through the OpenVitals workout export format.
 - Re-importing writes no duplicates; a corrected value replaces the record at the same instant.
 - No rollback/delete flow is provided for a CSV import after records are written.
 

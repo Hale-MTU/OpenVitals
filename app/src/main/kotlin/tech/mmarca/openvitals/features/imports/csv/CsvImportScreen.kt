@@ -240,6 +240,7 @@ internal fun CsvMappingStep(
                     onSetRole = { role, metric -> viewModel.setColumnRole(index, role, metric) },
                     onSetNutrient = { nutrient -> viewModel.setColumnNutrient(index, nutrient) },
                     onSetBloodPressurePart = { part -> viewModel.setColumnBloodPressurePart(index, part) },
+                    onSetSleepPart = { part -> viewModel.setColumnSleepPart(index, part) },
                     onSetInterpretation = { viewModel.setColumnInterpretation(index, it) },
                     modifier = Modifier.padding(bottom = Spacing.sm),
                     labelHint = labelHint,
@@ -350,6 +351,8 @@ internal fun CsvConfirmStep(
                         }
                         // Readings that will be written: a swapped pair is rejected, so it shows no range.
                         CsvBloodPressureRangeLines(sample = sample, mapping = mapping)
+                        // Nights as the sleep screen will count them, so seconds read as minutes stand out.
+                        CsvSleepRangeLines(sample = sample, mapping = mapping)
                     }
                 }
                 if (missing.isNotEmpty()) {
