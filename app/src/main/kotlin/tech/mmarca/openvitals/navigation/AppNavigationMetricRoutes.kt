@@ -168,7 +168,6 @@ internal fun MetricRouteContent(
                 onOpenDistance = { onOpenMetric(DashboardWidgetId.DISTANCE) },
                 onOpenEnergyBurned = { onOpenMetric(DashboardWidgetId.CALORIES_OUT) },
                 onOpenHrv = { onOpenMetric(DashboardWidgetId.HRV) },
-                onOpenBodyProfile = onOpenBodyProfile,
             )
         }
         MetricRouteDestination.Sleep -> {

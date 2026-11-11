@@ -15,12 +15,7 @@ import tech.mmarca.openvitals.core.presentation.rememberMetricDetailSectionOrder
 import tech.mmarca.openvitals.domain.model.ExerciseData
 import tech.mmarca.openvitals.domain.preferences.toWeekPeriodMode
 import tech.mmarca.openvitals.healthconnect.HealthConnectFeature
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.Modifier
-import tech.mmarca.openvitals.ui.components.BodyProfilePrompt
 import tech.mmarca.openvitals.ui.components.MetricDetailScaffold
-import tech.mmarca.openvitals.ui.theme.LayoutMetrics
-import tech.mmarca.openvitals.ui.theme.Spacing
 import tech.mmarca.openvitals.ui.components.WithHealthConnectFeatureScreen
 import tech.mmarca.openvitals.ui.components.rememberChartDaySelection
 
@@ -39,7 +34,6 @@ fun ActivitiesScreen(
     onOpenDistance: (() -> Unit)? = null,
     onOpenEnergyBurned: (() -> Unit)? = null,
     onOpenHrv: (() -> Unit)? = null,
-    onOpenBodyProfile: (() -> Unit)? = null,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val sectionContext = rememberMetricDetailSectionOrdering()
@@ -81,15 +75,6 @@ fun ActivitiesScreen(
                 activityPeriodTitle(state.selectedRange, state.activityWeekMode, period)
             },
         ) { period ->
-            if (state.calorieProfileMissingInputs.isNotEmpty() && onOpenBodyProfile != null) {
-                item {
-                    BodyProfilePrompt(
-                        missing = state.calorieProfileMissingInputs,
-                        onOpenBodyProfile = onOpenBodyProfile,
-                        modifier = Modifier.padding(horizontal = LayoutMetrics.screenGutter, vertical = Spacing.sm),
-                    )
-                }
-            }
             renderActivitiesOrderedContent(
                 sectionContext = sectionContext,
                 state = state,

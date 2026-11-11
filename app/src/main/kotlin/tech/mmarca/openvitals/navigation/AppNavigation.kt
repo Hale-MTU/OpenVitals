@@ -693,9 +693,6 @@ fun AppNavigation(
                     onOpenHrv = {
                         navController.navigate(Screen.Metric.createRoute(DashboardWidgetId.HRV.name))
                     },
-                    onOpenBodyProfile = {
-                        navController.navigate(Screen.SettingsBodyProfile.route)
-                    },
                 )
             }
 

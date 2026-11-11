@@ -21,8 +21,6 @@ import tech.mmarca.openvitals.core.period.PeriodSelectionDriver
 import tech.mmarca.openvitals.core.period.TimeRange
 import tech.mmarca.openvitals.core.period.displayPeriodFor
 import tech.mmarca.openvitals.domain.preferences.ActivityWeekMode
-import tech.mmarca.openvitals.domain.insights.BmrInput
-import tech.mmarca.openvitals.domain.insights.bmrMissingInputs
 import tech.mmarca.openvitals.domain.preferences.BodyProfile
 import tech.mmarca.openvitals.domain.preferences.toWeekPeriodMode
 import tech.mmarca.openvitals.domain.model.CaloriesBurnedSource
@@ -68,8 +66,6 @@ data class ActivitiesUiState(
     val activityTypeAggregates: List<ActivityTypeAggregate> = emptyList(),
     val overviewDays: List<ActivityOverviewDay> = emptyList(),
     val crossDailyRestingHR: List<DailyRestingHR> = emptyList(),
-    /** Body profile fields the workout calorie estimates still want; the screen asks for them. */
-    val calorieProfileMissingInputs: Set<BmrInput> = emptySet(),
     val error: ScreenError? = null,
 )
 
@@ -268,7 +264,6 @@ class ActivitiesViewModel @Inject constructor(
                             )
                         },
                         crossDailyRestingHR = loadedRestingHeartRate,
-                        calorieProfileMissingInputs = profile.bmrMissingInputs(windows.current.end),
                     )
                 }
             }
@@ -299,7 +294,6 @@ class ActivitiesViewModel @Inject constructor(
             selectedActivityType = selectedActivityType,
             availableActivityTypes = result.availableActivityTypes(),
             workouts = filtered.workouts,
-            calorieProfileMissingInputs = result.calorieProfileMissingInputs,
             plannedWorkouts = filtered.plannedWorkouts,
             plannedWorkoutsAvailable = runCatching { repository.plannedWorkoutWritePermissions().isNotEmpty() }
                 .getOrDefault(false),
@@ -326,7 +320,6 @@ private data class ActivitiesLoadResult(
     val baselineWorkouts: List<ExerciseData>,
     val overviewDays: List<ActivityOverviewDay>,
     val crossDailyRestingHR: List<DailyRestingHR>,
-    val calorieProfileMissingInputs: Set<BmrInput>,
 )
 
 private fun ActivitiesLoadResult.filteredBy(type: Int?): ActivitiesLoadResult {

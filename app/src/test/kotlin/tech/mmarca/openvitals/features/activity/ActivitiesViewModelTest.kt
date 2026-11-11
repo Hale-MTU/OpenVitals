@@ -14,7 +14,6 @@ import tech.mmarca.openvitals.domain.insights.MetricDailyGoalKey
 import tech.mmarca.openvitals.domain.insights.dailyGoalProgress
 import tech.mmarca.openvitals.domain.preferences.ActivityWeekMode
 import tech.mmarca.openvitals.domain.preferences.BiologicalSex
-import tech.mmarca.openvitals.domain.insights.BmrInput
 import tech.mmarca.openvitals.domain.preferences.BodyProfile
 import tech.mmarca.openvitals.domain.model.DailyRestingHR
 import tech.mmarca.openvitals.domain.model.ExerciseData
@@ -142,17 +141,6 @@ class ActivitiesViewModelTest {
         coVerify { repo.loadWorkoutsWithMetrics(today.minusDays(6), today) }
         coVerify { repo.loadDailySteps(today.minusDays(6), today) }
         coVerify { repo.loadDailyNutrition(today.minusDays(6), today) }
-    }
-
-    @Test fun `a body profile without the calorie fields is asked for them`() = runTest {
-        val vm = activitiesViewModel(emptyRepo())
-
-        advanceUntilIdle()
-
-        assertEquals(
-            setOf(BmrInput.SEX, BmrInput.BIRTH_YEAR, BmrInput.WEIGHT, BmrInput.HEIGHT),
-            vm.uiState.value.calorieProfileMissingInputs,
-        )
     }
 
     @Test fun `monday to sunday week mode displays all seven days including empty future days`() = runTest {
