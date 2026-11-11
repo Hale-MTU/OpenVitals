@@ -35,7 +35,7 @@ holds the line: it fails if the default build could reach the integration or los
 
 ## What the runner sees (opt-in build)
 
-- **Settings**: a VertMatch card at the end of the root list opens the VertMatch screen. That screen says what
+- **Settings**: a VertMatch card after the settings categories, above Support, opens the VertMatch screen. That screen says what
   is sent and received, connects through the browser (Auth0 at `auth.vertmatch.run`, PKCE, no client secret),
   disconnects, and shows the training summary: goal race, and for premium runners the last seven days' load,
   fitness and fatigue.

@@ -24,13 +24,7 @@ internal fun LazyListScope.settingsScreenContent(
     openWatchSummary: OpenWatchLinkSummary? = null,
 ) {
     when (section) {
-        null -> {
-            settingsRootCards(actions, openWatchSummary)
-            viewModel.extensions.forEach { extension ->
-                item { SettingsCardSpacer() }
-                item { extension.Entry(Modifier.padding(horizontal = LayoutMetrics.screenGutter)) }
-            }
-        }
+        null -> settingsRootCards(actions, openWatchSummary, viewModel.extensions)
         SettingsSection.VITALS -> {
             item { SectionHeader(stringResource(section.titleRes)) }
             item {
@@ -84,7 +78,11 @@ internal fun LazyListScope.settingsScreenContent(
     }
 }
 
-private fun LazyListScope.settingsRootCards(actions: SettingsScreenActions, openWatchSummary: OpenWatchLinkSummary?) {
+private fun LazyListScope.settingsRootCards(
+    actions: SettingsScreenActions,
+    openWatchSummary: OpenWatchLinkSummary?,
+    extensions: List<SettingsExtension>,
+) {
     SettingsSection.entries
         .filter { BuildConfig.OPENVITALS_DIAGNOSTICS || it != SettingsSection.DEBUG_DIAGNOSTICS }
         .forEach { settingsSection ->
@@ -97,6 +95,11 @@ private fun LazyListScope.settingsRootCards(actions: SettingsScreenActions, open
                 )
             }
         }
+
+    // An optional integration's entry sits with the categories, above Support and the footer.
+    extensions.forEach { extension ->
+        item { extension.Entry(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) }
+    }
 
     item { SectionHeader(stringResource(R.string.section_support)) }
 

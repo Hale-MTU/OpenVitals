@@ -57,6 +57,10 @@ internal data class VertMatchUiState(
  * The runner's connection to VertMatch: sign-in, sending and deleting activities, and the
  * training summary. One per process. Calls are serialised, so a token refresh never races
  * another call. Nothing here logs: no token, no file and no id leaves through the log.
+ *
+ * The vault reads the disk and the Keystore, so it is only touched on [Dispatchers.IO]: the
+ * constructor reads nothing, and the stored connection loads in the background, with the state
+ * busy until it has.
  */
 @Singleton
 internal class VertMatchConnection @Inject constructor(
@@ -67,16 +71,26 @@ internal class VertMatchConnection @Inject constructor(
     private val api = VertMatchApi(config, { vault.tokens?.accessToken })
     private val mutex = Mutex()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private val _state = MutableStateFlow(VertMatchUiState(currentStatus(), sent = vault.sent))
+    private val _state = MutableStateFlow(
+        VertMatchUiState(
+            status = if (config.isConfigured) VertMatchStatus.Disconnected else VertMatchStatus.NotConfigured,
+            busy = config.isConfigured,
+        ),
+    )
     val state: StateFlow<VertMatchUiState> = _state.asStateFlow()
+
+    init {
+        // serial publishes what the vault holds when it ends.
+        if (config.isConfigured) scope.launch { serial {} }
+    }
 
     val canReadSummary: Boolean get() = VertMatchScope.SummaryRead in config.scopes
 
     /** The browser intent that starts sign-in. The verifier waits, encrypted, for the redirect. */
-    fun signInIntent(): Intent {
+    suspend fun signInIntent(): Intent = withContext(Dispatchers.IO) {
         val request = VertMatchAuth.begin(config)
         vault.pendingSignIn = PendingSignIn(request.state, request.verifier)
-        return Intent(Intent.ACTION_VIEW, Uri.parse(request.url))
+        Intent(Intent.ACTION_VIEW, Uri.parse(request.url))
     }
 
     /** True when [uri] is this app's VertMatch redirect, which [completeSignIn] then handles. */
@@ -108,7 +122,7 @@ internal class VertMatchConnection @Inject constructor(
     }
 
     /** Forgets the connection on this phone: tokens, the Keystore key and what was sent. */
-    fun disconnect() {
+    suspend fun disconnect() = serial {
         vault.clear()
         publish(R.string.vertmatch_message_disconnected)
     }
@@ -143,11 +157,14 @@ internal class VertMatchConnection @Inject constructor(
     /** Called after OpenVitals deleted an activity: deletes VertMatch's copy, if it has one. */
     fun onActivityDeleted(id: String) {
         val externalId = externalIdFor(id) ?: return
-        if (externalId !in vault.sent) return
-        vault.forgetSent(externalId)
-        vault.addPendingDelete(externalId)
-        refresh()
-        scope.launch { serial { flushPendingDeletes() } }
+        scope.launch {
+            serial {
+                if (externalId !in vault.sent) return@serial
+                vault.forgetSent(externalId)
+                vault.addPendingDelete(externalId)
+                flushPendingDeletes()
+            }
+        }
     }
 
     suspend fun loadSummary() = serial {
@@ -159,7 +176,7 @@ internal class VertMatchConnection @Inject constructor(
         flushPendingDeletes()
     }
 
-    fun refresh() = _state.update { it.copy(status = currentStatus(), sent = vault.sent) }
+    private fun refresh() = _state.update { it.copy(status = currentStatus(), sent = vault.sent) }
 
     fun clearMessage() = _state.update { it.copy(message = null) }
 
@@ -242,7 +259,8 @@ internal class VertMatchConnection @Inject constructor(
     private fun publish(@StringRes message: Int) =
         _state.update { it.copy(status = currentStatus(), sent = vault.sent, message = message) }
 
-    private suspend fun serial(block: suspend () -> Unit) {
+    /** One call at a time, on [Dispatchers.IO] wherever it was started: every step reads the vault. */
+    private suspend fun serial(block: suspend () -> Unit) = withContext(Dispatchers.IO) {
         _state.update { it.copy(busy = true) }
         try {
             mutex.withLock { block() }

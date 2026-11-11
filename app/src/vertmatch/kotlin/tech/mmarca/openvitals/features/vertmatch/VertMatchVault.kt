@@ -38,10 +38,13 @@ internal class PendingSignIn(val state: String, val verifier: String) {
  * which never leaves the device: a backup restored elsewhere cannot decrypt them, so it reads as
  * "not connected" rather than as someone else's session. The ids of activities sent, and of
  * deletes still owed, are not secret and are kept as they are.
+ *
+ * Every member reads the disk or the Keystore: call them off the main thread. Constructing one
+ * touches neither, so Hilt can create it wherever it is first injected.
  */
 internal class VertMatchVault(context: Context) {
-    private val prefs: SharedPreferences =
-        context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    private val appContext = context.applicationContext
+    private val prefs: SharedPreferences by lazy { appContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE) }
 
     var tokens: StoredTokens?
         get() = decrypt(prefs.getString(KEY_TOKENS, null))?.let(::parseTokens)

@@ -8,17 +8,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,8 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -36,6 +33,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.launch
 import tech.mmarca.openvitals.R
 import tech.mmarca.openvitals.ui.components.DetailSectionCard
+import tech.mmarca.openvitals.ui.components.OpenVitalsAdaptiveScaffold
 import tech.mmarca.openvitals.ui.components.OpenVitalsButton
 import tech.mmarca.openvitals.ui.components.OpenVitalsOutlinedButton
 import tech.mmarca.openvitals.ui.theme.OpenVitalsTheme
@@ -58,10 +56,23 @@ internal class VertMatchActivity : ComponentActivity() {
         handleRedirect(intent)
         setContent {
             OpenVitalsTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
+                OpenVitalsAdaptiveScaffold(
+                    title = stringResource(R.string.vertmatch_title),
+                    navigationDestinations = emptyList(),
+                    currentRoute = null,
+                    showTopBar = true,
+                    showNavigation = false,
+                    canNavigateBack = true,
+                    onNavigateBack = onBackPressedDispatcher::onBackPressed,
+                    onNavigate = {},
+                    navigationIcon = Icons.AutoMirrored.Outlined.ArrowBack,
+                    navigationContentDescription = stringResource(R.string.cd_back),
+                    action = null,
+                ) { innerPadding ->
                     VertMatchScreen(
                         connection = connection,
                         onConnect = ::startSignIn,
+                        contentPadding = innerPadding,
                     )
                 }
             }
@@ -82,16 +93,19 @@ internal class VertMatchActivity : ComponentActivity() {
     }
 
     private fun startSignIn() {
-        try {
-            startActivity(connection.signInIntent())
-        } catch (_: ActivityNotFoundException) {
-            // No browser on the phone: nothing to sign in with. The screen keeps saying disconnected.
+        lifecycleScope.launch {
+            val signIn = connection.signInIntent()
+            try {
+                startActivity(signIn)
+            } catch (_: ActivityNotFoundException) {
+                // No browser on the phone: nothing to sign in with. The screen keeps saying disconnected.
+            }
         }
     }
 }
 
 @Composable
-private fun VertMatchScreen(connection: VertMatchConnection, onConnect: () -> Unit) {
+private fun VertMatchScreen(connection: VertMatchConnection, onConnect: () -> Unit, contentPadding: PaddingValues) {
     val state by connection.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     LaunchedEffect(state.status) {
@@ -100,17 +114,12 @@ private fun VertMatchScreen(connection: VertMatchConnection, onConnect: () -> Un
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .padding(contentPadding)
             .verticalScroll(rememberScrollState())
             .padding(Spacing.lg)
             .widthIn(max = 720.dp),
         verticalArrangement = Arrangement.spacedBy(Spacing.md),
     ) {
-        Text(
-            text = stringResource(R.string.vertmatch_title),
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.semantics { heading() },
-        )
         DetailSectionCard(title = stringResource(R.string.vertmatch_what_title)) {
             Text(stringResource(R.string.vertmatch_what_body), style = MaterialTheme.typography.bodyMedium)
             Text(
@@ -124,7 +133,7 @@ private fun VertMatchScreen(connection: VertMatchConnection, onConnect: () -> Un
             state.message?.let { Text(stringResource(it), style = MaterialTheme.typography.bodyMedium) }
             when (state.status) {
                 VertMatchStatus.Connected -> OpenVitalsOutlinedButton(
-                    onClick = connection::disconnect,
+                    onClick = { scope.launch { connection.disconnect() } },
                     enabled = !state.busy,
                     modifier = Modifier.fillMaxWidth(),
                 ) { Text(stringResource(R.string.vertmatch_disconnect)) }
