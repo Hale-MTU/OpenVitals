@@ -246,6 +246,8 @@
     <string name="activity_entry_plan_preview_reps">%1$d reps</string>
     <string name="activity_entry_distance_label">Distance %1$s</string>
     <string name="activity_entry_elevation_label">Climb %1$s</string>
+    <string name="body_profile_prompt_message">For calorie estimates, add to your body profile: %1$s.</string>
+    <string name="body_profile_prompt_action">Open body profile</string>
     <string name="activity_entry_notes_label">Notes</string>
     <string name="activity_entry_feeling_label">How did it feel?</string>
     <string name="activity_entry_feeling_great">Great</string>

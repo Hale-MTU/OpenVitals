@@ -15,6 +15,7 @@ import androidx.health.connect.client.records.ExerciseSegment
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import java.time.Clock
 import java.time.Duration
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.ceil
@@ -26,7 +27,14 @@ import tech.mmarca.openvitals.domain.model.ExerciseLapData
 import tech.mmarca.openvitals.domain.model.ExerciseRoutePoint
 import tech.mmarca.openvitals.domain.model.ExerciseRouteStatus
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
+import tech.mmarca.openvitals.domain.insights.CompendiumMet
+import tech.mmarca.openvitals.domain.insights.BmrInput
+import tech.mmarca.openvitals.domain.insights.WorkoutEnergyResult
+import tech.mmarca.openvitals.domain.insights.bmrMissingInputs
+import tech.mmarca.openvitals.domain.insights.estimateWorkoutEnergy
 import tech.mmarca.openvitals.domain.insights.heartRateRecoveryWindowFor
+import tech.mmarca.openvitals.domain.model.BleHeartRateSample
+import tech.mmarca.openvitals.domain.preferences.BodyProfile
 import tech.mmarca.openvitals.domain.model.ActivityFormMetric
 import tech.mmarca.openvitals.features.activity.exerciseTypeLabelRes
 
@@ -366,69 +374,56 @@ internal data class ActivityCalorieEstimate(
     val totalCaloriesText: String,
 )
 
+/** What a workout's calorie estimate reads besides the session: the wearer and the day. */
+internal data class CalorieEstimateContext(
+    val profile: BodyProfile,
+    val today: LocalDate,
+)
+
+/**
+ * The estimate for a session that recorded no calories: [estimateWorkoutEnergy]
+ * from the session's mean heart rate, its distance on foot or the activity's
+ * Compendium MET, with the body profile's weight. Null without a weight: the
+ * form says so ([calorieEstimateMissingInputs]) rather than guess one.
+ */
 internal fun activityCalorieEstimate(
     activityType: ActivityEntryType,
     distanceMeters: Double?,
     durationMinutesText: String,
+    heartRateSamples: List<BleHeartRateSample>,
+    context: CalorieEstimateContext,
 ): ActivityCalorieEstimate? {
-    if (!activityType.supportsGpsRoute) return null
     val durationMinutes = durationMinutesText.trim().toLongOrNull()
         ?.takeIf { it in 1..MaxActivityDurationMinutes }
         ?: return null
-    val hours = durationMinutes / 60.0
-    val met = activityMet(activityType.exerciseType) ?: return null
-    val restingCalories = DefaultCalorieEstimateWeightKg * hours * RestingMet
-    val activeByMet = (met - RestingMet)
-        .coerceAtLeast(0.0) * DefaultCalorieEstimateWeightKg * hours
-    val activeByDistance = distanceBasedActiveCalories(
+    val estimate = estimateWorkoutEnergy(
         exerciseType = activityType.exerciseType,
+        durationMinutes = durationMinutes.toDouble(),
+        meanHeartRateBpm = heartRateSamples.takeIf { it.isNotEmpty() }?.map { it.beatsPerMinute }?.average(),
+        profile = context.profile,
+        today = context.today,
         distanceMeters = distanceMeters,
-    ) ?: 0.0
-    val activeCalories = maxOf(activeByMet, activeByDistance).takeIf { it > 0.0 } ?: return null
-
+    ) as? WorkoutEnergyResult.Estimate ?: return null
     return ActivityCalorieEstimate(
-        activeCaloriesText = activeCalories.toCaloriesInputText(),
-        totalCaloriesText = (activeCalories + restingCalories).toCaloriesInputText(),
+        activeCaloriesText = estimate.activeKcal.toCaloriesInputText(),
+        totalCaloriesText = estimate.totalKcal.toCaloriesInputText(),
     )
 }
 
-internal fun activityMet(exerciseType: Int): Double? =
-    when (exerciseType) {
-        ExerciseSessionRecord.EXERCISE_TYPE_RUNNING -> 9.8
-        ExerciseSessionRecord.EXERCISE_TYPE_BIKING -> 7.5
-        ExerciseSessionRecord.EXERCISE_TYPE_WALKING -> 3.5
-        ExerciseSessionRecord.EXERCISE_TYPE_HIKING -> 6.0
-        ExerciseSessionRecord.EXERCISE_TYPE_WHEELCHAIR -> 4.0
-        ExerciseSessionRecord.EXERCISE_TYPE_ROWING,
-        ExerciseSessionRecord.EXERCISE_TYPE_PADDLING -> 7.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SKIING -> 7.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SNOWBOARDING -> 5.3
-        ExerciseSessionRecord.EXERCISE_TYPE_SNOWSHOEING -> 8.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SKATING,
-        ExerciseSessionRecord.EXERCISE_TYPE_ICE_SKATING -> 7.0
-        ExerciseSessionRecord.EXERCISE_TYPE_ROCK_CLIMBING -> 8.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SAILING -> 3.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SURFING -> 3.0
-        ExerciseSessionRecord.EXERCISE_TYPE_SWIMMING_OPEN_WATER -> 8.0
-        ExerciseSessionRecord.EXERCISE_TYPE_GOLF -> 4.8
-        else -> null
+/**
+ * The body profile fields a session's estimate still wants: without a weight
+ * there is none, without sex, age or height it is less exact. Empty for an
+ * activity with no sourced energy cost.
+ */
+internal fun calorieEstimateMissingInputs(
+    activityType: ActivityEntryType,
+    context: CalorieEstimateContext,
+): Set<BmrInput> =
+    if (CompendiumMet.forExerciseType(activityType.exerciseType) != null) {
+        context.profile.bmrMissingInputs(context.today)
+    } else {
+        emptySet()
     }
-
-internal fun distanceBasedActiveCalories(
-    exerciseType: Int,
-    distanceMeters: Double?,
-): Double? {
-    val distanceKm = distanceMeters?.takeIf { it > 0.0 }?.div(1000.0) ?: return null
-    val kcalPerKgKm = when (exerciseType) {
-        ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
-        ExerciseSessionRecord.EXERCISE_TYPE_HIKING,
-        ExerciseSessionRecord.EXERCISE_TYPE_SNOWSHOEING -> RunningKcalPerKgKm
-        ExerciseSessionRecord.EXERCISE_TYPE_WALKING,
-        ExerciseSessionRecord.EXERCISE_TYPE_WHEELCHAIR -> WalkingKcalPerKgKm
-        else -> return null
-    }
-    return DefaultCalorieEstimateWeightKg * distanceKm * kcalPerKgKm
-}
 
 internal fun parseDistanceMeters(text: String, unitSystem: UnitSystem): Double? {
     val value = text.toPositiveDoubleOrNull() ?: return null

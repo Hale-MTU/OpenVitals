@@ -411,6 +411,9 @@ fun AppNavigation(
                     onOpenStressDetails = { date ->
                         navController.navigate(Screen.StressDetails.createRoute(date.toString()))
                     },
+                    onOpenBodyProfile = {
+                        navController.navigate(Screen.SettingsBodyProfile.route)
+                    },
                 )
             }
 
@@ -572,6 +575,9 @@ fun AppNavigation(
                     },
                     onOpenStressDetails = { date ->
                         navController.navigate(Screen.StressDetails.createRoute(date.toString()))
+                    },
+                    onOpenBodyProfile = {
+                        navController.navigate(Screen.SettingsBodyProfile.route)
                     },
                     onEditHydrationEntry = { entryId ->
                         navController.navigate(Screen.HydrationEntryEdit.createRoute(entryId))

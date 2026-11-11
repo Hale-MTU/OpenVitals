@@ -150,6 +150,8 @@
     <string name="activity_entry_plan_preview_reps">%1$d kordust</string>
     <string name="activity_entry_distance_label">Vahemaa %1$s</string>
     <string name="activity_entry_elevation_label">Tõus %1$s</string>
+    <string name="body_profile_prompt_message">Kalorihinnangute jaoks lisa kehaprofiili: %1$s.</string>
+    <string name="body_profile_prompt_action">Ava kehaprofiil</string>
     <string name="activity_entry_notes_label">Märkmed</string>
     <string name="activity_entry_feeling_label">Milline tunne oli?</string>
     <string name="activity_entry_feeling_great">Suurepärane</string>

@@ -81,8 +81,16 @@ private const val ReferenceBmrKcalPerDay = 1600.0
 /** Drain per active kilocalorie: a heavy 700 kcal day is about 40 points. */
 private const val ActiveKcalToPoints = 0.06
 
-/** Fallback when a bucket has steps but no calories. Never added on top. */
-private const val KcalPerStep = 0.04
+/**
+ * Active calories for a bucket that has steps but no calorie record, never added
+ * on top of one: [WalkingEnergy] (Moore et al. 2021) at the bucket's mean cadence.
+ * Without a weight in the profile the steps add nothing rather than a guess.
+ */
+private fun stepActiveKcal(steps: Double, bucketMinutes: Double, weightKg: Double?): Double {
+    if (weightKg == null || steps <= 0.0 || bucketMinutes <= 0.0) return 0.0
+    val cadence = (steps / bucketMinutes).roundToInt()
+    return WalkingEnergy.activeKcalPerMinute(cadence, weightKg) * bucketMinutes
+}
 
 enum class BodyEnergyConfidence {
     HIGH,
@@ -427,7 +435,11 @@ fun calculateBodyEnergyTimeline(inputs: BodyEnergyTimelineInputs): BodyEnergyTim
             val recordedKcal = activeKcalPerBucket.getOrElse(index) { 0.0 }
             val bucketSteps = stepsPerBucket.getOrElse(index) { 0.0 }
             // Steps stand in for calories only when the calorie series is silent.
-            val activeKcal = if (recordedKcal > 0.0) recordedKcal else bucketSteps * KcalPerStep
+            val activeKcal = if (recordedKcal > 0.0) {
+                recordedKcal
+            } else {
+                stepActiveKcal(bucketSteps, bucketMinutes, inputs.bodyProfile.weightKg)
+            }
             // Once any signal is seen today, unmeasured awake buckets still pay basal
             // drain. Before the first signal the line stays frozen.
             daySignalSeen = daySignalSeen || avgHeartRate != null || sleepMinutes > 0.0 || activeKcal > 0.0
