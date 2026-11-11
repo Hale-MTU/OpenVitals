@@ -34,6 +34,7 @@ import tech.mmarca.openvitals.domain.query.ActivityPeriodData
 import tech.mmarca.openvitals.domain.model.SpeedSample
 import tech.mmarca.openvitals.core.period.PeriodLoadQuery
 import tech.mmarca.openvitals.core.period.TimeRange
+import tech.mmarca.openvitals.data.repository.contract.ActivityDeletionListener
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
 import tech.mmarca.openvitals.data.repository.contract.CoMapsNavigationRepository
 import tech.mmarca.openvitals.data.repository.contract.SessionDistancePreferences
@@ -55,6 +56,7 @@ class ActivityRepositoryImpl @Inject constructor(
     private val markerRepository: ActivityMarkerRepository? = null,
     private val coMapsNavigationRepository: CoMapsNavigationRepository? = null,
     private val sessionDistancePreferences: SessionDistancePreferences? = null,
+    private val deletionListeners: Set<@JvmSuppressWildcards ActivityDeletionListener> = emptySet(),
 ) : ActivityRepository {
 
     companion object {
@@ -627,5 +629,7 @@ class ActivityRepositoryImpl @Inject constructor(
         hc.deleteActivityEntry(id)
         markerRepository?.deleteMarkersForActivity(id)
         coMapsNavigationRepository?.deleteSamples(id)
+        // The delete has happened; a listener that fails must not turn it into an error.
+        deletionListeners.forEach { listener -> runCatching { listener.onActivityDeleted(id) } }
     }
 }

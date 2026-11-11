@@ -24,7 +24,13 @@ internal fun LazyListScope.settingsScreenContent(
     openWatchSummary: OpenWatchLinkSummary? = null,
 ) {
     when (section) {
-        null -> settingsRootCards(actions, openWatchSummary)
+        null -> {
+            settingsRootCards(actions, openWatchSummary)
+            viewModel.extensions.forEach { extension ->
+                item { SettingsCardSpacer() }
+                item { extension.Entry(Modifier.padding(horizontal = LayoutMetrics.screenGutter)) }
+            }
+        }
         SettingsSection.VITALS -> {
             item { SectionHeader(stringResource(section.titleRes)) }
             item {

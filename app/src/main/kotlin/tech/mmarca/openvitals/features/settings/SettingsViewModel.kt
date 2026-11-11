@@ -77,7 +77,11 @@ class SettingsViewModel @Inject constructor(
     private val heartThresholdPreferences: HeartThresholdPreferences,
     private val permissionUxState: HealthConnectPermissionUxState,
     private val openWatchLink: tech.mmarca.openvitals.openwatch.OpenWatchLink? = null,
+    extensionSet: Set<@JvmSuppressWildcards SettingsExtension> = emptySet(),
 ) : ViewModel() {
+    /** Entries optional integrations add below the root; none in the default build. */
+    val extensions: List<SettingsExtension> = extensionSet.toList()
+
     companion object {
         private const val TAG = "SettingsViewModel"
     }

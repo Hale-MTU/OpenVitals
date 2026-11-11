@@ -9,8 +9,8 @@ The repo now has one Android app module for the local app. The goal is to keep b
 ## Current Snapshot
 
 - App namespace: `tech.mmarca.openvitals`
-- Project shape: two Gradle modules. The phone app is `:app`, under `app/`; `:domain` holds the app-local pure code the app depends on (see [Module `:domain`](#module-domain)). The rest of this document is about `:app` unless it says otherwise; package names are the same across `:app` and `:domain`. Watch and scale support is a separate app, [OpenWatch](https://github.com/Hale-MTU/OpenWatch), which writes to Health Connect; the two share no code
-- Dependency wiring: Hilt in `:app`, rooted at [`OpenVitalsApp`](../../app/src/main/kotlin/tech/mmarca/openvitals/OpenVitalsApp.kt); modules are `di/AppModule.kt`, `di/RepositoryModule.kt`, `di/PreferencesModule.kt`, and `di/RemindersModule.kt`
+- Project shape: three Gradle modules. The phone app is `:app`, under `app/`; `:domain` holds the app-local pure code the app depends on (see [Module `:domain`](#module-domain)). The rest of this document is about `:app` unless it says otherwise; package names are the same across `:app` and `:domain`. Watch and scale support is a separate app, [OpenWatch](https://github.com/Hale-MTU/OpenWatch), which writes to Health Connect; the two share no code
+- Dependency wiring: Hilt in `:app`, rooted at [`OpenVitalsApp`](../../app/src/main/kotlin/tech/mmarca/openvitals/OpenVitalsApp.kt); modules are `di/AppModule.kt`, `di/RepositoryModule.kt`, `di/PreferencesModule.kt`, `di/RemindersModule.kt`, and `di/ExtensionsModule.kt` (the empty extension-point sets, see [Module `:vertmatch`](#module-vertmatch))
 - UI stack: Jetpack Compose + Material 3 app shell + Navigation Compose + `ViewModel` + coroutines/`StateFlow`
 - Health data backend: Health Connect AndroidX client, wrapped by [`HealthConnectManager`](../../app/src/main/kotlin/tech/mmarca/openvitals/healthconnect/HealthConnectManager.kt)
 - App-local domain code: pure models, insight calculations, and preference enums under [`domain`](../../domain/src/main/kotlin/tech/mmarca/openvitals/domain), in the `:domain` module
@@ -335,6 +335,12 @@ It is an Android library, not plain Kotlin: a few files use Health Connect recor
 Its test fixtures (`testFixtures`) hold the FHIR, C-CDA and SMART Health Card fixtures that both its own tests and the app's import tests use, and the privacy sentinels (`PrivacySentinels`) that tests of crash drafts, logs and reports seed and look for, with the FHIR sample files under `domain/src/testFixtures/resources/fhir/`. Its tests and lint are part of the phone gate (`verifyCiUnitTest` depends on `:domain:testCiUnitTest`, `verifyCiLint` on `:domain:lintCi`), its lockfile is `domain/gradle.lockfile`, and the ratchet tests and the `runBlocking` allow-list cover its files under the same package-relative paths as the app's.
 
 The module exists for the build: the app's lint and tests no longer cover these lines, and a change elsewhere leaves this module's compile, lint and test results in the build cache. What does not belong here: anything with an inbound dependency from `data/`, `healthconnect/` or `features/` (`domain/query` and `domain/usecase` stay in `:app` for that reason), resources, and Hilt wiring. `ArchitectureDocTest` fails when a Gradle module is missing from this document.
+
+## Module `:vertmatch`
+
+[`vertmatch/`](../../vertmatch) is a plain Kotlin/JVM client for the [VertMatch partner API](https://vertmatch.run/developers): PKCE sign-in, uploading and deleting a FIT activity, reading the training summary, and the documented error handling. It needs a socket and OpenVitals declares no `INTERNET` permission (see the invariant in [AGENTS.md](../../AGENTS.md)), so `:app` depends on it only in the opt-in build, `-Popenvitals.vertmatch=true`. That build also compiles `app/src/vertmatch/` (the screen, the encrypted token store, the Hilt bindings, English strings) and merges its manifest, the only one that asks for `INTERNET`.
+
+The default build reaches none of it. The app keeps three extension points, each an empty Hilt set declared in `di/ExtensionsModule`: `SettingsExtension` (an entry below the Settings root), `ActivityDetailExtension` (a card under an activity's export card) and `ActivityDeletionListener` (told by `ActivityRepositoryImpl` after a delete). `DormantBoundaryTest` in the module fails if a main source imports the integration, if the dependency leaves its switch, or if the main manifest stops stripping `INTERNET`. Building and shipping it: [vertmatch/README.md](../../vertmatch/README.md).
 
 ## Phone-To-Phone Sync
 
