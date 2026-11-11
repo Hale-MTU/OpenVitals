@@ -28,7 +28,9 @@ import tech.mmarca.openvitals.domain.model.ExerciseRoutePoint
 import tech.mmarca.openvitals.domain.model.ExerciseRouteStatus
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
 import tech.mmarca.openvitals.domain.insights.CompendiumMet
+import tech.mmarca.openvitals.domain.insights.BmrInput
 import tech.mmarca.openvitals.domain.insights.WorkoutEnergyResult
+import tech.mmarca.openvitals.domain.insights.bmrMissingInputs
 import tech.mmarca.openvitals.domain.insights.estimateWorkoutEnergy
 import tech.mmarca.openvitals.domain.insights.heartRateRecoveryWindowFor
 import tech.mmarca.openvitals.domain.model.BleHeartRateSample
@@ -382,7 +384,7 @@ internal data class CalorieEstimateContext(
  * The estimate for a session that recorded no calories: [estimateWorkoutEnergy]
  * from the session's mean heart rate, its distance on foot or the activity's
  * Compendium MET, with the body profile's weight. Null without a weight: the
- * form says so ([calorieEstimateNeedsWeight]) rather than guess one.
+ * form says so ([calorieEstimateMissingInputs]) rather than guess one.
  */
 internal fun activityCalorieEstimate(
     activityType: ActivityEntryType,
@@ -408,9 +410,20 @@ internal fun activityCalorieEstimate(
     )
 }
 
-/** True when a session could be estimated but the body profile has no weight to do it with. */
-internal fun calorieEstimateNeedsWeight(activityType: ActivityEntryType, context: CalorieEstimateContext): Boolean =
-    context.profile.weightKg == null && CompendiumMet.forExerciseType(activityType.exerciseType) != null
+/**
+ * The body profile fields a session's estimate still wants: without a weight
+ * there is none, without sex, age or height it is less exact. Empty for an
+ * activity with no sourced energy cost.
+ */
+internal fun calorieEstimateMissingInputs(
+    activityType: ActivityEntryType,
+    context: CalorieEstimateContext,
+): Set<BmrInput> =
+    if (CompendiumMet.forExerciseType(activityType.exerciseType) != null) {
+        context.profile.bmrMissingInputs(context.today)
+    } else {
+        emptySet()
+    }
 
 internal fun parseDistanceMeters(text: String, unitSystem: UnitSystem): Double? {
     val value = text.toPositiveDoubleOrNull() ?: return null

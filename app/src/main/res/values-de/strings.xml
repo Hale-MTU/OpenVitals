@@ -149,7 +149,8 @@
     <string name="activity_entry_plan_preview_reps">%1$d Wdh.</string>
     <string name="activity_entry_distance_label">Distanz %1$s optional</string>
     <string name="activity_entry_elevation_label">Höhe %1$s optional</string>
-    <string name="activity_entry_calorie_estimate_needs_weight">Keine Kalorienschätzung: Trage dein Gewicht im Körperprofil ein.</string>
+    <string name="body_profile_prompt_message">Für Kalorienschätzungen im Körperprofil ergänzen: %1$s.</string>
+    <string name="body_profile_prompt_action">Körperprofil öffnen</string>
     <string name="activity_entry_notes_label">Notizen optional</string>
     <string name="activity_entry_feeling_label">Wie hat es sich angefühlt?</string>
     <string name="activity_entry_feeling_great">Großartig</string>

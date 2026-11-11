@@ -71,7 +71,11 @@ internal fun ActivityEntryUiState.withRouteImport(
         totalCaloriesText = totalCaloriesText.ifBlank {
             importedTotalCaloriesText ?: calorieEstimate?.totalCaloriesText.orEmpty()
         },
-        calorieEstimateNeedsWeight = wantsEstimate && calorieEstimateNeedsWeight(selectedActivityType, calorieContext),
+        calorieEstimateMissingInputs = if (wantsEstimate) {
+            calorieEstimateMissingInputs(selectedActivityType, calorieContext)
+        } else {
+            emptySet()
+        },
         importedRoute = routeImport,
         recordedPauseIntervals = emptyList(),
         recordedLaps = emptyList(),

@@ -1,6 +1,7 @@
 package tech.mmarca.openvitals.features.manualentry.activity
 
 import tech.mmarca.openvitals.domain.model.ActivityFormMetric
+import tech.mmarca.openvitals.domain.insights.BmrInput
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
 import androidx.compose.material.icons.outlined.SentimentDissatisfied
@@ -164,7 +165,7 @@ data class ActivityEntryUiState(
     val activeCaloriesText: String = "",
     val totalCaloriesText: String = "",
     /** A session came in without calories and could have been estimated, but the body profile has no weight. */
-    val calorieEstimateNeedsWeight: Boolean = false,
+    val calorieEstimateMissingInputs: Set<BmrInput> = emptySet(),
     val repetitionMode: ActivityRepetitionEntryMode = ActivityRepetitionEntryMode.TOTAL,
     val repetitionTotalText: String = "",
     val repetitionSets: List<ActivityRepetitionSetInput> = listOf(ActivityRepetitionSetInput()),

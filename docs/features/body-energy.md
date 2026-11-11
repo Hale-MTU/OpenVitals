@@ -42,7 +42,9 @@ heart-rate-derived stress, and from recovery debt after a hard session.
 Where a stretch has steps but no active-calorie record, the steps stand in: the
 walking cost at that stretch's cadence (Moore et al. 2021,
 doi:10.1249/MSS.0000000000002430) and the body profile's weight. Without a
-weight the steps add no drain.
+weight the steps add no drain. While the body profile lacks sex, birth year,
+weight or height, the screen names the missing fields above the battery and
+links to the profile; nothing is guessed in their place.
 
 Each component is scaled by a personal gain — see [Calibration](#calibration).
 The gains are the only per-user tuning; everything else above is the same model

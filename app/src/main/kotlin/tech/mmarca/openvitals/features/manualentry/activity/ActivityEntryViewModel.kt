@@ -1475,8 +1475,11 @@ class ActivityEntryViewModel(
             } else {
                 ""
             },
-            calorieEstimateNeedsWeight = wantsCalorieEstimate &&
-                calorieEstimateNeedsWeight(selectedActivityType, calorieContext),
+            calorieEstimateMissingInputs = if (wantsCalorieEstimate) {
+                calorieEstimateMissingInputs(selectedActivityType, calorieContext)
+            } else {
+                emptySet()
+            },
             activeCaloriesText = calorieEstimate?.activeCaloriesText ?: currentState.activeCaloriesText,
             totalCaloriesText = calorieEstimate?.totalCaloriesText ?: currentState.totalCaloriesText,
             repetitionMode = if (recordedSets.isNotEmpty()) {

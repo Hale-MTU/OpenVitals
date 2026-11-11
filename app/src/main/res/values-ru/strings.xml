@@ -222,7 +222,8 @@
     <string name="activity_entry_plan_preview_reps">%1$d повторений</string>
     <string name="activity_entry_distance_label">Расстояние %1$s</string>
     <string name="activity_entry_elevation_label">Набор высоты %1$s</string>
-    <string name="activity_entry_calorie_estimate_needs_weight">Нет оценки калорий: укажите свой вес в профиле тела.</string>
+    <string name="body_profile_prompt_message">Для оценки калорий добавьте в профиль тела: %1$s.</string>
+    <string name="body_profile_prompt_action">Открыть профиль тела</string>
     <string name="activity_entry_notes_label">Заметки</string>
     <string name="activity_entry_feeling_label">Как вы себя чувствовали?</string>
     <string name="activity_entry_feeling_great">Отлично</string>

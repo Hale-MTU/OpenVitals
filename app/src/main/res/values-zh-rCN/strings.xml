@@ -151,7 +151,8 @@
     <string name="activity_entry_plan_preview_reps">%1$d 次</string>
     <string name="activity_entry_distance_label">距离 %1$s</string>
     <string name="activity_entry_elevation_label">爬升 %1$s</string>
-    <string name="activity_entry_calorie_estimate_needs_weight">无卡路里估算：请在身体资料中添加你的体重。</string>
+    <string name="body_profile_prompt_message">要估算热量，请在身体档案中补充：%1$s。</string>
+    <string name="body_profile_prompt_action">打开身体档案</string>
     <string name="activity_entry_notes_label">备注</string>
     <string name="activity_entry_feeling_label">感觉如何？</string>
     <string name="activity_entry_feeling_great">很好</string>

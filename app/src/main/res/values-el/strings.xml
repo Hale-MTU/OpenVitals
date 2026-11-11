@@ -241,7 +241,8 @@
     <string name="activity_entry_plan_preview_reps">%1$d επαναλήψεις</string>
     <string name="activity_entry_distance_label">Απόσταση %1$s</string>
     <string name="activity_entry_elevation_label">Ανάβαση %1$s</string>
-    <string name="activity_entry_calorie_estimate_needs_weight">Χωρίς εκτίμηση θερμίδων: προσθέστε το βάρος σας στο προφίλ σώματος.</string>
+    <string name="body_profile_prompt_message">Για εκτίμηση θερμίδων, προσθέστε στο προφίλ σώματος: %1$s.</string>
+    <string name="body_profile_prompt_action">Άνοιγμα προφίλ σώματος</string>
     <string name="activity_entry_notes_label">Σημειώσεις</string>
     <string name="activity_entry_feeling_label">Πώς σου φάνηκε;</string>
     <string name="activity_entry_feeling_great">Υπέροχα</string>

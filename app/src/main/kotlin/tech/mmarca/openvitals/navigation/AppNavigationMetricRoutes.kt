@@ -91,6 +91,7 @@ internal fun MetricRouteContent(
     onOpenHeartRateRecovery: () -> Unit = {},
     onOpenTrainingReadinessDetails: (java.time.LocalDate) -> Unit = {},
     onOpenStressDetails: (java.time.LocalDate) -> Unit = {},
+    onOpenBodyProfile: () -> Unit = {},
     onEditHydrationEntry: (String) -> Unit,
     onEditNutritionEntry: (String) -> Unit = {},
     onOpenCaffeineDrink: (String, LocalDate) -> Unit = { _, _ -> },
@@ -167,6 +168,7 @@ internal fun MetricRouteContent(
                 onOpenDistance = { onOpenMetric(DashboardWidgetId.DISTANCE) },
                 onOpenEnergyBurned = { onOpenMetric(DashboardWidgetId.CALORIES_OUT) },
                 onOpenHrv = { onOpenMetric(DashboardWidgetId.HRV) },
+                onOpenBodyProfile = onOpenBodyProfile,
             )
         }
         MetricRouteDestination.Sleep -> {
@@ -190,6 +192,7 @@ internal fun MetricRouteContent(
                 selectedDate = pinnedDay ?: LocalDate.now(),
                 onOpenTrainingReadinessDetails = onOpenTrainingReadinessDetails,
                 onOpenStressDetails = onOpenStressDetails,
+                onOpenBodyProfile = onOpenBodyProfile,
             )
         }
         MetricRouteDestination.Hydration -> {

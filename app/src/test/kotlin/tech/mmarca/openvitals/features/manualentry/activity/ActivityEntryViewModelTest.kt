@@ -5,6 +5,7 @@ import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
 import tech.mmarca.openvitals.data.repository.PreferencesRepository
 import tech.mmarca.openvitals.data.repository.contract.FakePreferences
 import tech.mmarca.openvitals.R
+import tech.mmarca.openvitals.domain.insights.BmrInput
 import tech.mmarca.openvitals.domain.model.ActivityFormMetric
 import tech.mmarca.openvitals.features.manualentry.*
 import tech.mmarca.openvitals.features.manualentry.activity.*
@@ -1075,7 +1076,7 @@ class ActivityEntryViewModelTest {
         assertEquals(ActivityEntryMode.MANUAL, vm.uiState.value.mode)
         assertEquals("260", vm.uiState.value.activeCaloriesText)
         assertEquals("294", vm.uiState.value.totalCaloriesText)
-        assertFalse(vm.uiState.value.calorieEstimateNeedsWeight)
+        assertTrue(vm.uiState.value.calorieEstimateMissingInputs.isEmpty())
         assertEquals(ExerciseSessionRecord.EXERCISE_TYPE_RUNNING, prefs.lastActivityExerciseType)
     }
 
@@ -1105,7 +1106,7 @@ class ActivityEntryViewModelTest {
 
         assertEquals("", vm.uiState.value.activeCaloriesText)
         assertEquals("", vm.uiState.value.totalCaloriesText)
-        assertTrue(vm.uiState.value.calorieEstimateNeedsWeight)
+        assertEquals(setOf(BmrInput.WEIGHT), vm.uiState.value.calorieEstimateMissingInputs)
     }
 
     private fun bodyProfile(profile: BodyProfile): BodyProfilePreferences =

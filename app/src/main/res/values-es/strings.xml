@@ -149,7 +149,8 @@
     <string name="activity_entry_plan_preview_reps">%1$d repeticiones</string>
     <string name="activity_entry_distance_label">Distancia %1$s opcional</string>
     <string name="activity_entry_elevation_label">Elevación %1$s opcional</string>
-    <string name="activity_entry_calorie_estimate_needs_weight">Sin estimación de calorías: añade tu peso al perfil corporal.</string>
+    <string name="body_profile_prompt_message">Para estimar las calorías, añade a tu perfil corporal: %1$s.</string>
+    <string name="body_profile_prompt_action">Abrir perfil corporal</string>
     <string name="activity_entry_notes_label">Notas opcionales</string>
     <string name="activity_entry_feeling_label">¿Cómo te sentiste?</string>
     <string name="activity_entry_feeling_great">Genial</string>

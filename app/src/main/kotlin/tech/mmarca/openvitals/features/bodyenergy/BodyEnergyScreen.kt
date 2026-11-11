@@ -39,11 +39,13 @@ import tech.mmarca.openvitals.domain.insights.BodyEnergyPrimaryInfluence
 import tech.mmarca.openvitals.domain.insights.BodyEnergyReasonCode
 import tech.mmarca.openvitals.domain.insights.BodyEnergyTimeline
 import tech.mmarca.openvitals.domain.insights.GulatiMaxHeartRateUrl
+import tech.mmarca.openvitals.domain.insights.bmrMissingInputs
 import tech.mmarca.openvitals.domain.insights.TanakaMaxHeartRateUrl
 import tech.mmarca.openvitals.domain.insights.TrainingLoadReviewUrl
 import tech.mmarca.openvitals.features.readiness.DailyReadinessCard
 import tech.mmarca.openvitals.features.readiness.DailyReadinessViewModel
 import tech.mmarca.openvitals.healthconnect.HealthConnectFeature
+import tech.mmarca.openvitals.ui.components.BodyProfilePrompt
 import tech.mmarca.openvitals.ui.components.ErrorMessage
 import tech.mmarca.openvitals.ui.components.MetricDetailScaffold
 import tech.mmarca.openvitals.ui.components.OpenVitalsCard
@@ -59,6 +61,7 @@ fun BodyEnergyDetailsScreen(
     selectedDate: LocalDate,
     onOpenTrainingReadinessDetails: (LocalDate) -> Unit,
     onOpenStressDetails: (LocalDate) -> Unit,
+    onOpenBodyProfile: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(selectedDate) {
@@ -109,6 +112,16 @@ fun BodyEnergyDetailsScreen(
                 return@MetricDetailScaffold
             }
             if (result == null) return@MetricDetailScaffold
+            val missingProfileInputs = state.bodyProfile.bmrMissingInputs(state.selectedDate)
+            if (missingProfileInputs.isNotEmpty()) {
+                item {
+                    BodyProfilePrompt(
+                        missing = missingProfileInputs,
+                        onOpenBodyProfile = onOpenBodyProfile,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                    )
+                }
+            }
             bodyEnergyContent(
                 display = state.display,
                 selectedDate = state.selectedDate,

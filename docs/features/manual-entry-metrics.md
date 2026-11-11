@@ -36,7 +36,7 @@ Editing an activity follows the same line. The edit form is filled with the step
 
 ## Calorie Estimate For A Workout
 
-A recorded or imported workout that measured no calories gets an estimate in the form, which the user can change before saving. It is never made without a weight in the body profile: the form then says that the weight is missing.
+A recorded or imported workout that measured no calories gets an estimate in the form, which the user can change before saving. It is never made without a weight in the body profile: the form then names the missing profile fields (sex, birth year, weight, height), without a link, so the draft is not left. The Activities and Body Energy screens name the same fields with a button to the body profile.
 
 - **From the heart rate**, when the session has one and the body profile has sex and birth year: Keytel et al., "Prediction of energy expenditure from heart rate monitoring during submaximal exercise", J Sports Sci 23(3):289–297 (2005), doi:10.1080/02640410470001730089, the model without VO2max. The coefficients were read in Keytel's PhD thesis (University of Cape Town, 2004), chapter 4. It is used only while the mean heart rate is between 57 % and 90 % of the maximum (the profile's, or the age-predicted one), the range the equation was derived on; that limit is this project's rule.
 - **From the activity**, otherwise: the MET value of the 2024 Adult Compendium of Physical Activities (Herrmann et al., J Sport Health Sci 13(1):6–12, 2024, doi:10.1016/j.jshs.2023.10.010). `domain/insights/CompendiumMet.kt` keeps the Compendium code beside each Health Connect exercise type; a type with no matching activity gets no estimate.
