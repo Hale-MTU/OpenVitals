@@ -67,3 +67,33 @@ internal fun overlapMinutes(
     if (!overlapEnd.isAfter(overlapStart)) return 0.0
     return Duration.between(overlapStart, overlapEnd).seconds.toDouble() / 60.0
 }
+
+/**
+ * Two heart rate readings further apart than this are a gap: the time between
+ * them counts for nothing. App choice, no published source.
+ */
+internal const val MaxHeartRateSampleGapMinutes = 5.0
+
+/**
+ * The mean heart rate over time: each pair of neighbouring readings counts
+ * with its mean for the time between them, unless that is more than
+ * [MaxHeartRateSampleGapMinutes]. Readings at uneven intervals therefore do not
+ * skew it, which a plain average of the readings does. Keytel's equation
+ * ([KeytelHeartRate]) is linear in heart rate, so this mean gives the same
+ * energy as adding it up reading by reading.
+ *
+ * The plain average when no pair counts (one reading, or only gaps); null without readings.
+ */
+fun timeWeightedMeanHeartRate(samples: List<Pair<Instant, Long>>): Double? {
+    if (samples.isEmpty()) return null
+    val ordered = samples.sortedBy { it.first }
+    var weighted = 0.0
+    var minutes = 0.0
+    for ((first, second) in ordered.zipWithNext()) {
+        val span = Duration.between(first.first, second.first).toMillis() / 60_000.0
+        if (span <= 0.0 || span > MaxHeartRateSampleGapMinutes) continue
+        weighted += (first.second + second.second) / 2.0 * span
+        minutes += span
+    }
+    return if (minutes > 0.0) weighted / minutes else ordered.map { it.second }.average()
+}

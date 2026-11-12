@@ -21,7 +21,6 @@ private const val ModerateHeartRateReserveThreshold = 0.40
 private const val VigorousHeartRateReserveThreshold = 0.60
 private const val GoodHeartRateCoverageMinutes = 10.0
 private const val GoodHeartRateCoverageRatio = 0.60
-private const val MaxHeartRateSampleGapMinutes = 5.0
 /*
  * Fallbacks for days without usable heart rate, in order: a workout's active
  * energy per minute, the day's active energy, cardio load. App heuristic, no

@@ -75,4 +75,23 @@ class DailyHeartRateEstimatesTest {
         assertEquals(30.0, overlapMinutes(t(0), t(60), t(30), t(90)), 0.0)
         assertEquals(0.0, overlapMinutes(t(0), t(30), t(30), t(60)), 0.0)
     }
+
+    @Test
+    fun `the time-weighted mean is not skewed by dense readings`() {
+        val t = { seconds: Long -> Instant.ofEpochSecond(seconds) }
+        // 100 bpm for 4 minutes, then a burst of readings at 160 bpm over 10 seconds.
+        // A plain average gives (100 + 100 + 160 x 10) / 12 = 150.
+        val samples = listOf(t(0) to 100L, t(240) to 100L) + (1L..10L).map { t(240 + it) to 160L }
+        // Pairs: 4 min at 100, 1 s at 130, 9 s at 160.
+        val expected = (100.0 * 240 + 130.0 * 1 + 160.0 * 9) / 250
+        assertEquals(expected, timeWeightedMeanHeartRate(samples)!!, 1e-9)
+    }
+
+    @Test
+    fun `a gap over 5 minutes counts for nothing, and a lone reading is its own mean`() {
+        val t = { minutes: Long -> Instant.ofEpochSecond(minutes * 60) }
+        assertEquals(110.0, timeWeightedMeanHeartRate(listOf(t(0) to 100L, t(1) to 120L, t(10) to 200L))!!, 1e-9)
+        assertEquals(90.0, timeWeightedMeanHeartRate(listOf(t(0) to 90L))!!, 0.0)
+        assertNull(timeWeightedMeanHeartRate(emptyList()))
+    }
 }

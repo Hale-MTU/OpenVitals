@@ -11,7 +11,6 @@ import tech.mmarca.openvitals.domain.preferences.BiologicalSex
 private const val MinimumTrimpMinutes = 5.0
 private const val GoodHeartRateCoverageMinutes = 10.0
 private const val GoodHeartRateCoverageRatio = 0.6
-private const val MaxHeartRateSampleGapMinutes = 5.0
 private const val ActiveHeartRateReserveThreshold = 0.3
 private const val MinimumMovementFallbackLoad = 0.25
 

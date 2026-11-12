@@ -27,6 +27,7 @@ import tech.mmarca.openvitals.domain.model.ExerciseLapData
 import tech.mmarca.openvitals.domain.model.ExerciseRoutePoint
 import tech.mmarca.openvitals.domain.model.ExerciseRouteStatus
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
+import tech.mmarca.openvitals.domain.insights.timeWeightedMeanHeartRate
 import tech.mmarca.openvitals.domain.insights.CompendiumMet
 import tech.mmarca.openvitals.domain.insights.BmrInput
 import tech.mmarca.openvitals.domain.insights.WorkoutEnergyResult
@@ -382,7 +383,7 @@ internal data class CalorieEstimateContext(
 
 /**
  * The estimate for a session that recorded no calories: [estimateWorkoutEnergy]
- * from the session's mean heart rate, its distance on foot or the activity's
+ * from the session's time-weighted mean heart rate, its distance on foot or the activity's
  * Compendium MET, with the body profile's weight. Null without a weight: the
  * form says so ([calorieEstimateMissingInputs]) rather than guess one.
  */
@@ -399,7 +400,7 @@ internal fun activityCalorieEstimate(
     val estimate = estimateWorkoutEnergy(
         exerciseType = activityType.exerciseType,
         durationMinutes = durationMinutes.toDouble(),
-        meanHeartRateBpm = heartRateSamples.takeIf { it.isNotEmpty() }?.map { it.beatsPerMinute }?.average(),
+        meanHeartRateBpm = timeWeightedMeanHeartRate(heartRateSamples.map { it.time to it.beatsPerMinute }),
         profile = context.profile,
         today = context.today,
         distanceMeters = distanceMeters,
