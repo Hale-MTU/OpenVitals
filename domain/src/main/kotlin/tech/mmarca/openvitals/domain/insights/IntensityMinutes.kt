@@ -31,8 +31,6 @@ private const val VigorousKcalPerMinute = 8.0
 private const val ModerateKcalPerMinute = 3.0
 private const val DailyActiveCaloriesModerateKcalPerMinute = 5.0
 private const val CardioLoadToModerateEquivalentMinutes = 4.0
-private const val ObservedMaxHeartRateMinimumBpm = 150L
-private const val ObservedMaxHeartRateRestingDeltaBpm = 60L
 
 enum class IntensityMinutesConfidence {
     HIGH,
@@ -70,11 +68,6 @@ data class IntensityMinutesEstimate(
     }
 }
 
-private data class IntensityMaxHeartRateContext(
-    val bpm: Long,
-    val isObservedAvailable: Boolean,
-)
-
 private data class IntensityMinuteAccumulator(
     val moderateMinutes: Double,
     val vigorousMinutes: Double,
@@ -104,15 +97,22 @@ fun calculateIntensityMinutes(
     sex: BiologicalSex? = null,
 ): IntensityMinutesEstimate {
     val resting = restingHeartRate ?: baselineRestingHeartRate ?: samples.estimatedRestingHeartRate()
+    val highestObserved = listOfNotNull(observedMaxHeartRate, samples.maxOfOrNull { it.beatsPerMinute }).maxOrNull()
     val maxHeartRate = resting?.let {
-        maxHeartRateContext(observedMaxHeartRate, samples, it, ageYears, sex, explicitMaxHeartRate)
+        dailyMaxHeartRate(
+            restingHeartRate = it,
+            observedMaxHeartRate = highestObserved,
+            ageYears = ageYears,
+            sex = sex,
+            explicitMaxHeartRate = explicitMaxHeartRate,
+        )
     }
     if (resting != null && maxHeartRate != null) {
         val heartRateEstimate = calculateHeartRateReserveIntensity(
             samples = samples,
             restingHeartRate = resting,
             maxHeartRate = maxHeartRate.bpm,
-            maxHeartRateObserved = maxHeartRate.isObservedAvailable,
+            maxHeartRateObserved = maxHeartRate.isMeasured,
             restingHeartRateObserved = restingHeartRate != null,
             activityWindows = activityWindows,
         )
@@ -268,44 +268,4 @@ private fun cardioLoadFallbackIntensity(cardioLoadScore: Int?): IntensityMinutes
         confidence = IntensityMinutesConfidence.LOW,
         method = IntensityMinutesMethod.CARDIO_LOAD,
     )
-}
-
-private fun maxHeartRateContext(
-    observedMaxHeartRate: Long?,
-    samples: List<HeartRateSample>,
-    restingHeartRate: Long,
-    ageYears: Int?,
-    sex: BiologicalSex?,
-    explicitMaxHeartRate: Long? = null,
-): IntensityMaxHeartRateContext? {
-    // A user-stated maximum outranks everything, as in heart-rate recovery.
-    if (explicitMaxHeartRate != null && explicitMaxHeartRate > restingHeartRate) {
-        return IntensityMaxHeartRateContext(bpm = explicitMaxHeartRate, isObservedAvailable = true)
-    }
-    val sampleMax = samples.maxOfOrNull { it.beatsPerMinute }
-    val observedMax = listOfNotNull(observedMaxHeartRate, sampleMax).maxOrNull() ?: return null
-    val observedAvailable = observedMax >= maxOf(
-        ObservedMaxHeartRateMinimumBpm,
-        restingHeartRate + ObservedMaxHeartRateRestingDeltaBpm,
-    )
-    val estimatedMax = ageYears?.let { ageMaxHeartRate(it, sex) }
-        ?: maxOf(observedMax + 10L, restingHeartRate + 70L)
-    return IntensityMaxHeartRateContext(
-        bpm = if (observedAvailable) observedMax else estimatedMax,
-        isObservedAvailable = observedAvailable,
-    )
-}
-
-private fun List<HeartRateSample>.estimatedRestingHeartRate(): Long? {
-    if (isEmpty()) return null
-    val sorted = map { it.beatsPerMinute }.sorted()
-    val index = (sorted.lastIndex * 0.1).roundToInt().coerceIn(sorted.indices)
-    return sorted[index].coerceIn(40L, 100L)
-}
-
-private fun CardioLoadTimeWindow.overlapMinutes(other: CardioLoadTimeWindow): Double {
-    val overlapStart = maxOf(start, other.start)
-    val overlapEnd = minOf(end, other.end)
-    if (!overlapEnd.isAfter(overlapStart)) return 0.0
-    return Duration.between(overlapStart, overlapEnd).seconds.toDouble() / 60.0
 }

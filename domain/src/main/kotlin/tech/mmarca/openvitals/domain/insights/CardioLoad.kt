@@ -14,8 +14,6 @@ private const val GoodHeartRateCoverageRatio = 0.6
 private const val MaxHeartRateSampleGapMinutes = 5.0
 private const val ActiveHeartRateReserveThreshold = 0.3
 private const val MinimumMovementFallbackLoad = 0.25
-private const val ObservedMaxHeartRateMinimumBpm = 150L
-private const val ObservedMaxHeartRateRestingDeltaBpm = 60L
 
 enum class CardioLoadConfidence {
     HIGH,
@@ -67,11 +65,6 @@ data class CardioLoadTimeWindow(
         get() = Duration.between(start, end).seconds.coerceAtLeast(0L).toDouble() / 60.0
 }
 
-private data class MaxHeartRateContext(
-    val bpm: Long,
-    val isObservedAvailable: Boolean,
-)
-
 private data class TrimpResult(
     val score: Double,
     val coveredMinutes: Double,
@@ -95,8 +88,15 @@ fun calculateCardioLoad(
 ): CardioLoadEstimate {
     val fallback = movementFallbackCardioLoad(steps)
     val resting = restingHeartRate ?: baselineRestingHeartRate ?: samples.estimatedRestingHeartRate()
+    val highestObserved = listOfNotNull(observedMaxHeartRate, samples.maxOfOrNull { it.beatsPerMinute }).maxOrNull()
     val maxHeartRate = resting?.let {
-        maxHeartRateContext(observedMaxHeartRate, samples, it, ageYears, sex, explicitMaxHeartRate)
+        dailyMaxHeartRate(
+            restingHeartRate = it,
+            observedMaxHeartRate = highestObserved,
+            ageYears = ageYears,
+            sex = sex,
+            explicitMaxHeartRate = explicitMaxHeartRate,
+        )
     }
     val trimp = if (resting != null && maxHeartRate != null) {
         calculateTrimp(
@@ -113,7 +113,7 @@ fun calculateCardioLoad(
     val activityWindowMinutes = activityWindows.sumOf { it.durationMinutes }
     if (trimp != null && trimp.coveredMinutes >= MinimumTrimpMinutes && trimp.score > 0.0) {
         val confidence = when {
-            trimp.hasGoodCoverage && restingHeartRate != null && maxHeartRate?.isObservedAvailable == true ->
+            trimp.hasGoodCoverage && restingHeartRate != null && maxHeartRate?.isMeasured == true ->
                 CardioLoadConfidence.HIGH
             trimp.hasGoodCoverage -> CardioLoadConfidence.MEDIUM
             else -> CardioLoadConfidence.LOW
@@ -132,7 +132,7 @@ fun calculateCardioLoad(
             restingHeartRateBpm = resting,
             restingHeartRateObserved = restingHeartRate != null,
             maxHeartRateBpm = maxHeartRate?.bpm,
-            maxHeartRateObserved = maxHeartRate?.isObservedAvailable == true,
+            maxHeartRateObserved = maxHeartRate?.isMeasured == true,
             heartRateSampleCount = samples.size,
             activityWindowCount = activityWindows.size,
             activityWindowMinutes = activityWindowMinutes,
@@ -153,7 +153,7 @@ fun calculateCardioLoad(
             restingHeartRateBpm = resting,
             restingHeartRateObserved = restingHeartRate != null,
             maxHeartRateBpm = maxHeartRate?.bpm,
-            maxHeartRateObserved = maxHeartRate?.isObservedAvailable == true,
+            maxHeartRateObserved = maxHeartRate?.isMeasured == true,
             heartRateSampleCount = samples.size,
             activityWindowCount = activityWindows.size,
             activityWindowMinutes = activityWindowMinutes,
@@ -249,44 +249,7 @@ private fun movementFallbackCardioLoad(steps: DailySteps?): Int {
     }
 }
 
-private fun maxHeartRateContext(
-    observedMaxHeartRate: Long?,
-    samples: List<HeartRateSample>,
-    restingHeartRate: Long,
-    ageYears: Int?,
-    sex: BiologicalSex?,
-    explicitMaxHeartRate: Long? = null,
-): MaxHeartRateContext? {
-    // A stated maximum outranks everything.
-    if (explicitMaxHeartRate != null && explicitMaxHeartRate > restingHeartRate) {
-        return MaxHeartRateContext(bpm = explicitMaxHeartRate, isObservedAvailable = true)
-    }
-    val sampleMax = samples.maxOfOrNull { it.beatsPerMinute }
-    val observedMax = listOfNotNull(observedMaxHeartRate, sampleMax).maxOrNull() ?: return null
-    val observedAvailable = observedMax >= maxOf(
-        ObservedMaxHeartRateMinimumBpm,
-        restingHeartRate + ObservedMaxHeartRateRestingDeltaBpm,
-    )
-    val estimatedMax = ageYears?.let { ageMaxHeartRate(it, sex) }
-        ?: maxOf(observedMax + 10L, restingHeartRate + 70L)
-    return MaxHeartRateContext(
-        bpm = if (observedAvailable) observedMax else estimatedMax,
-        isObservedAvailable = observedAvailable,
-    )
-}
-
-private fun List<HeartRateSample>.estimatedRestingHeartRate(): Long? {
-    if (isEmpty()) return null
-    val sorted = map { it.beatsPerMinute }.sorted()
-    val index = (sorted.lastIndex * 0.1).roundToInt().coerceIn(sorted.indices)
-    return sorted[index].coerceIn(40L, 100L)
-}
-
-private fun CardioLoadTimeWindow.overlapMinutes(other: CardioLoadTimeWindow): Double {
-    val overlapStart = maxOf(start, other.start)
-    val overlapEnd = minOf(end, other.end)
-    if (!overlapEnd.isAfter(overlapStart)) return 0.0
-    return Duration.between(overlapStart, overlapEnd).seconds.toDouble() / 60.0
-}
+internal fun CardioLoadTimeWindow.overlapMinutes(other: CardioLoadTimeWindow): Double =
+    overlapMinutes(start, end, other.start, other.end)
 
 private fun Double?.orZero(): Double = this ?: 0.0

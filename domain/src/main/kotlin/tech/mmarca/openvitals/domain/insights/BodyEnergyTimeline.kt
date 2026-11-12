@@ -759,17 +759,23 @@ private fun resolveIntensityContext(
         inputs.observedMaxHeartRateBpm,
         heartRateSamples.maxOfOrNull { it.beatsPerMinute },
     ).maxOrNull()
-    val ageMax = profile.ageYears(inputs.date)?.let { ageMaxHeartRate(it, profile.sex) }
-    val maxHeartRate = when {
-        resting != null && observedMax != null && observedMax >= maxOf(150L, resting + 60L) -> observedMax
-        ageMax != null -> ageMax
-        resting != null && observedMax != null -> maxOf(observedMax + 10L, resting + 70L)
-        resting != null -> resting + 70L
-        else -> null
+    val ageYears = profile.ageYears(inputs.date)
+    val ageMax = ageYears?.let { ageMaxHeartRate(it, profile.sex) }
+    // The same choice as cardio load and intensity minutes, except that Body Energy
+    // ignores an entered maximum: since v11 it calibrates from data and manual zones only.
+    val daily = resting?.let {
+        dailyMaxHeartRate(
+            restingHeartRate = it,
+            observedMaxHeartRate = observedMax,
+            ageYears = ageYears,
+            sex = profile.sex,
+            explicitMaxHeartRate = null,
+        )
     }
-    // An observed max already cleared max(150, resting + 60), so it earns high confidence.
+    // Without a resting rate there is no reserve to place a heart rate on; the maximum is shown only.
+    val maxHeartRate = daily?.bpm ?: ageMax ?: resting?.let { it + 70L }
     val confidence = when {
-        resting != null && observedMax != null && maxHeartRate == observedMax -> BodyEnergyConfidence.HIGH
+        daily?.isMeasured == true -> BodyEnergyConfidence.HIGH
         resting != null && ageMax != null -> BodyEnergyConfidence.MEDIUM
         else -> BodyEnergyConfidence.LOW
     }
@@ -887,30 +893,11 @@ private fun confidenceReason(
     BodyEnergyConfidence.NO_DATA -> "No usable Health Connect data was available."
 }
 
-private fun List<HeartRateSample>.estimatedRestingHeartRate(): Long? {
-    if (isEmpty()) return null
-    val sorted = map { it.beatsPerMinute }.sorted()
-    val index = (sorted.lastIndex * 0.1).roundToInt().coerceIn(sorted.indices)
-    return sorted[index].coerceIn(40L, 100L)
-}
-
 private fun SleepData.overlapMinutes(start: Instant, end: Instant): Double =
     overlapMinutes(startTime, endTime, start, end)
 
 private fun ExerciseData.overlapMinutes(start: Instant, end: Instant): Double =
     overlapMinutes(startTime, endTime, start, end)
-
-private fun overlapMinutes(
-    sourceStart: Instant,
-    sourceEnd: Instant,
-    start: Instant,
-    end: Instant,
-): Double {
-    val overlapStart = maxOf(sourceStart, start)
-    val overlapEnd = minOf(sourceEnd, end)
-    if (!overlapEnd.isAfter(overlapStart)) return 0.0
-    return Duration.between(overlapStart, overlapEnd).seconds.toDouble() / 60.0
-}
 
 private inline fun <T> List<T>.bucketedAverages(
     bucketCount: Int,
