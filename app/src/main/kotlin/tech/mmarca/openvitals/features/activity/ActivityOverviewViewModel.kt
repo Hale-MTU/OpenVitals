@@ -41,6 +41,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import tech.mmarca.openvitals.core.stats.lowerMedianOrNull
 
 private const val ActivityOverviewLookbackDays = 30L
 
@@ -214,7 +215,7 @@ class ActivityOverviewViewModel @Inject constructor(
         val restingHeartRateByDate = restingHeartRate.associateBy { it.date }
         val baselineRestingHeartRate = restingHeartRate
             .map { it.bpm }
-            .medianOrNull()
+            .lowerMedianOrNull()
         val observedMaxHeartRate = heartRateSamples.maxOfOrNull { it.beatsPerMinute }
         return generateSequence(start) { date ->
             date.plusDays(1).takeUnless { it.isAfter(end) }
@@ -247,12 +248,6 @@ class ActivityOverviewViewModel @Inject constructor(
             )
         }.toList()
     }
-}
-
-private fun List<Long>.medianOrNull(): Long? {
-    if (isEmpty()) return null
-    val sorted = sorted()
-    return sorted[sorted.lastIndex / 2]
 }
 
 private fun List<ExerciseData>.overlapping(date: LocalDate, zone: ZoneId): List<ExerciseData> {

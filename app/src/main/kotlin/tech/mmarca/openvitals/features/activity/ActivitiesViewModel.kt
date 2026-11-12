@@ -47,6 +47,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import tech.mmarca.openvitals.core.stats.lowerMedianOrNull
 
 @Immutable
 data class ActivitiesUiState(
@@ -380,7 +381,7 @@ private fun activityOverviewDays(
     val restingHeartRateByDate = restingHeartRate.associateBy { it.date }
     val baselineRestingHeartRate = restingHeartRate
         .map { it.bpm }
-        .medianOrNull()
+        .lowerMedianOrNull()
     val observedMaxHeartRate = heartRateSamples.maxOfOrNull { it.beatsPerMinute }
 
     return generateSequence(start) { date ->
@@ -460,12 +461,6 @@ internal fun activityDisplayPeriod(
         today = today,
         weekPeriodMode = activityWeekMode.toWeekPeriodMode(),
     )
-}
-
-private fun List<Long>.medianOrNull(): Long? {
-    if (isEmpty()) return null
-    val sorted = sorted()
-    return sorted[sorted.lastIndex / 2]
 }
 
 private fun List<ExerciseData>.overlapping(date: LocalDate, zone: ZoneId): List<ExerciseData> {

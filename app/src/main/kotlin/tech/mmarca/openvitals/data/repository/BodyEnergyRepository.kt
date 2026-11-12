@@ -32,6 +32,8 @@ import tech.mmarca.openvitals.domain.model.HealthConnectAvailability
 import tech.mmarca.openvitals.domain.model.RefreshMode
 import tech.mmarca.openvitals.domain.preferences.BodyEnergyCalibration
 import tech.mmarca.openvitals.domain.preferences.BodyProfile
+import tech.mmarca.openvitals.core.stats.lowerMedianOrNull
+import tech.mmarca.openvitals.core.stats.medianOrNull
 
 /**
  * Builds the per-day Body Energy timeline from the heart, sleep, activity and
@@ -373,7 +375,7 @@ class BodyEnergyRepositoryImpl(
             heartRepository.loadDailyRestingHR(baselineStart, baselineEnd)
                 .map { it.bpm }
                 .filter { it > 0L }
-                .medianLongOrNull()
+                .lowerMedianOrNull()
         }
         // Observed max is taken over the whole baseline window. An aggregate: loading 28 days of samples ran out of memory.
         val observedMax = async {
@@ -383,13 +385,13 @@ class BodyEnergyRepositoryImpl(
             heartRepository.loadDailyHRV(baselineStart, baselineEnd)
                 .map { it.rmssdMs }
                 .filter { it > 0.0 }
-                .medianDoubleOrNull()
+                .medianOrNull()
         }
         val respiratoryBaseline = async {
             vitalsRepository.loadDailyVitals(VitalsPeriodMetric.RESPIRATORY_RATE, baselineStart, baselineEnd)
                 .map { it.value }
                 .filter { it > 0.0 }
-                .medianDoubleOrNull()
+                .medianOrNull()
         }
         BodyEnergyBaselines(
             baselineRestingHeartRateBpm = baselineResting.await(),
@@ -509,23 +511,6 @@ private data class ChainSeed(
         val Neutral = ChainSeed(null, BodyEnergySeedSource.NEUTRAL)
         val ChainGap = ChainSeed(null, BodyEnergySeedSource.CHAIN_GAP)
         fun carried(score: Int) = ChainSeed(score, BodyEnergySeedSource.CARRIED_OVER)
-    }
-}
-
-private fun List<Long>.medianLongOrNull(): Long? {
-    if (isEmpty()) return null
-    val sorted = sorted()
-    return sorted[sorted.lastIndex / 2]
-}
-
-private fun List<Double>.medianDoubleOrNull(): Double? {
-    if (isEmpty()) return null
-    val sorted = sorted()
-    val middle = sorted.lastIndex / 2
-    return if (sorted.size % 2 == 0) {
-        (sorted[middle] + sorted[middle + 1]) / 2.0
-    } else {
-        sorted[middle]
     }
 }
 

@@ -50,4 +50,24 @@ class StatsTest {
         }
         assertNull(emptyList<Int>().averageOrNull())
     }
+
+    @Test
+    fun `median averages the two middle values for an even count`() {
+        assertEquals(2.5, listOf(4.0, 1.0, 2.0, 3.0).medianOrNull()!!, 0.0)
+        assertEquals(3.0, listOf(5, 1, 3).medianOrNull()!!, 0.0)
+        assertNull(emptyList<Double>().medianOrNull())
+    }
+
+    @Test
+    fun `lower median picks one of the values`() {
+        assertEquals(2L, listOf(4L, 1L, 2L, 3L).lowerMedianOrNull())
+        assertEquals(3L, listOf(5L, 1L, 3L).lowerMedianOrNull())
+        assertNull(emptyList<Long>().lowerMedianOrNull())
+    }
+
+    @Test
+    fun `circular mean wraps around midnight`() {
+        assertEquals(0, circularMeanMinutes(listOf(23 * 60 + 30, 30)))
+        assertEquals(23 * 60, circularMeanMinutes(listOf(22 * 60 + 30, 23 * 60 + 30)))
+    }
 }

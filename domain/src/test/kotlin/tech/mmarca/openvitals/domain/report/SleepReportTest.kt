@@ -8,6 +8,7 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import tech.mmarca.openvitals.domain.model.SleepData
 import tech.mmarca.openvitals.domain.model.SleepStage
+import tech.mmarca.openvitals.core.stats.circularMeanMinutes
 
 class SleepReportTest {
 

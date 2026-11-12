@@ -21,6 +21,7 @@ import tech.mmarca.openvitals.domain.model.DashboardWeeklyCardioLoadTargetSource
 import tech.mmarca.openvitals.domain.model.ExerciseData
 import tech.mmarca.openvitals.domain.preferences.ActivityWeekMode
 import tech.mmarca.openvitals.domain.preferences.toWeekPeriodMode
+import tech.mmarca.openvitals.core.stats.medianOrNull
 
 /**
  * Pure dashboard combine helpers. Health Connect I/O stays in [tech.mmarca.openvitals.data.repository.dashboard.DashboardDataLoader].
@@ -58,7 +59,7 @@ object DashboardAggregator {
     ): WeeklyCardioTarget? {
         val previousBaseline = previousWeekScores
             .filter { it > 0 }
-            .medianDoubleOrNull()
+            .medianOrNull()
         if (previousBaseline != null) {
             return WeeklyCardioTarget(
                 score = previousBaseline.roundCardioTarget(),
@@ -136,23 +137,6 @@ object DashboardAggregator {
                 date.plusDays(1).takeUnless { it.isAfter(end) }
             }
         }
-
-    fun List<Long>.medianLongOrNull(): Long? {
-        if (isEmpty()) return null
-        val sorted = sorted()
-        return sorted[sorted.lastIndex / 2]
-    }
-
-    fun List<Int>.medianDoubleOrNull(): Double? {
-        if (isEmpty()) return null
-        val sorted = sorted()
-        val middle = sorted.size / 2
-        return if (sorted.size % 2 == 0) {
-            (sorted[middle - 1] + sorted[middle]) / 2.0
-        } else {
-            sorted[middle].toDouble()
-        }
-    }
 
     fun List<Double>.medianDoubleValuesOrNull(): Double? {
         if (isEmpty()) return null

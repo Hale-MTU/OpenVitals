@@ -78,9 +78,7 @@ import tech.mmarca.openvitals.domain.dashboard.DashboardAggregator
 import tech.mmarca.openvitals.domain.dashboard.DashboardAggregator.cardioLoadWindows
 import tech.mmarca.openvitals.domain.dashboard.DashboardAggregator.datesInRange
 import tech.mmarca.openvitals.domain.dashboard.DashboardAggregator.intensityWorkoutInputs
-import tech.mmarca.openvitals.domain.dashboard.DashboardAggregator.medianDoubleOrNull
 import tech.mmarca.openvitals.domain.dashboard.DashboardAggregator.medianDoubleValuesOrNull
-import tech.mmarca.openvitals.domain.dashboard.DashboardAggregator.medianLongOrNull
 import tech.mmarca.openvitals.domain.dashboard.DashboardAggregator.roundCardioTarget
 import tech.mmarca.openvitals.domain.dashboard.DashboardAggregator.weeklyCardioConfidence
 import tech.mmarca.openvitals.domain.dashboard.DashboardAggregator.weeklyIntensityConfidence
@@ -102,6 +100,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.roundToInt
 import tech.mmarca.openvitals.healthconnect.HealthConnectManager
+import tech.mmarca.openvitals.core.stats.lowerMedianOrNull
 
 @Singleton
 class DashboardDataLoader @Inject constructor(
@@ -399,7 +398,7 @@ class DashboardDataLoader @Inject constructor(
             hc.readDailyRestingHR(date.minusDays(28), date.minusDays(1))
                 .map { it.bpm }
                 .filter { it > 0L }
-                .medianLongOrNull()
+                .lowerMedianOrNull()
         }
         val hrvSamples = readIfNeeded(wants(DashboardMetric.HRV), readHrvPermission, "HRV samples") {
             hc.readHrvSamples(nightStart, effectiveDayEnd)
@@ -836,7 +835,7 @@ class DashboardDataLoader @Inject constructor(
         return withContext(dispatchers.default) {
             val stepsByDate = dailySteps.associateBy { it.date }
             val restingHeartRateByDate = restingHeartRates.associateBy { it.date }
-            val baselineRestingHeartRate = restingHeartRates.map { it.bpm }.medianLongOrNull()
+            val baselineRestingHeartRate = restingHeartRates.map { it.bpm }.lowerMedianOrNull()
             val observedMaxHeartRate = heartRateSamples.maxOfOrNull { it.beatsPerMinute }
             val heartRateSamplesByDate = heartRateSamples
                 .sortedBy { it.time }
