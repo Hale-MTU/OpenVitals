@@ -3852,4 +3852,11 @@
     <string name="body_profile_openwatch_synced_updated">OpenWatch と同期 · %1$sに更新</string>
     <string name="openwatch_profile_sync_now">身体プロフィールを今すぐ同期</string>
     <string name="openwatch_profile_nothing_to_sync">先に「設定」の「身体プロフィール」でプロフィールを入力してください</string>
+    <string name="activity_heart_rate_zones_title">心拍ゾーン</string>
+    <string name="activity_heart_rate_zone_1">ゾーン 1 · 非常に軽い</string>
+    <string name="activity_heart_rate_zone_2">ゾーン 2 · 軽い</string>
+    <string name="activity_heart_rate_zone_3">ゾーン 3 · 中程度</string>
+    <string name="activity_heart_rate_zone_4">ゾーン 4 · きつい</string>
+    <string name="activity_heart_rate_zone_5">ゾーン 5 · 最大に近い</string>
+    <string name="activity_heart_rate_zones_basis">最大 %1$d bpm から算出（ACSM の運動強度区分）</string>
 </resources>

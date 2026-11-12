@@ -23,7 +23,10 @@ import tech.mmarca.openvitals.domain.insights.ActivitySplits
 import tech.mmarca.openvitals.domain.insights.HeartRateRecoveryReading
 import tech.mmarca.openvitals.domain.insights.buildActivitySplits
 import tech.mmarca.openvitals.domain.insights.calculateHeartRateRecovery
+import tech.mmarca.openvitals.domain.insights.HeartRateZoneBasis
+import tech.mmarca.openvitals.domain.insights.HeartRateZones
 import tech.mmarca.openvitals.domain.insights.heartRateRecoveryWindowFor
+import tech.mmarca.openvitals.domain.preferences.BodyProfile
 import tech.mmarca.openvitals.domain.model.ActivityCadenceSample
 import tech.mmarca.openvitals.domain.model.ActivityRecordingMarker
 import tech.mmarca.openvitals.domain.model.CoMapsNavigationSnapshot
@@ -75,6 +78,9 @@ internal data class ActivityDetailUiState(
 
     /** How the heart rate fell after the effort stopped, for a session that carries a stop mark. */
     val heartRateRecovery: HeartRateRecoveryReading? = null,
+
+    /** How long the session's heart rate sat in each zone. Null without a basis or a reading. */
+    val heartRateZones: ActivityHeartRateZoneTime? = null,
 
     /** The plan this session was logged against, when it still exists and can be read. */
     val linkedPlan: PlannedExerciseData? = null,
@@ -174,6 +180,7 @@ internal class ActivityDetailViewModel @Inject constructor(
             val loadedMarkers = markers.await()
             val loadedCoMapsSamples = coMapsSamples.await()
             val recovery = heartRateRecovery.await()
+            val profile = bodyProfilePreferences.bodyProfile()
             val plan = linkedPlan.await()
             // Backfill, height profile and splits walk every sample.
             withContext(dispatchers.default) {
@@ -192,6 +199,7 @@ internal class ActivityDetailViewModel @Inject constructor(
                     coMapsSamples = loadedCoMapsSamples,
                     elevationSamples = elevationProfile(backfilledWorkout.route),
                     heartRateRecovery = recovery,
+                    heartRateZones = heartRateZoneTime(heartRate, profile),
                     linkedPlan = plan,
                 ).withSplitsCutAt(splitDistanceMeters)
             }
@@ -303,4 +311,14 @@ internal class ActivityDetailViewModel @Inject constructor(
             splitSpeedTrace = splitSpeedTrace(recordedSpeed = speedSamples, splits = splits),
         )
     }
+}
+
+/** The time in each zone from the profile's basis, or null when there is none to place the zones on. */
+private fun heartRateZoneTime(
+    samples: List<HeartRateSample>,
+    profile: BodyProfile,
+): ActivityHeartRateZoneTime? {
+    if (samples.size < 2) return null
+    val basis = HeartRateZoneBasis.of(profile) ?: return null
+    return ActivityHeartRateZoneTime(basis, HeartRateZones.timeInZones(samples, basis))
 }

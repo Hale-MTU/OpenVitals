@@ -3784,4 +3784,11 @@
     <string name="body_profile_openwatch_synced_updated">Mit OpenWatch synchron gehalten · aktualisiert %1$s</string>
     <string name="openwatch_profile_sync_now">Körperprofil jetzt synchronisieren</string>
     <string name="openwatch_profile_nothing_to_sync">Gib zuerst dein Körperprofil unter Einstellungen, Körperprofil ein</string>
+    <string name="activity_heart_rate_zones_title">Herzfrequenzzonen</string>
+    <string name="activity_heart_rate_zone_1">Zone 1 · Sehr leicht</string>
+    <string name="activity_heart_rate_zone_2">Zone 2 · Leicht</string>
+    <string name="activity_heart_rate_zone_3">Zone 3 · Moderat</string>
+    <string name="activity_heart_rate_zone_4">Zone 4 · Intensiv</string>
+    <string name="activity_heart_rate_zone_5">Zone 5 · Nahe am Maximum</string>
+    <string name="activity_heart_rate_zones_basis">Zonen aus einem Maximum von %1$d bpm (ACSM-Intensitätsklassen)</string>
 </resources>

@@ -13,13 +13,16 @@ import tech.mmarca.openvitals.domain.model.ActivityCadenceKind
 import tech.mmarca.openvitals.domain.model.ActivityCadenceSample
 import tech.mmarca.openvitals.domain.model.ExerciseData
 import tech.mmarca.openvitals.domain.model.ExerciseSegmentData
+import tech.mmarca.openvitals.domain.insights.HeartRateZones
 import tech.mmarca.openvitals.domain.model.HeartRateSample
+import tech.mmarca.openvitals.domain.preferences.BodyProfile
 import tech.mmarca.openvitals.domain.model.SpeedSample
 import tech.mmarca.openvitals.util.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import java.time.Duration
 import java.time.Instant
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.runTest
@@ -84,6 +87,42 @@ class ActivityDetailViewModelTest {
         assertEquals(heartSamples, vm.uiState.value.heartRateSamples)
         assertEquals(speedSamples, vm.uiState.value.speedSamples)
         assertEquals(cadenceSamples, vm.uiState.value.cadenceSamples)
+    }
+
+    @Test fun `heart rate zones are placed on the profile's maximum and resting rate`() = runTest {
+        val workout = workout(id = "activity-1")
+        val repo = mockk<ActivityRepository>()
+        val heartRepo = mockk<HeartRepository>()
+        coEvery { repo.loadWorkout("activity-1") } returns workout
+        stubMetricSamples(repo)
+        coEvery { heartRepo.loadHeartRateSamples(workout.startTime, workout.endTime) } returns listOf(
+            HeartRateSample(workout.startTime, 150L, "test"),
+            HeartRateSample(workout.startTime.plusSeconds(30), 150L, "test"),
+        )
+        val preferences = FakePreferences(initialProfile = BodyProfile(maxHeartRateBpm = 190, restingHeartRateBpm = 50))
+
+        val vm = activityDetailViewModel(repo, "activity-1", heartRepository = heartRepo, preferences = preferences)
+
+        val zones = requireNotNull(vm.uiState.value.heartRateZones)
+        assertEquals(HeartRateZones.Basis(190, 50), zones.basis)
+        // 150 bpm is 71 % of the reserve: ACSM's vigorous class, zone 4.
+        assertEquals(Duration.ofSeconds(30), zones.durations[3])
+    }
+
+    @Test fun `no profile gives no heart rate zones`() = runTest {
+        val workout = workout(id = "activity-1")
+        val repo = mockk<ActivityRepository>()
+        val heartRepo = mockk<HeartRepository>()
+        coEvery { repo.loadWorkout("activity-1") } returns workout
+        stubMetricSamples(repo)
+        coEvery { heartRepo.loadHeartRateSamples(workout.startTime, workout.endTime) } returns listOf(
+            HeartRateSample(workout.startTime, 150L, "test"),
+            HeartRateSample(workout.startTime.plusSeconds(30), 150L, "test"),
+        )
+
+        val vm = activityDetailViewModel(repo, "activity-1", heartRepository = heartRepo)
+
+        assertNull(vm.uiState.value.heartRateZones)
     }
 
     @Test fun `missing activity sets not found error`() = runTest {

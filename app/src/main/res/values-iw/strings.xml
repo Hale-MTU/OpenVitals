@@ -110,4 +110,11 @@
     <string name="openwatch_profile_nothing_to_sync">הזינו קודם את פרופיל הגוף בהגדרות, פרופיל גוף</string>
     <string name="body_profile_prompt_message">להערכת קלוריות, הוסף לפרופיל הגוף: %1$s.</string>
     <string name="body_profile_prompt_action">פתח את פרופיל הגוף</string>
+    <string name="activity_heart_rate_zones_title">אזורי דופק</string>
+    <string name="activity_heart_rate_zone_1">אזור 1 · קל מאוד</string>
+    <string name="activity_heart_rate_zone_2">אזור 2 · קל</string>
+    <string name="activity_heart_rate_zone_3">אזור 3 · בינוני</string>
+    <string name="activity_heart_rate_zone_4">אזור 4 · עצים</string>
+    <string name="activity_heart_rate_zone_5">אזור 5 · קרוב למקסימום</string>
+    <string name="activity_heart_rate_zones_basis">אזורים לפי מקסימום של %1$d פעימות לדקה (דרגות העצימות של ACSM)</string>
 </resources>

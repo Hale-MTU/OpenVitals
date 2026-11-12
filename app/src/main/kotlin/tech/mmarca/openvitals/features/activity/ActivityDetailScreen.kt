@@ -206,6 +206,7 @@ internal fun ActivityDetailScreen(
             workout = workout,
             heartRateSamples = state.heartRateSamples,
             heartRateRecovery = state.heartRateRecovery,
+            heartRateZones = state.heartRateZones,
             speedSamples = state.speedSamples,
             cadenceSamples = state.cadenceSamples,
             markers = state.markers,
@@ -256,6 +257,7 @@ internal fun ActivityDetailContent(
     workout: ExerciseData,
     heartRateSamples: List<HeartRateSample>,
     heartRateRecovery: HeartRateRecoveryReading?,
+    heartRateZones: ActivityHeartRateZoneTime?,
     speedSamples: List<SpeedSample>,
     cadenceSamples: List<ActivityCadenceSample>,
     markers: List<ActivityRecordingMarker>,
@@ -341,6 +343,17 @@ internal fun ActivityDetailContent(
                     sessionStart = workout.startTime,
                     sessionEnd = workout.endTime,
                     pauses = workout.segments.toSessionPauses(),
+                    unitFormatter = unitFormatter,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                )
+            }
+        }
+        if (heartRateZones != null) {
+            item {
+                ActivityHeartRateZonesCard(
+                    zoneTime = heartRateZones,
                     unitFormatter = unitFormatter,
                     modifier = Modifier
                         .fillMaxWidth()

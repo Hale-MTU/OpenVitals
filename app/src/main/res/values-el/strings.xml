@@ -1149,4 +1149,11 @@
     <string name="interpretation_bp_severe">Εύρος σοβαρής υπέρτασης</string>
     <string name="interpretation_bp_body">Αυτή η μέτρηση εμπίπτει στο εύρος %1$s . Μία μόνο μέτρηση από την εφαρμογή δεν αποτελεί διάγνωση.</string>
     <string name="interpretation_bp_severe_body">Αυτή η μέτρηση υπερβαίνει το όριο σοβαρής υπέρτασης. Ελέγξτε την ξανά· αν υπάρχουν συμπτώματα ή η μέτρηση παραμένει πολύ υψηλή, αναζητήστε άμεσα ιατρική βοήθεια.</string>
+    <string name="activity_heart_rate_zones_title">Ζώνες καρδιακού ρυθμού</string>
+    <string name="activity_heart_rate_zone_1">Ζώνη 1 · Πολύ ελαφριά</string>
+    <string name="activity_heart_rate_zone_2">Ζώνη 2 · Ελαφριά</string>
+    <string name="activity_heart_rate_zone_3">Ζώνη 3 · Μέτρια</string>
+    <string name="activity_heart_rate_zone_4">Ζώνη 4 · Έντονη</string>
+    <string name="activity_heart_rate_zone_5">Ζώνη 5 · Σχεδόν μέγιστη</string>
+    <string name="activity_heart_rate_zones_basis">Ζώνες από μέγιστο %1$d bpm (κατηγορίες έντασης ACSM)</string>
 </resources>
