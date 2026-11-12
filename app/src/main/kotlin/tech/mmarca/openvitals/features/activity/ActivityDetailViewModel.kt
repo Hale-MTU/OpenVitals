@@ -14,6 +14,7 @@ import tech.mmarca.openvitals.core.performance.LoadCoordinator
 import tech.mmarca.openvitals.core.performance.runCatchingCancellable
 import tech.mmarca.openvitals.data.repository.ActivityMarkerRepository
 import tech.mmarca.openvitals.data.repository.contract.ActivitySplitPreferences
+import tech.mmarca.openvitals.data.repository.contract.BodyEnergyCalibrationPreferences
 import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
 import tech.mmarca.openvitals.domain.model.PlannedExerciseData
@@ -26,6 +27,7 @@ import tech.mmarca.openvitals.domain.insights.calculateHeartRateRecovery
 import tech.mmarca.openvitals.domain.insights.HeartRateZoneBasis
 import tech.mmarca.openvitals.domain.insights.HeartRateZones
 import tech.mmarca.openvitals.domain.insights.heartRateRecoveryWindowFor
+import tech.mmarca.openvitals.domain.preferences.BodyEnergyCalibration
 import tech.mmarca.openvitals.domain.preferences.BodyProfile
 import tech.mmarca.openvitals.domain.model.ActivityCadenceSample
 import tech.mmarca.openvitals.domain.model.ActivityRecordingMarker
@@ -94,6 +96,7 @@ internal class ActivityDetailViewModel @Inject constructor(
     private val heartRepository: HeartRepository? = null,
     private val markerRepository: ActivityMarkerRepository? = null,
     private val bodyProfilePreferences: BodyProfilePreferences,
+    private val calibrationPreferences: BodyEnergyCalibrationPreferences,
     private val splitPreferences: ActivitySplitPreferences,
     private val coMapsNavigationRepository: CoMapsNavigationRepository? = null,
     private val dispatchers: DispatcherProvider = DefaultDispatcherProvider,
@@ -181,6 +184,7 @@ internal class ActivityDetailViewModel @Inject constructor(
             val loadedCoMapsSamples = coMapsSamples.await()
             val recovery = heartRateRecovery.await()
             val profile = bodyProfilePreferences.bodyProfile()
+            val calibration = calibrationPreferences.bodyEnergyCalibration().normalized()
             val plan = linkedPlan.await()
             // Backfill, height profile and splits walk every sample.
             withContext(dispatchers.default) {
@@ -199,7 +203,7 @@ internal class ActivityDetailViewModel @Inject constructor(
                     coMapsSamples = loadedCoMapsSamples,
                     elevationSamples = elevationProfile(backfilledWorkout.route),
                     heartRateRecovery = recovery,
-                    heartRateZones = heartRateZoneTime(heartRate, profile),
+                    heartRateZones = heartRateZoneTime(heartRate, profile, calibration),
                     linkedPlan = plan,
                 ).withSplitsCutAt(splitDistanceMeters)
             }
@@ -313,12 +317,14 @@ internal class ActivityDetailViewModel @Inject constructor(
     }
 }
 
-/** The time in each zone from the profile's basis, or null when there is none to place the zones on. */
+/** The time in each zone: on the user's own limits when set, else on the profile's basis. Null when there is neither. */
 private fun heartRateZoneTime(
     samples: List<HeartRateSample>,
     profile: BodyProfile,
+    calibration: BodyEnergyCalibration,
 ): ActivityHeartRateZoneTime? {
     if (samples.size < 2) return null
-    val basis = HeartRateZoneBasis.of(profile) ?: return null
-    return ActivityHeartRateZoneTime(basis, HeartRateZones.timeInZones(samples, basis))
+    val manual = calibration.manualZoneThresholdsBpm.takeIf { calibration.useManualZones }
+    val bounds = HeartRateZones.boundsOf(manual, HeartRateZoneBasis.of(profile)) ?: return null
+    return ActivityHeartRateZoneTime(bounds, HeartRateZones.timeInZones(samples, bounds.lowerBpm))
 }

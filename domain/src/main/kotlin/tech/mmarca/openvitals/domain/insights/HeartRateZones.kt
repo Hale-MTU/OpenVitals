@@ -3,6 +3,7 @@ package tech.mmarca.openvitals.domain.insights
 import java.time.Duration
 import kotlin.math.ceil
 import tech.mmarca.openvitals.domain.model.HeartRateSample
+import tech.mmarca.openvitals.domain.preferences.HeartZoneThresholds
 
 const val GarberIntensityClassesUrl = "https://doi.org/10.1249/MSS.0b013e318213fefb"
 
@@ -17,8 +18,10 @@ const val GarberIntensityClassesUrl = "https://doi.org/10.1249/MSS.0b013e318213f
  * without one shares of the maximum. Very light has no lower bound in the
  * table; here it starts at rest, or at nothing.
  *
- * The bounds and the choice of basis are the same as OpenWatch's
- * `HeartRateZones`, so one heart rate lands in the same zone in both apps.
+ * Without limits of the user's own, the bounds and the choice of basis are the
+ * same as OpenWatch's `HeartRateZones`, so one heart rate lands in the same
+ * zone in both apps. Body Energy keeps its own estimate of the activity drain
+ * (it splits vigorous at 75 percent) and does not use these.
  */
 object HeartRateZones {
     const val COUNT = 5
@@ -39,12 +42,6 @@ object HeartRateZones {
     data class Basis(val maxBpm: Int, val restingBpm: Int? = null) {
         private val resting: Int? get() = restingBpm?.takeIf { it < maxBpm }
 
-        /** Where [bpm] sits between the floor (rest, or nothing) and the maximum. */
-        fun share(bpm: Double): Double {
-            val floor = resting?.toDouble() ?: 0.0
-            return (bpm - floor) / (maxBpm - floor)
-        }
-
         /** The lowest whole bpm in each zone, zone 1 first. */
         val boundsBpm: List<Int>
             get() {
@@ -52,26 +49,37 @@ object HeartRateZones {
                 val shares = if (resting != null) RESERVE_SHARE_BOUNDS else MAX_SHARE_BOUNDS
                 return shares.map { ceil(floor + it * (maxBpm - floor) - ROUNDING_TOLERANCE).toInt() }
             }
+    }
 
-        internal val shareBounds: List<Double>
-            get() = if (resting != null) RESERVE_SHARE_BOUNDS else MAX_SHARE_BOUNDS
+    /**
+     * The zones a heart rate is placed on: the lowest bpm of each, zone 1 first.
+     * [maxBpm] is the maximum they were derived from, null for the user's own
+     * limits.
+     */
+    data class Bounds(val lowerBpm: List<Int>, val maxBpm: Int?)
+
+    /** The user's own limits when set (Body Energy calibration), else the zones of [basis]. */
+    fun boundsOf(manual: HeartZoneThresholds?, basis: Basis?): Bounds? = when {
+        manual != null -> Bounds(
+            listOf(manual.zone1LowerBpm, manual.zone2LowerBpm, manual.zone3LowerBpm, manual.zone4LowerBpm, manual.zone5LowerBpm),
+            maxBpm = null,
+        )
+        basis != null -> Bounds(basis.boundsBpm, basis.maxBpm)
+        else -> null
     }
 
     /** The zone index, 0 to 4; null below zone 1. */
-    fun zoneOf(bpm: Double, basis: Basis): Int? {
-        val share = basis.share(bpm)
-        return basis.shareBounds.indexOfLast { share >= it }.takeIf { it >= 0 }
-    }
+    fun zoneOf(bpm: Long, lowerBpm: List<Int>): Int? = lowerBpm.indexOfLast { bpm >= it }.takeIf { it >= 0 }
 
     /**
      * The time spent in each zone, zone 1 first: each reading counts until the
      * next one, at most [MaxSampleGap]. The last reading counts for no time.
      */
-    fun timeInZones(samples: List<HeartRateSample>, basis: Basis): List<Duration> {
+    fun timeInZones(samples: List<HeartRateSample>, lowerBpm: List<Int>): List<Duration> {
         val millis = LongArray(COUNT)
         val ordered = samples.sortedBy { it.time }
         for (index in 0 until ordered.size - 1) {
-            val zone = zoneOf(ordered[index].beatsPerMinute.toDouble(), basis) ?: continue
+            val zone = zoneOf(ordered[index].beatsPerMinute, lowerBpm) ?: continue
             val span = Duration.between(ordered[index].time, ordered[index + 1].time)
             if (span <= MaxSampleGap) millis[zone] += span.toMillis()
         }

@@ -117,4 +117,5 @@
     <string name="activity_heart_rate_zone_4">المنطقة 4 · شديد</string>
     <string name="activity_heart_rate_zone_5">المنطقة 5 · قريب من الحد الأقصى</string>
     <string name="activity_heart_rate_zones_basis">المناطق من حد أقصى %1$d نبضة/دقيقة (فئات الشدة لـ ACSM)</string>
+    <string name="activity_heart_rate_zones_manual">المناطق من حدودك الخاصة (المضبوطة في طاقة الجسم)</string>
 </resources>

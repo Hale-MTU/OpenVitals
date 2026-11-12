@@ -3792,4 +3792,5 @@
     <string name="activity_heart_rate_zone_4">区间 4 · 剧烈</string>
     <string name="activity_heart_rate_zone_5">区间 5 · 接近最大</string>
     <string name="activity_heart_rate_zones_basis">按最大心率 %1$d 次/分计算（ACSM 强度分级）</string>
+    <string name="activity_heart_rate_zones_manual">按您自己设定的界限计算（在身体能量中设置）</string>
 </resources>

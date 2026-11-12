@@ -3857,4 +3857,5 @@
     <string name="activity_heart_rate_zone_4">Strefa 4 · Intensywna</string>
     <string name="activity_heart_rate_zone_5">Strefa 5 · Prawie maksymalna</string>
     <string name="activity_heart_rate_zones_basis">Strefy z maksimum %1$d uderzeń/min (klasy intensywności ACSM)</string>
+    <string name="activity_heart_rate_zones_manual">Strefy z twoich własnych granic (ustawionych w Energii ciała)</string>
 </resources>

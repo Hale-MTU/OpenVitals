@@ -117,4 +117,5 @@
     <string name="activity_heart_rate_zone_4">אזור 4 · עצים</string>
     <string name="activity_heart_rate_zone_5">אזור 5 · קרוב למקסימום</string>
     <string name="activity_heart_rate_zones_basis">אזורים לפי מקסימום של %1$d פעימות לדקה (דרגות העצימות של ACSM)</string>
+    <string name="activity_heart_rate_zones_manual">אזורים לפי הגבולות שלך (שהוגדרו באנרגיית הגוף)</string>
 </resources>

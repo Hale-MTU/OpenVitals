@@ -16,6 +16,8 @@ import tech.mmarca.openvitals.domain.model.ExerciseSegmentData
 import tech.mmarca.openvitals.domain.insights.HeartRateZones
 import tech.mmarca.openvitals.domain.model.HeartRateSample
 import tech.mmarca.openvitals.domain.preferences.BodyProfile
+import tech.mmarca.openvitals.domain.preferences.HeartZoneThresholds
+import tech.mmarca.openvitals.domain.preferences.BodyEnergyCalibration
 import tech.mmarca.openvitals.domain.model.SpeedSample
 import tech.mmarca.openvitals.util.MainDispatcherRule
 import io.mockk.coEvery
@@ -104,9 +106,36 @@ class ActivityDetailViewModelTest {
         val vm = activityDetailViewModel(repo, "activity-1", heartRepository = heartRepo, preferences = preferences)
 
         val zones = requireNotNull(vm.uiState.value.heartRateZones)
-        assertEquals(HeartRateZones.Basis(190, 50), zones.basis)
+        assertEquals(HeartRateZones.Basis(190, 50).boundsBpm, zones.bounds.lowerBpm)
+        assertEquals(190, zones.bounds.maxBpm)
         // 150 bpm is 71 % of the reserve: ACSM's vigorous class, zone 4.
         assertEquals(Duration.ofSeconds(30), zones.durations[3])
+    }
+
+    @Test fun `the user's own zone limits win over the profile`() = runTest {
+        val workout = workout(id = "activity-1")
+        val repo = mockk<ActivityRepository>()
+        val heartRepo = mockk<HeartRepository>()
+        coEvery { repo.loadWorkout("activity-1") } returns workout
+        stubMetricSamples(repo)
+        coEvery { heartRepo.loadHeartRateSamples(workout.startTime, workout.endTime) } returns listOf(
+            HeartRateSample(workout.startTime, 150L, "test"),
+            HeartRateSample(workout.startTime.plusSeconds(30), 150L, "test"),
+        )
+        val preferences = FakePreferences(
+            initialProfile = BodyProfile(maxHeartRateBpm = 190, restingHeartRateBpm = 50),
+            initialCalibration = BodyEnergyCalibration(
+                manualZoneThresholdsBpm = HeartZoneThresholds(100, 120, 140, 160, 180),
+                useManualZones = true,
+            ),
+        )
+
+        val vm = activityDetailViewModel(repo, "activity-1", heartRepository = heartRepo, preferences = preferences)
+
+        val zones = requireNotNull(vm.uiState.value.heartRateZones)
+        assertEquals(listOf(100, 120, 140, 160, 180), zones.bounds.lowerBpm)
+        assertNull(zones.bounds.maxBpm)
+        assertEquals(Duration.ofSeconds(30), zones.durations[2])
     }
 
     @Test fun `no profile gives no heart rate zones`() = runTest {
@@ -378,6 +407,7 @@ class ActivityDetailViewModelTest {
         heartRepository = heartRepository,
         markerRepository = markerRepository,
         bodyProfilePreferences = preferences,
+        calibrationPreferences = preferences,
         splitPreferences = preferences,
         dispatchers = mainDispatcherRule.dispatcherProvider,
         savedStateHandle = SavedStateHandle(mapOf(ACTIVITY_DETAIL_ID_ARG to activityId)),

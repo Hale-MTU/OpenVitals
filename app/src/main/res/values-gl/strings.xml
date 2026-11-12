@@ -3862,4 +3862,5 @@ Se Acceder a rutas de exercicio non aparece no diálogo de acceso, abre os axust
     <string name="activity_heart_rate_zone_4">Zona 4 · Intensa</string>
     <string name="activity_heart_rate_zone_5">Zona 5 · Case máxima</string>
     <string name="activity_heart_rate_zones_basis">Zonas a partir dun máximo de %1$d ppm (clases de intensidade da ACSM)</string>
+    <string name="activity_heart_rate_zones_manual">Zonas a partir dos teus propios límites (definidos en Enerxía corporal)</string>
 </resources>

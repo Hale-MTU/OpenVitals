@@ -9,24 +9,26 @@ import org.junit.Assert.assertNull
 import tech.mmarca.openvitals.domain.model.HeartRateSample
 import tech.mmarca.openvitals.domain.preferences.BiologicalSex
 import tech.mmarca.openvitals.domain.preferences.BodyProfile
+import tech.mmarca.openvitals.domain.preferences.HeartZoneThresholds
 
 class HeartRateZonesTest {
     @Test
     fun `with a resting rate the zones are shares of the reserve`() {
         val basis = HeartRateZones.Basis(maxBpm = 190, restingBpm = 50)
         assertEquals(listOf(50, 92, 106, 134, 176), basis.boundsBpm)
-        assertEquals(0, HeartRateZones.zoneOf(91.0, basis))
-        assertEquals(1, HeartRateZones.zoneOf(92.0, basis))
-        assertEquals(4, HeartRateZones.zoneOf(176.0, basis))
+        assertEquals(0, HeartRateZones.zoneOf(91, basis.boundsBpm))
+        assertEquals(1, HeartRateZones.zoneOf(92, basis.boundsBpm))
+        assertEquals(4, HeartRateZones.zoneOf(176, basis.boundsBpm))
     }
 
     @Test
     fun `without a resting rate the zones are shares of the maximum`() {
         val basis = HeartRateZones.Basis(maxBpm = 200)
         assertEquals(listOf(0, 114, 128, 154, 192), basis.boundsBpm)
-        assertEquals(1, HeartRateZones.zoneOf(114.0, basis))
-        assertEquals(3, HeartRateZones.zoneOf(191.0, basis))
-        assertEquals(4, HeartRateZones.zoneOf(192.0, basis))
+        assertEquals(0, HeartRateZones.zoneOf(113, basis.boundsBpm))
+        assertEquals(1, HeartRateZones.zoneOf(114, basis.boundsBpm))
+        assertEquals(3, HeartRateZones.zoneOf(191, basis.boundsBpm))
+        assertEquals(4, HeartRateZones.zoneOf(192, basis.boundsBpm))
     }
 
     @Test
@@ -36,8 +38,23 @@ class HeartRateZonesTest {
     }
 
     @Test
+    fun `the user's own limits win over a basis`() {
+        val manual = HeartZoneThresholds(100, 120, 140, 160, 180)
+        val bounds = HeartRateZones.boundsOf(manual, HeartRateZones.Basis(190, 50))
+        assertEquals(HeartRateZones.Bounds(listOf(100, 120, 140, 160, 180), maxBpm = null), bounds)
+        assertEquals(2, HeartRateZones.zoneOf(150, bounds!!.lowerBpm))
+    }
+
+    @Test
+    fun `without own limits the bounds come from the basis, and without either there are none`() {
+        val basis = HeartRateZones.Basis(200)
+        assertEquals(HeartRateZones.Bounds(basis.boundsBpm, 200), HeartRateZones.boundsOf(null, basis))
+        assertNull(HeartRateZones.boundsOf(null, null))
+    }
+
+    @Test
     fun `a rate below the resting rate is below zone 1`() {
-        assertNull(HeartRateZones.zoneOf(40.0, HeartRateZones.Basis(190, 50)))
+        assertNull(HeartRateZones.zoneOf(40, HeartRateZones.Basis(190, 50).boundsBpm))
     }
 
     @Test
@@ -47,7 +64,7 @@ class HeartRateZonesTest {
         fun at(seconds: Long, bpm: Long) = HeartRateSample(start.plusSeconds(seconds), bpm, "test")
         val time = HeartRateZones.timeInZones(
             listOf(at(30, 130), at(0, 120), at(60, 192), at(300, 192), at(310, 100)),
-            basis,
+            basis.boundsBpm,
         )
         assertEquals(
             listOf(Duration.ZERO, Duration.ofSeconds(30), Duration.ofSeconds(30), Duration.ZERO, Duration.ofSeconds(10)),

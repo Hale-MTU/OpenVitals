@@ -3818,4 +3818,5 @@
     <string name="activity_heart_rate_zone_4">Zona 4 · Intensa</string>
     <string name="activity_heart_rate_zone_5">Zona 5 · Quase máxima</string>
     <string name="activity_heart_rate_zones_basis">Zonas a partir de um máximo de %1$d bpm (classes de intensidade do ACSM)</string>
+    <string name="activity_heart_rate_zones_manual">Zonas a partir dos seus próprios limites (definidos em Energia corporal)</string>
 </resources>

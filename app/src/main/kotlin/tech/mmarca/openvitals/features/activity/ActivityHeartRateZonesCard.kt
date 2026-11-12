@@ -29,7 +29,7 @@ import tech.mmarca.openvitals.ui.theme.HeartColor
 /** The [HeartRateZones] a session's heart rate was placed on, and the time spent in each. */
 @Immutable
 internal data class ActivityHeartRateZoneTime(
-    val basis: HeartRateZones.Basis,
+    val bounds: HeartRateZones.Bounds,
     val durations: List<Duration>,
 )
 
@@ -49,7 +49,7 @@ internal fun ActivityHeartRateZonesCard(
 ) {
     val total = zoneTime.durations.sumOf { it.toMillis() }
     if (total <= 0L) return
-    val lowerBounds = zoneTime.basis.boundsBpm
+    val lowerBounds = zoneTime.bounds.lowerBpm
     OpenVitalsCard(modifier = modifier) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -99,11 +99,13 @@ internal fun ActivityHeartRateZonesCard(
                     }
                 }
             }
+            val maxBpm = zoneTime.bounds.maxBpm
             Text(
-                text = stringResource(
-                    R.string.activity_heart_rate_zones_basis,
-                    zoneTime.basis.maxBpm,
-                ),
+                text = if (maxBpm != null) {
+                    stringResource(R.string.activity_heart_rate_zones_basis, maxBpm)
+                } else {
+                    stringResource(R.string.activity_heart_rate_zones_manual)
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

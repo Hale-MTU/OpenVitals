@@ -3859,4 +3859,5 @@
     <string name="activity_heart_rate_zone_4">ゾーン 4 · きつい</string>
     <string name="activity_heart_rate_zone_5">ゾーン 5 · 最大に近い</string>
     <string name="activity_heart_rate_zones_basis">最大 %1$d bpm から算出（ACSM の運動強度区分）</string>
+    <string name="activity_heart_rate_zones_manual">自分で設定した上限・下限から算出（ボディエナジーで設定）</string>
 </resources>
