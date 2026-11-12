@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import tech.mmarca.openvitals.domain.insights.AlcoholHealthDrinkCatalog
 import tech.mmarca.openvitals.domain.insights.CaffeineHealthDrinkCatalog
+import tech.mmarca.openvitals.domain.insights.CoffeeRecipeDrinkCatalog
 import tech.mmarca.openvitals.domain.insights.HydrationDrinkCatalog
 import tech.mmarca.openvitals.domain.model.BeverageCategory
 import tech.mmarca.openvitals.domain.model.CustomHydrationDrink
@@ -134,6 +135,6 @@ data class BeverageEntity(
             )
 
         private val PresetCatalogs: List<HydrationDrinkCatalog> =
-            listOf(CaffeineHealthDrinkCatalog, AlcoholHealthDrinkCatalog)
+            listOf(CaffeineHealthDrinkCatalog, CoffeeRecipeDrinkCatalog, AlcoholHealthDrinkCatalog)
     }
 }
