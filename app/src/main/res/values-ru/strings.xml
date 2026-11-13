@@ -279,6 +279,7 @@
     <string name="activity_entry_recording_end_session">Завершить сеанс</string>
     <string name="activity_entry_recording_rest_remaining">Отдых %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Используйте + или –, если датчик пропустил повторение или добавил лишнее.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Удерживайте +, чтобы засчитать весь подход сразу.</string>
     <string name="activity_entry_recording_accuracy">Последняя точность %1$s</string>
     <string name="activity_entry_recording_focus">Фокус</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2×4</string>
@@ -864,6 +865,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Частота сердечных сокращений: %1$d</string>
     <string name="activity_recording_plan_get_ready">Приготовьтесь</string>
     <string name="cd_add_one_repetition">Добавить одно повторение</string>
+    <string name="cd_add_remaining_repetitions">Засчитать остаток подхода</string>
     <string name="cd_remove_one_repetition">Удалить одно повторение</string>
     <string name="workout_plan_error_title_required">Введите название</string>
     <string name="workout_plan_error_start_date">Введите корректную дату начала</string>

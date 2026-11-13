@@ -11,12 +11,16 @@ import tech.mmarca.openvitals.features.manualentry.vitals.*
 
 
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -30,7 +34,9 @@ import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material.icons.outlined.Stop
 import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,7 +57,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import java.time.Duration
 import java.time.Instant
@@ -117,7 +125,10 @@ internal fun RepetitionCountAdjustRow(
     unitFormatter: UnitFormatter,
     onAdjustRepetitionCount: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    /** The set's rep target in a plan run: holding + counts up to it. Null means no target. */
+    fillTarget: Long? = null,
 ) {
+        val remainingToTarget = fillTarget?.minus(state.currentSetRepetitionCount)?.takeIf { it > 0L }
         OpenVitalsSurface(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             shape = MaterialTheme.shapes.medium,
@@ -154,20 +165,21 @@ internal fun RepetitionCountAdjustRow(
                             modifier = Modifier.size(18.dp),
                         )
                     }
-                    OpenVitalsOutlinedButton(
+                    RepetitionAddButton(
                         onClick = { onAdjustRepetitionCount(1) },
+                        onLongClick = remainingToTarget?.let { remaining -> { onAdjustRepetitionCount(remaining) } },
                         enabled = state.status == ActivityRecordingStatus.RECORDING,
                         modifier = Modifier.weight(1f),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Add,
-                            contentDescription = stringResource(R.string.cd_add_one_repetition),
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
+                    )
                 }
                 Text(
-                    text = stringResource(R.string.activity_entry_recording_repetition_correction_hint),
+                    text = stringResource(
+                        if (fillTarget != null) {
+                            R.string.activity_recording_plan_fill_reps_hint
+                        } else {
+                            R.string.activity_entry_recording_repetition_correction_hint
+                        },
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -298,5 +310,44 @@ internal fun RepetitionRecordingControls(
                 )
             }
         }
+    }
+}
+
+/**
+ * The + of the count row, drawn as the outlined button beside it. A Material
+ * button has no long click, so this one is its own surface: a tap adds one,
+ * a hold ([onLongClick], null for none) counts the rest of the set.
+ */
+@Composable
+private fun RepetitionAddButton(
+    onClick: () -> Unit,
+    onLongClick: (() -> Unit)?,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .heightIn(min = ButtonDefaults.MinHeight)
+            .clip(CircleShape)
+            .border(ButtonDefaults.outlinedButtonBorder(enabled), CircleShape)
+            .combinedClickable(
+                enabled = enabled,
+                role = Role.Button,
+                onLongClickLabel = stringResource(R.string.cd_add_remaining_repetitions),
+                onLongClick = onLongClick,
+                onClick = onClick,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Add,
+            contentDescription = stringResource(R.string.cd_add_one_repetition),
+            tint = if (enabled) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            },
+            modifier = Modifier.size(18.dp),
+        )
     }
 }

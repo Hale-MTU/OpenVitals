@@ -303,6 +303,7 @@
     <string name="activity_entry_recording_end_session">Finish session</string>
     <string name="activity_entry_recording_rest_remaining">Rest %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Use + or - if the sensor misses or adds a rep.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Hold + to count the whole set at once.</string>
     <string name="activity_entry_recording_accuracy">Last accuracy %1$s</string>
     <string name="activity_entry_recording_focus">Focus</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -893,6 +894,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Heart rate %1$d</string>
     <string name="activity_recording_plan_get_ready">Get ready</string>
     <string name="cd_add_one_repetition">Add one repetition</string>
+    <string name="cd_add_remaining_repetitions">Count the rest of the set</string>
     <string name="cd_remove_one_repetition">Remove one repetition</string>
 
     <string name="workout_plan_error_title_required">Enter a title</string>

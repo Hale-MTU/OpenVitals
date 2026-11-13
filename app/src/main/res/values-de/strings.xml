@@ -211,6 +211,7 @@
     <string name="activity_entry_recording_end_session">Sitzung beenden</string>
     <string name="activity_entry_recording_rest_remaining">Pause %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Nutze + oder -, wenn der Sensor eine Wiederholung auslässt oder hinzufügt.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Halte + gedrückt, um den ganzen Satz auf einmal zu zählen.</string>
     <string name="activity_entry_recording_accuracy">Letzte Genauigkeit %1$s</string>
     <string name="activity_entry_route_summary">%1$s • %2$s • %3$s Anstieg • %4$d Punkte</string>
     <string name="activity_entry_route_average_metrics">Durchschn. Tempo %1$s • durchschn. Geschwindigkeit %2$s</string>
@@ -3062,6 +3063,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Herzfrequenz %1$d</string>
     <string name="activity_recording_plan_get_ready">Bereit machen</string>
     <string name="cd_add_one_repetition">Eine Wiederholung hinzufügen</string>
+    <string name="cd_add_remaining_repetitions">Rest des Satzes zählen</string>
     <string name="cd_remove_one_repetition">Eine Wiederholung entfernen</string>
     <string name="workout_plan_error_title_required">Gib einen Titel ein</string>
     <string name="workout_plan_error_start_date">Gib ein gültiges Startdatum ein</string>

@@ -244,6 +244,7 @@
     <string name="activity_entry_recording_end_session">Zakończ sesję</string>
     <string name="activity_entry_recording_rest_remaining">Odpocznij %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Użyj + lub - jeżeli sensor pominie lub doda powtórzenie.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Przytrzymaj +, aby zaliczyć całą serię naraz.</string>
     <string name="activity_entry_recording_accuracy">Ostatnia dokładność %1$s</string>
     <string name="activity_entry_recording_focus">Skupienie</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -889,6 +890,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Tętno %1$d</string>
     <string name="activity_recording_plan_get_ready">Przygotuj się</string>
     <string name="cd_add_one_repetition">Dodaj jedno powtórzenie</string>
+    <string name="cd_add_remaining_repetitions">Zalicz resztę serii</string>
     <string name="cd_remove_one_repetition">Usuń jedno powtórzenie</string>
     <string name="workout_plan_error_title_required">Podaj tytuł</string>
     <string name="workout_plan_error_start_date">Podaj poprawną datę rozpoczęcia</string>

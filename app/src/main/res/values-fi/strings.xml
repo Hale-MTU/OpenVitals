@@ -337,6 +337,7 @@
     <string name="activity_entry_recording_end_session">Lopeta harjoitus</string>
     <string name="activity_entry_recording_rest_remaining">Lepo %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Käytä + tai -, jos anturi ohittaa tai lisää toiston.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Pidä + painettuna, niin koko sarja lasketaan kerralla.</string>
     <string name="activity_entry_recording_accuracy">Viimeisin tarkkuus %1$s</string>
     <string name="activity_entry_recording_focus">Keskity</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -912,6 +913,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Syke %1$d</string>
     <string name="activity_recording_plan_get_ready">Valmistaudu</string>
     <string name="cd_add_one_repetition">Lisää yksi toisto</string>
+    <string name="cd_add_remaining_repetitions">Laske sarjan loput toistot</string>
     <string name="cd_remove_one_repetition">Poista yksi toisto</string>
     <string name="workout_plan_error_title_required">Anna otsikko</string>
     <string name="workout_plan_error_start_date">Anna kelvollinen aloituspäivä</string>

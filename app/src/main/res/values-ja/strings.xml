@@ -267,6 +267,7 @@
     <string name="activity_entry_recording_end_session">セッション終了</string>
     <string name="activity_entry_recording_rest_remaining">休憩 %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">センサーが回数を見逃したり余分に数えたりしたら + や - で修正してください。</string>
+    <string name="activity_recording_plan_fill_reps_hint">+ を長押しすると、セット全体をまとめてカウントします。</string>
     <string name="activity_entry_recording_accuracy">最新の精度 %1$s</string>
     <string name="activity_entry_recording_focus">フォーカス</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -850,6 +851,7 @@
     <string name="activity_recording_plan_cue_heart_rate">心拍数 %1$d</string>
     <string name="activity_recording_plan_get_ready">準備</string>
     <string name="cd_add_one_repetition">1 回追加</string>
+    <string name="cd_add_remaining_repetitions">セットの残りをカウント</string>
     <string name="cd_remove_one_repetition">1 回減らす</string>
     <string name="workout_plan_error_title_required">タイトルを入力してください</string>
     <string name="workout_plan_error_start_date">有効な開始日を入力してください</string>

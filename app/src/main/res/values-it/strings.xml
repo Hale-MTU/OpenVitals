@@ -212,6 +212,7 @@
     <string name="activity_entry_recording_end_session">Termina sessione</string>
     <string name="activity_entry_recording_rest_remaining">Riposo %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Usa + o - se il sensore manca o aggiunge una ripetizione.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Tieni premuto + per contare tutta la serie in una volta.</string>
     <string name="activity_entry_recording_accuracy">Ultima precisione %1$s</string>
     <string name="activity_entry_route_summary">%1$s • %2$s • %3$s dislivello • %4$d punti</string>
     <string name="activity_entry_route_average_metrics">Ritmo medio %1$s • velocità media %2$s</string>
@@ -3104,6 +3105,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Frequenza cardiaca %1$d</string>
     <string name="activity_recording_plan_get_ready">Preparati</string>
     <string name="cd_add_one_repetition">Aggiungi una ripetizione</string>
+    <string name="cd_add_remaining_repetitions">Conta il resto della serie</string>
     <string name="cd_remove_one_repetition">Togli una ripetizione</string>
     <string name="workout_plan_error_title_required">Inserisci un titolo</string>
     <string name="workout_plan_error_start_date">Inserisci una data di inizio valida</string>

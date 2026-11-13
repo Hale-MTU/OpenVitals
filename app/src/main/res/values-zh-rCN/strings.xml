@@ -208,6 +208,7 @@
     <string name="activity_entry_recording_end_session">结束会话</string>
     <string name="activity_entry_recording_rest_remaining">休息 %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">传感器漏计或多计时，用 + 或 - 修正。</string>
+    <string name="activity_recording_plan_fill_reps_hint">长按 + 可一次计完整组。</string>
     <string name="activity_entry_recording_accuracy">上次精度 %1$s</string>
     <string name="activity_entry_recording_focus">专注</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -3110,6 +3111,7 @@
     <string name="activity_recording_plan_cue_heart_rate">心率 %1$d</string>
     <string name="activity_recording_plan_get_ready">准备</string>
     <string name="cd_add_one_repetition">增加一次</string>
+    <string name="cd_add_remaining_repetitions">计完本组剩余次数</string>
     <string name="cd_remove_one_repetition">减少一次</string>
     <string name="workout_plan_error_title_required">请输入标题</string>
     <string name="workout_plan_error_start_date">请输入有效的开始日期</string>

@@ -208,6 +208,7 @@
     <string name="activity_entry_recording_end_session">Terminer la séance</string>
     <string name="activity_entry_recording_rest_remaining">Repos %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Utilisez + ou - si le capteur rate ou ajoute une répétition.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Maintenez + pour compter toute la série d\'un coup.</string>
     <string name="activity_entry_recording_accuracy">Dernière précision %1$s</string>
     <string name="activity_entry_recording_focus">Focus</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -3113,6 +3114,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Fréquence cardiaque %1$d</string>
     <string name="activity_recording_plan_get_ready">Préparez-vous</string>
     <string name="cd_add_one_repetition">Ajouter une répétition</string>
+    <string name="cd_add_remaining_repetitions">Compter le reste de la série</string>
     <string name="cd_remove_one_repetition">Retirer une répétition</string>
     <string name="workout_plan_error_title_required">Saisissez un titre</string>
     <string name="workout_plan_error_start_date">Saisissez une date de début valide</string>
