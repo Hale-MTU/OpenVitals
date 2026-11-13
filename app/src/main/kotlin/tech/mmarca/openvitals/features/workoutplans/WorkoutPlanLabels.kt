@@ -1,5 +1,7 @@
 package tech.mmarca.openvitals.features.workoutplans
 
+import tech.mmarca.openvitals.core.presentation.UnitFormatter
+import tech.mmarca.openvitals.features.manualentry.activity.MaxActivityWeightKg
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import tech.mmarca.openvitals.R
@@ -65,7 +67,7 @@ internal fun completionText(completion: PlannedExerciseCompletion): String? = wh
 
 /** "HR 120–150 bpm", "Power 200–250 W", …; null for a target the app cannot describe. */
 @Composable
-internal fun performanceTargetText(target: PlannedExercisePerformanceTarget): String? = when (target) {
+internal fun performanceTargetText(target: PlannedExercisePerformanceTarget, unitFormatter: UnitFormatter): String? = when (target) {
     is PlannedExercisePerformanceTarget.HeartRate ->
         stringResource(R.string.workout_plan_target_heart_rate, target.minBpm.toInt(), target.maxBpm.toInt())
     is PlannedExercisePerformanceTarget.Power ->
@@ -74,11 +76,20 @@ internal fun performanceTargetText(target: PlannedExercisePerformanceTarget): St
         stringResource(R.string.workout_plan_target_speed, target.minMetersPerSecond * 3.6, target.maxMetersPerSecond * 3.6)
     is PlannedExercisePerformanceTarget.Cadence ->
         stringResource(R.string.workout_plan_target_cadence, target.minRpm.toInt(), target.maxRpm.toInt())
-    is PlannedExercisePerformanceTarget.Weight -> stringResource(R.string.workout_plan_target_weight, target.kilograms)
+    is PlannedExercisePerformanceTarget.Weight ->
+        stringResource(R.string.workout_plan_target_weight, unitFormatter.load(target.kilograms).text)
     is PlannedExercisePerformanceTarget.RateOfPerceivedExertion -> stringResource(R.string.workout_plan_target_rpe, target.rpe)
     PlannedExercisePerformanceTarget.Amrap -> stringResource(R.string.workout_plan_target_amrap)
     PlannedExercisePerformanceTarget.Unknown -> null
 }
+
+@Composable
+internal fun WorkoutPlanValidationError.message(unitFormatter: UnitFormatter): String =
+    if (kind == WorkoutPlanValidationErrorKind.STEP_WEIGHT_INVALID) {
+        stringResource(R.string.workout_plan_error_step_weight, unitFormatter.load(MaxActivityWeightKg).text)
+    } else {
+        message()
+    }
 
 @Composable
 internal fun WorkoutPlanValidationError.message(): String = stringResource(

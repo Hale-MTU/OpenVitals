@@ -211,6 +211,7 @@
     <string name="activity_entry_recording_end_session">Finalizar sesión</string>
     <string name="activity_entry_recording_rest_remaining">Descanso %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Usa + o - si el sensor omite o añade una repetición.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Mantén pulsado + para contar toda la serie de una vez.</string>
     <string name="activity_entry_recording_accuracy">Última precisión %1$s</string>
     <string name="activity_entry_route_summary">%1$s • %2$s • %3$s desnivel • %4$d puntos</string>
     <string name="activity_entry_route_average_metrics">Ritmo medio %1$s • velocidad media %2$s</string>
@@ -2887,7 +2888,7 @@
     <string name="workout_plan_target_power">Potencia %1$d–%2$d W</string>
     <string name="workout_plan_target_speed">Velocidad %1$.1f–%2$.1f km/h</string>
     <string name="workout_plan_target_cadence">Cadencia %1$d–%2$d rpm</string>
-    <string name="workout_plan_target_weight">Peso %1$.1f kg</string>
+    <string name="workout_plan_target_weight">Peso %1$s</string>
     <string name="workout_plan_target_rpe">RPE %1$d</string>
     <string name="workout_plan_target_amrap">Tantas repeticiones como puedas</string>
     <string name="workout_plans_export">Exportar planes</string>
@@ -3026,6 +3027,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Frecuencia cardíaca %1$d</string>
     <string name="activity_recording_plan_get_ready">Prepárate</string>
     <string name="cd_add_one_repetition">Añadir una repetición</string>
+    <string name="cd_add_remaining_repetitions">Contar el resto de la serie</string>
     <string name="cd_remove_one_repetition">Quitar una repetición</string>
     <string name="workout_plan_error_title_required">Escribe un título</string>
     <string name="workout_plan_error_start_date">Introduce una fecha de inicio válida</string>
@@ -3093,9 +3095,9 @@
     <string name="settings_fit_import_folder_grant">Permitir la importación</string>
     <string name="settings_fit_import_error">Advertencia de importación FIT: %1$s</string>
     <string name="activity_recording_plan_set_progress">Establecer %1$d de %2$d</string>
-    <string name="activity_recording_plan_weight">%1$s kg</string>
     <string name="activity_recording_plan_setup_rest_minutes">resto %1$d min</string>
     <string name="activity_recording_plan_spoken_reps_weight">%1$s , %2$d repeticiones, %3$s kilogramos</string>
+    <string name="activity_recording_plan_spoken_reps_weight_pounds">%1$s , %2$d repeticiones, %3$s libras</string>
     <plurals name="activity_recording_plan_spoken_minutes">
         <item quantity="one">%1$s, %2$d minuto</item>
         <item quantity="many">%1$s, %2$d minutos</item>
@@ -3111,13 +3113,13 @@
         <item quantity="many">Descanso %1$d minutos.</item>
         <item quantity="other">Descanso %1$d minutos.</item>
     </plurals>
-    <string name="activity_entry_set_weight_label">Peso (kg)</string>
+    <string name="activity_entry_set_weight_label">Peso (%1$s)</string>
     <string name="workout_plan_goal_seconds_short">segundo</string>
     <string name="workout_plan_goal_minutes_short">min</string>
     <string name="workout_plan_preview_minutes">%1$d min</string>
     <string name="workout_plan_step_sets_label">Conjuntos</string>
     <string name="workout_plan_step_set_rest_label">Descansa después de cada serie</string>
-    <string name="workout_plan_step_weight_label">Peso (kg)</string>
+    <string name="workout_plan_step_weight_label">Peso (%1$s)</string>
     <string name="workout_plan_error_step_sets">Los conjuntos deben estar entre 1 y 99</string>
     <string name="settings_elevation_tile_import_action">Importar mosaico de elevación</string>
     <string name="settings_elevation_tile_importing">Importando…</string>
@@ -3127,7 +3129,7 @@
     <string name="settings_elevation_help_link">Abrir la guía de mosaicos de elevación</string>
     <string name="detail_weight">Peso</string>
     <string name="workout_plan_error_step_set_rest">El descanso después de cada serie debe ser de 0 o más, hasta 24 horas</string>
-    <string name="workout_plan_error_step_weight">Introduce un peso superior a 0 y hasta 1000 kg</string>
+    <string name="workout_plan_error_step_weight">Introduce un peso superior a 0 y hasta %1$s</string>
     <string name="settings_elevation_title">Corrección de elevación</string>
     <string name="settings_elevation_body">Reemplaza la altitud en los archivos GPX, TCX, KML y FIT importados, en las actividades del reloj y en las actividades registradas en este teléfono con los valores de los mosaicos de elevación guardadas aquí.</string>
     <string name="settings_elevation_toggle_title">Corrección de altitud con teselas</string>

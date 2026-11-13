@@ -14,8 +14,8 @@ import tech.mmarca.openvitals.domain.model.restPlanStep
 import tech.mmarca.openvitals.features.manualentry.activity.ActivityEntryType
 import tech.mmarca.openvitals.features.manualentry.activity.ActivityRepetitionSetInput
 import tech.mmarca.openvitals.features.manualentry.activity.isRepetitionLike
-import tech.mmarca.openvitals.features.manualentry.activity.toInputText
 import tech.mmarca.openvitals.features.manualentry.activity.toWeightKgOrNull
+import tech.mmarca.openvitals.features.manualentry.activity.toWeightKgText
 import tech.mmarca.openvitals.features.manualentry.activity.recording.ActivityPlanGoalKind
 import tech.mmarca.openvitals.features.manualentry.activity.recording.ActivityPlanRunStep
 import tech.mmarca.openvitals.features.manualentry.activity.recording.planStepSensorTypeId
@@ -42,7 +42,7 @@ fun PlannedExerciseData.toRepetitionSetInputs(ownSegmentType: Int?): List<Activi
         val isRest = step.isRestStep()
         val segmentType = step.exerciseType.takeIf { it != ownSegmentType }
         val label = step.description?.trim()?.takeIf { it.isNotEmpty() && !it.startsWith("Set ") }
-        val weightKgText = step.plannedWeightKg()?.toInputText(1).orEmpty()
+        val weightKgText = step.plannedWeightKg()?.toWeightKgText().orEmpty()
         when (val completion = step.completion) {
             is PlannedExerciseCompletion.Repetitions -> if (!isRest) {
                 rows += ActivityRepetitionSetInput(

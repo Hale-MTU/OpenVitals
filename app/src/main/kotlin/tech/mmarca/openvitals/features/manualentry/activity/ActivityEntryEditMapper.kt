@@ -228,7 +228,7 @@ internal fun ExerciseData.toRepetitionEditState(type: ActivityEntryType): Repeti
             restMinutesText = restSeconds,
             segmentType = segment.segmentType.takeIf { it != type.segmentType },
             isDuration = isDuration,
-            weightKgText = segment.weightKg?.toInputText(1).orEmpty(),
+            weightKgText = segment.weightKg?.toWeightKgText().orEmpty(),
         )
     }
     return RepetitionEditState(

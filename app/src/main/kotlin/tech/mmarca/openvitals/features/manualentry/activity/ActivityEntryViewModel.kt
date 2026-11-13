@@ -1445,7 +1445,7 @@ class ActivityEntryViewModel(
                 segmentType = set.segmentType?.takeIf { it != selectedActivityType.segmentType },
                 label = set.label,
                 isDuration = set.isDuration,
-                weightKgText = set.weightKg?.toInputText(1).orEmpty(),
+                weightKgText = set.weightKg?.toWeightKgText().orEmpty(),
             )
         }
         val linkedPlan = snapshot.planId?.let { ActivityLinkedPlan(it, snapshot.planTitle) } ?: currentState.linkedPlan
