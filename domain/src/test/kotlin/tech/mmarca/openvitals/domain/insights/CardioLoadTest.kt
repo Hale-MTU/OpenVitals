@@ -167,7 +167,7 @@ class CardioLoadTest {
 
         assertEquals(60.8, load(tech.mmarca.openvitals.domain.preferences.BiologicalSex.MALE), 0.1)
         assertEquals(67.7, load(tech.mmarca.openvitals.domain.preferences.BiologicalSex.FEMALE), 0.1)
-        // No recorded sex keeps the men's constants, as before.
-        assertEquals(60.8, load(null), 0.1)
+        // No recorded sex: the mean of both weightings, (60.8 + 67.7) / 2.
+        assertEquals(64.2, load(null), 0.1)
     }
 }

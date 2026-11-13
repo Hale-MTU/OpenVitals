@@ -38,11 +38,12 @@ sealed interface WorkoutEnergyResult {
  * The calories a workout burned, estimated, for a session that recorded none.
  *
  * In this order: from the heart rate when the session has one in the range
- * Keytel's equation was derived on and the profile has sex and age; from the
+ * Keytel's equation was derived on and the profile has an age; from the
  * distance of a walk or run whose pace lies where ACSM's equation holds
  * ([AcsmDistanceOnFoot]); otherwise from the activity's Compendium MET. The
  * resting share for the same time is the wearer's own basal metabolic rate
- * (Mifflin-St Jeor) when the profile has every field it needs, else 1 MET.
+ * (Mifflin-St Jeor) when the profile has weight, height and age, else 1 MET.
+ * Without a sex, Keytel and Mifflin-St Jeor take the mean of both sexes.
  * Heart rate and MET give gross energy, active = gross − resting; ACSM's
  * horizontal component is already net of rest.
  *
@@ -82,9 +83,14 @@ fun estimateWorkoutEnergy(
     )
 }
 
-private fun restingKcal(profile: BodyProfile, weightKg: Double, durationMinutes: Double, today: LocalDate): Double =
-    profile.basalMetabolicRateKcal(today)?.let { it * durationMinutes / MinutesPerDay }
-        ?: CompendiumMet.grossKcal(met = 1.0, weightKg = weightKg, durationMinutes = durationMinutes)
+private fun restingKcal(profile: BodyProfile, weightKg: Double, durationMinutes: Double, today: LocalDate): Double {
+    val age = profile.ageYears(today)
+    val heightCm = profile.heightCm
+    if (age == null || heightCm == null) {
+        return CompendiumMet.grossKcal(met = 1.0, weightKg = weightKg, durationMinutes = durationMinutes)
+    }
+    return BasalMetabolicRate.mifflinStJeor(profile.sex, weightKg, heightCm, age) * durationMinutes / MinutesPerDay
+}
 
 private fun keytelGrossKcal(
     profile: BodyProfile,
@@ -93,7 +99,7 @@ private fun keytelGrossKcal(
     durationMinutes: Double,
     today: LocalDate,
 ): Double? {
-    val sex = profile.sex ?: return null
+    val sex = profile.sex
     val age = profile.ageYears(today) ?: return null
     val maxHeartRate = profile.maxHeartRateBpm?.toDouble() ?: ageMaxHeartRate(age, sex).toDouble()
     if (meanHeartRateBpm < KeytelHeartRate.MinFractionOfMax * maxHeartRate) return null
@@ -115,17 +121,24 @@ private fun keytelGrossKcal(
  *
  * Derived on 115 adults aged 19 to 45 at steady-state treadmill or cycle work
  * of 57 to 90 % of their maximum heart rate. Outside that heart rate range the
- * estimate is not used: this project's own rule, not the paper's.
+ * estimate is not used: this project's own rule, not the paper's. Without a
+ * sex, the mean of the two equations: Keytel et al. fit one mixed model with
+ * gender as a factor, and the mean is that model halfway between the two, as
+ * [BasalMetabolicRate.mifflinStJeor] does with Mifflin's sex term.
  */
 object KeytelHeartRate {
     const val MinFractionOfMax = 0.57
     const val MaxFractionOfMax = 0.90
 
-    fun kilojoulesPerMinute(sex: BiologicalSex, heartRateBpm: Double, weightKg: Double, ageYears: Int): Double =
-        when (sex) {
-            BiologicalSex.MALE -> -55.0969 + 0.6309 * heartRateBpm + 0.1988 * weightKg + 0.2017 * ageYears
-            BiologicalSex.FEMALE -> -20.4022 + 0.4472 * heartRateBpm - 0.1263 * weightKg + 0.074 * ageYears
+    fun kilojoulesPerMinute(sex: BiologicalSex?, heartRateBpm: Double, weightKg: Double, ageYears: Int): Double {
+        val men = -55.0969 + 0.6309 * heartRateBpm + 0.1988 * weightKg + 0.2017 * ageYears
+        val women = -20.4022 + 0.4472 * heartRateBpm - 0.1263 * weightKg + 0.074 * ageYears
+        return when (sex) {
+            BiologicalSex.MALE -> men
+            BiologicalSex.FEMALE -> women
+            null -> (men + women) / 2.0
         }
+    }
 }
 
 /**

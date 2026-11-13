@@ -66,6 +66,7 @@ class ActivitiesViewModelTest {
         coEvery { repo.loadDailyRestingHR(any(), any()) } returns restingHeartRate
         coEvery { repo.loadDailyHRV(any(), any()) } returns emptyList()
         coEvery { repo.loadHeartRateSamples(any<LocalDate>(), any<LocalDate>()) } returns heartRateSamples
+        coEvery { repo.loadMaxHeartRate(any(), any()) } returns null
     }
 
     private fun emptyRepo() = mockk<ActivityRepository>().also { repo ->

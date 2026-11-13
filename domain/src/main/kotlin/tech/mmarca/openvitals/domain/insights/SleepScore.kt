@@ -4,12 +4,8 @@ import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import kotlin.math.PI
 import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.cos
 import kotlin.math.roundToInt
-import kotlin.math.sin
 import tech.mmarca.openvitals.core.stats.timeBucketedAverageOrNull
 import tech.mmarca.openvitals.domain.model.DailyHrv
 import tech.mmarca.openvitals.domain.model.HrvSample
@@ -18,6 +14,8 @@ import tech.mmarca.openvitals.domain.model.SleepStage
 import tech.mmarca.openvitals.domain.preferences.SleepWindow
 import tech.mmarca.openvitals.domain.model.dailySleepSummary
 import tech.mmarca.openvitals.domain.model.sleepDurationMsFromStages
+import tech.mmarca.openvitals.core.stats.medianOrNull
+import tech.mmarca.openvitals.core.stats.circularMeanMinutes
 
 /*
  * Sleep score: a 0-100 estimate on three pillars, duration (NSF/AASM),
@@ -157,17 +155,6 @@ private fun overnightHrvInputsFromNightRmssd(
     }.toMap()
 }
 
-private fun List<Double>.medianOrNull(): Double? {
-    if (isEmpty()) return null
-    val sorted = sorted()
-    val mid = sorted.size / 2
-    return if (sorted.size % 2 == 0) {
-        (sorted[mid - 1] + sorted[mid]) / 2.0
-    } else {
-        sorted[mid]
-    }
-}
-
 fun calculateSleepScoresByDate(
     sessions: List<SleepData>,
     start: LocalDate,
@@ -260,7 +247,7 @@ fun calculateSleepScore(
     val midpoint = session.sleepMidpointMinute(zone)
     val baselineMidpoints = previousSessions.map { it.sleepMidpointMinute(zone) }
     val regularityDifference = if (baselineMidpoints.size >= 2) {
-        circularMinuteDifference(midpoint, circularMeanMinutes(baselineMidpoints)).toDouble()
+        circularMinuteDifference(midpoint, checkNotNull(circularMeanMinutes(baselineMidpoints))).toDouble()
     } else {
         null
     }
@@ -497,13 +484,6 @@ private fun SleepData.sleepMidpointMinute(zone: ZoneId): Int {
     val midpoint = startTime.plusMillis(durationMs / 2)
     val localTime = midpoint.atZone(zone).toLocalTime()
     return localTime.hour * 60 + localTime.minute
-}
-
-private fun circularMeanMinutes(values: List<Int>): Int {
-    val sinMean = values.sumOf { sin(it.toDouble() / MinutesPerDay * 2.0 * PI) } / values.size
-    val cosMean = values.sumOf { cos(it.toDouble() / MinutesPerDay * 2.0 * PI) } / values.size
-    val angle = atan2(sinMean, cosMean).let { if (it < 0.0) it + 2.0 * PI else it }
-    return (angle / (2.0 * PI) * MinutesPerDay).roundToInt() % MinutesPerDay
 }
 
 private fun circularMinuteDifference(first: Int, second: Int): Int {
