@@ -122,7 +122,9 @@ private fun keytelGrossKcal(
  * Derived on 115 adults aged 19 to 45 at steady-state treadmill or cycle work
  * of 57 to 90 % of their maximum heart rate. Outside that heart rate range the
  * estimate is not used: this project's own rule, not the paper's. Without a
- * sex, the mean of the two equations: an app choice, Keytel gives none.
+ * sex, the mean of the two equations: Keytel et al. fit one mixed model with
+ * gender as a factor, and the mean is that model halfway between the two, as
+ * [BasalMetabolicRate.mifflinStJeor] does with Mifflin's sex term.
  */
 object KeytelHeartRate {
     const val MinFractionOfMax = 0.57

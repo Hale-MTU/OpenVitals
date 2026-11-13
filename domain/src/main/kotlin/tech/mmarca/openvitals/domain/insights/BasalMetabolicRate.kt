@@ -15,8 +15,9 @@ enum class BmrInput { SEX, BIRTH_YEAR, WEIGHT, HEIGHT }
  */
 object BasalMetabolicRate {
     /**
-     * Without a [sex], the mean of the men's (+5) and women's (−161) terms,
-     * −78: an app choice, Mifflin gives no equation for an unknown sex. Only
+     * Without a [sex], −78, the mean of the men's (+5) and women's (−161)
+     * terms. The paper writes the equation with sex as one term, 166 × sex − 161
+     * (men 1, women 0), so this is the same equation at sex = 0.5. Only
      * estimates that would otherwise fall back to a cruder value use it.
      */
     fun mifflinStJeor(sex: BiologicalSex?, weightKg: Double, heightCm: Double, ageYears: Int): Double {
