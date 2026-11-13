@@ -4,6 +4,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import tech.mmarca.openvitals.core.stats.medianOrNull
 
 /** The three overnight signals the cycle screen lines up against the cycle day. */
 enum class NightlySignal {
@@ -188,7 +189,7 @@ object NightlyVitalsCalculator {
             NightlyPoint(
                 cycleDay = ChronoUnit.DAYS.between(cycleStart, night.date).toInt() + 1,
                 date = night.date,
-                value = median(readings.map { it.value }),
+                value = checkNotNull(readings.map { it.value }.medianOrNull()),
                 sampleCount = readings.size,
                 isDailyValue = chosen !in night.inside,
             )
@@ -196,12 +197,6 @@ object NightlyVitalsCalculator {
         return NightlySeries(signal, source = chosen, points = points, otherSources = allSources - chosen)
     }
 
-    /** The middle value; the mean of the two middle values for an even count. */
-    internal fun median(values: List<Double>): Double {
-        val sorted = values.sorted()
-        val mid = sorted.size / 2
-        return if (sorted.size % 2 == 1) sorted[mid] else (sorted[mid - 1] + sorted[mid]) / 2.0
-    }
 }
 
 /** A sourced statement shown in the nightly vitals' details. Its text is `cycle_nightly_evidence_<id>`. */

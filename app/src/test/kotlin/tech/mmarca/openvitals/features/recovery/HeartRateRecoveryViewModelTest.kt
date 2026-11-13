@@ -9,6 +9,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -69,6 +70,7 @@ class HeartRateRecoveryViewModelTest {
         coEvery { repo.loadHeartRateSamples(any<Instant>(), any<Instant>()) } returns samples
         coEvery { repo.loadDailyHeartRateSummaries(any(), any()) } returns summaries
         coEvery { repo.loadRestingHeartRate(any()) } returns 55L
+        coEvery { repo.loadMaxHeartRate(any(), any()) } returns summaries.maxOfOrNull { it.maxBpm }
     }
 
     private fun viewModel(
@@ -146,7 +148,7 @@ class HeartRateRecoveryViewModelTest {
     }
 
     @Test
-    fun `observed maximum is fetched once for the whole period over the trailing ninety days`() = runTest {
+    fun `observed maximum is fetched once for the whole period over the trailing year`() = runTest {
         val workouts = listOf(
             testSession(id = "a", startHour = 8, durationMinutes = 30),
             testSession(id = "b", startHour = 12, durationMinutes = 30),
@@ -157,12 +159,8 @@ class HeartRateRecoveryViewModelTest {
 
         viewModel(activityRepo(workouts), heartRepo)
 
-        coVerify(exactly = 1) {
-            heartRepo.loadDailyHeartRateSummaries(
-                monthWindow.end.minusDays(90),
-                monthWindow.end,
-            )
-        }
+        val end = monthWindow.end.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()
+        coVerify(exactly = 1) { heartRepo.loadMaxHeartRate(end.minus(Duration.ofDays(365)), end) }
     }
 
     @Test
@@ -173,7 +171,7 @@ class HeartRateRecoveryViewModelTest {
 
         assertTrue(vm.uiState.value.readings.isEmpty())
         coVerify(exactly = 0) { heartRepo.loadHeartRateSamples(any<Instant>(), any<Instant>()) }
-        coVerify(exactly = 0) { heartRepo.loadDailyHeartRateSummaries(any(), any()) }
+        coVerify(exactly = 0) { heartRepo.loadMaxHeartRate(any(), any()) }
     }
 
     @Test

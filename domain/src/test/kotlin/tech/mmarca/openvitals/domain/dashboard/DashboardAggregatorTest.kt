@@ -9,9 +9,9 @@ import tech.mmarca.openvitals.domain.insights.CardioLoadMethod
 import tech.mmarca.openvitals.domain.model.CaloriesBurnedSource
 import tech.mmarca.openvitals.domain.model.DashboardData
 import tech.mmarca.openvitals.domain.model.DashboardMetric
-import tech.mmarca.openvitals.domain.dashboard.DashboardAggregator.medianLongOrNull
 import tech.mmarca.openvitals.domain.model.DashboardWeeklyCardioLoadTargetSource
 import java.time.LocalDate
+import tech.mmarca.openvitals.core.stats.lowerMedianOrNull
 
 class DashboardAggregatorTest {
 
@@ -47,8 +47,8 @@ class DashboardAggregatorTest {
     }
 
     @Test fun `median long returns middle value`() {
-        assertEquals(5L, listOf(1L, 5L, 9L).medianLongOrNull())
-        assertNull(emptyList<Long>().medianLongOrNull())
+        assertEquals(5L, listOf(1L, 5L, 9L).lowerMedianOrNull())
+        assertNull(emptyList<Long>().lowerMedianOrNull())
     }
 
     private fun trimpDay(score: Int) = CardioLoadEstimate(

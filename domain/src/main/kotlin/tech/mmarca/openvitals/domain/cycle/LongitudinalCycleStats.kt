@@ -2,6 +2,7 @@ package tech.mmarca.openvitals.domain.cycle
 
 import java.time.LocalDate
 import kotlin.math.abs
+import tech.mmarca.openvitals.core.stats.medianOrNull
 
 /** One bar of the variability view. */
 data class LongitudinalCycleItem(
@@ -60,16 +61,9 @@ object LongitudinalCycleStatsCalculator {
             totalCyclesCount = items.size,
             completedCyclesCount = items.count { !it.isCurrent },
             excludedCyclesCount = items.count { it.isExcluded },
-            medianDays = completedLengths.median(),
+            medianDays = completedLengths.medianOrNull(),
             meanDays = completedLengths.takeIf { it.isNotEmpty() }?.average(),
             items = items.reversed(),
         )
-    }
-
-    private fun List<Int>.median(): Double? {
-        if (isEmpty()) return null
-        val sorted = sorted()
-        val middle = sorted.size / 2
-        return if (sorted.size % 2 == 1) sorted[middle].toDouble() else (sorted[middle - 1] + sorted[middle]) / 2.0
     }
 }

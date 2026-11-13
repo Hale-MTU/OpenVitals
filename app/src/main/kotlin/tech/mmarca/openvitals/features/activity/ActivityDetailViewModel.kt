@@ -19,6 +19,7 @@ import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
 import tech.mmarca.openvitals.domain.model.PlannedExerciseData
 import tech.mmarca.openvitals.data.repository.contract.CoMapsNavigationRepository
 import tech.mmarca.openvitals.data.repository.contract.HeartRepository
+import tech.mmarca.openvitals.data.repository.contract.loadObservedMaxHeartRate
 import tech.mmarca.openvitals.domain.insights.ActivitySplits
 import tech.mmarca.openvitals.domain.insights.HeartRateRecoveryReading
 import tech.mmarca.openvitals.domain.insights.buildActivitySplits
@@ -236,7 +237,7 @@ internal class ActivityDetailViewModel @Inject constructor(
                     .orEmpty()
             }
 
-    /** The recovery reading, or null without a stop mark, in which case no read is issued. */
+    /** The recovery reading, or null without a stop mark, in which case no read is issued. Two reads otherwise. */
     private suspend fun loadHeartRateRecovery(workout: ExerciseData): HeartRateRecoveryReading? {
         val heartRepository = heartRepository ?: return null
         val window = heartRateRecoveryWindowFor(workout) ?: return null
@@ -247,8 +248,8 @@ internal class ActivityDetailViewModel @Inject constructor(
             samples = samples,
             restingHeartRateBpm = profile.restingHeartRateBpm,
             ageYears = profile.ageYears(),
-            // The 90-day observed maximum is a trend-screen concern.
-            observedMaxHeartRateBpm = null,
+            // The same year-long observed maximum as the recovery screen, up to this workout.
+            observedMaxHeartRateBpm = heartRepository.loadObservedMaxHeartRate(workout.endTime)?.toInt(),
             explicitMaxHeartRateBpm = profile.maxHeartRateBpm,
             sex = profile.sex,
         )

@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -32,6 +33,7 @@ import tech.mmarca.openvitals.core.presentation.toScreenError
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
 import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
 import tech.mmarca.openvitals.data.repository.contract.HeartRepository
+import tech.mmarca.openvitals.data.repository.contract.loadObservedMaxHeartRate
 import tech.mmarca.openvitals.data.repository.contract.PeriodPreferences
 import tech.mmarca.openvitals.domain.insights.HeartRateRecoveryReading
 import tech.mmarca.openvitals.domain.insights.calculateHeartRateRecovery
@@ -48,8 +50,6 @@ private const val heartRateRecoveryReadConcurrency = 8
 /** The most sessions a period looks at. The newest are taken and the truncation is reported. */
 internal const val maxHeartRateRecoverySessions = 400
 
-/** How far back of the period end the observed maximum heart rate is looked for. */
-private const val observedMaxHeartRateLookbackDays = 90L
 
 /** One session's recovery, with enough of the session to label it on a chart. */
 @Immutable
@@ -222,7 +222,7 @@ class HeartRateRecoveryViewModel @Inject constructor(
             return PeriodData(readings = emptyList(), truncated = truncated)
         }
 
-        // Asked once for the whole period: the observed maximum covers the trailing 90 days.
+        // Asked once for the whole period: the observed maximum covers the year before its end.
         val profile = bodyProfilePreferences.bodyProfile()
         val observedMaxHeartRateBpm = observedMaxHeartRate(window.end)
         val restingHeartRateBpm = profile.restingHeartRateBpm
@@ -291,10 +291,6 @@ class HeartRateRecoveryViewModel @Inject constructor(
 
     private suspend fun observedMaxHeartRate(periodEnd: LocalDate): Int? =
         heartRepository
-            .loadDailyHeartRateSummaries(
-                periodEnd.minusDays(observedMaxHeartRateLookbackDays),
-                periodEnd,
-            )
-            .maxOfOrNull { it.maxBpm }
+            .loadObservedMaxHeartRate(periodEnd.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant())
             ?.toInt()
 }

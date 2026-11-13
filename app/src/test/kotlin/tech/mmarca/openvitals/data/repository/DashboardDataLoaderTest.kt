@@ -700,6 +700,8 @@ class DashboardDataLoaderTest {
             )
         } returns emptyList()
         coEvery { hc.readHeartRateSamplesForInsights(any(), any()) } returns samples
+        // The year's highest reading, the 180 bpm above.
+        coEvery { hc.readMaxHeartRate(any(), any()) } returns 180L
         coEvery { hc.readDailyRestingHR(any(), any()) } returns listOf(DailyRestingHR(date, 60L))
         coEvery { hc.readExerciseSessions(any(), any()) } returns listOf(workout)
         val repository = dashboardDataLoader(hc)
