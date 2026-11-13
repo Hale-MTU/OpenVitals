@@ -158,6 +158,7 @@ internal fun ActivityEntryCard(
 
             ActivityRepetitionInputs(
                 state = state,
+                unitFormatter = unitFormatter,
                 enabled = !state.isSavingEntry,
                 onModeChanged = onRepetitionModeChanged,
                 onTotalChanged = onRepetitionTotalChanged,

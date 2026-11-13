@@ -43,6 +43,25 @@ class UnitFormatter(
             UnitSystem.IMPERIAL -> DisplayValue(decimal(kgToPounds(kg), 1), "lb")
         }
 
+    /** A lifted load: up to one decimal, none when it is whole ("50 kg", "132.5 lb"). */
+    fun load(kg: Double): DisplayValue {
+        val value = when (unitSystem(UnitQuantity.WEIGHT)) {
+            UnitSystem.METRIC -> kg
+            UnitSystem.IMPERIAL -> kgToPounds(kg)
+        }
+        val format = NumberFormat.getNumberInstance(localeProvider()).apply {
+            minimumFractionDigits = 0
+            maximumFractionDigits = 1
+        }
+        return DisplayValue(format.format(value), loadUnit())
+    }
+
+    /** The unit a load is entered and shown in. */
+    fun loadUnit(): String = when (unitSystem(UnitQuantity.WEIGHT)) {
+        UnitSystem.METRIC -> "kg"
+        UnitSystem.IMPERIAL -> "lb"
+    }
+
     fun height(centimeters: Double): DisplayValue =
         when (unitSystem(UnitQuantity.HEIGHT)) {
             UnitSystem.METRIC -> DisplayValue(decimal(centimeters, 0), "cm")
@@ -203,7 +222,7 @@ class UnitFormatter(
             maximumFractionDigits = 0
         }
 
-    private fun kgToPounds(kg: Double): Double = kg * 2.2046226218
+    private fun kgToPounds(kg: Double): Double = kg * PoundsPerKilogram
 
     private fun metersToFeet(meters: Double): Double = meters * 3.280839895
 
@@ -211,4 +230,7 @@ class UnitFormatter(
 
     private fun litersToFluidOunces(liters: Double): Double = liters * 33.8140227018
 
+    companion object {
+        const val PoundsPerKilogram = 2.2046226218
+    }
 }

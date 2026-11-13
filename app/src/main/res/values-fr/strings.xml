@@ -147,7 +147,7 @@
     <string name="activity_entry_set_repetitions_label">Reps série %1$d</string>
     <string name="activity_entry_set_rest_label">Temps de repos</string>
     <string name="activity_entry_add_set">Ajouter une série</string>
-    <string name="activity_entry_set_weight_label">Charge (kg)</string>
+    <string name="activity_entry_set_weight_label">Charge (%1$s)</string>
     <string name="activity_entry_plan_preview_reps">%1$d reps</string>
     <string name="activity_entry_distance_label">Distance %1$s</string>
     <string name="activity_entry_elevation_label">Dénivelé %1$s</string>
@@ -2887,9 +2887,9 @@
     <string name="activity_recording_plan_cue_rest_last">Repos %1$d secondes.</string>
     <string name="activity_recording_plan_cue_complete">Plan terminé. Terminez quand vous voulez.</string>
     <string name="activity_recording_plan_set_progress">Série %1$d sur %2$d</string>
-    <string name="activity_recording_plan_weight">%1$s kg</string>
     <string name="activity_recording_plan_setup_rest_minutes">repos %1$d min</string>
     <string name="activity_recording_plan_spoken_reps_weight">%1$s, %2$d répétitions, %3$s kilogrammes</string>
+    <string name="activity_recording_plan_spoken_reps_weight_pounds">%1$s, %2$d répétitions, %3$s livres</string>
     <plurals name="activity_recording_plan_spoken_minutes">
         <item quantity="one">%1$s, %2$d minute</item>
         <item quantity="many">%1$s, %2$d minutes</item>
@@ -2966,7 +2966,7 @@
     <string name="workout_plan_target_power">Puissance %1$d–%2$d W</string>
     <string name="workout_plan_target_speed">Vitesse %1$.1f–%2$.1f km/h</string>
     <string name="workout_plan_target_cadence">Cadence %1$d–%2$d tr/min</string>
-    <string name="workout_plan_target_weight">Charge %1$.1f kg</string>
+    <string name="workout_plan_target_weight">Charge %1$s</string>
     <string name="workout_plan_target_rpe">RPE %1$d</string>
     <string name="workout_plan_target_amrap">Autant de répétitions que possible</string>
     <string name="workout_plans_export">Exporter les plans</string>
@@ -2978,10 +2978,10 @@
     <string name="workout_plan_preview_minutes">%1$d min</string>
     <string name="workout_plan_step_sets_label">Séries</string>
     <string name="workout_plan_step_set_rest_label">Repos après chaque série</string>
-    <string name="workout_plan_step_weight_label">Charge (kg)</string>
+    <string name="workout_plan_step_weight_label">Charge (%1$s)</string>
     <string name="workout_plan_error_step_sets">Le nombre de séries doit être compris entre 1 et 99</string>
     <string name="workout_plan_error_step_set_rest">Le repos après chaque série doit être de 0 ou plus, jusqu\'à 24 heures</string>
-    <string name="workout_plan_error_step_weight">Saisissez une charge supérieure à 0, jusqu\'à 1000 kg</string>
+    <string name="workout_plan_error_step_weight">Saisissez une charge supérieure à 0, jusqu\'à %1$s</string>
     <string name="hc_exercise_type_badminton">Badminton</string>
     <string name="hc_exercise_type_baseball">Baseball</string>
     <string name="hc_exercise_type_basketball">Basket-ball</string>

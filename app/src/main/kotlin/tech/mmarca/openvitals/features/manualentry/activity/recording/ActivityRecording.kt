@@ -1,5 +1,7 @@
 package tech.mmarca.openvitals.features.manualentry.activity.recording
 
+import tech.mmarca.openvitals.domain.preferences.UnitQuantity
+import tech.mmarca.openvitals.domain.preferences.UnitSystem
 import tech.mmarca.openvitals.features.manualentry.*
 import tech.mmarca.openvitals.features.manualentry.activity.*
 import tech.mmarca.openvitals.features.manualentry.activity.recording.*
@@ -727,6 +729,9 @@ class ActivityRecordingController @Inject constructor(
         vibrate(HrrCueVibrationMillis)
     }
 
+    private fun spokenWeightUnit(): UnitSystem =
+        preferencesRepository.unitOverride(UnitQuantity.WEIGHT) ?: preferencesRepository.unitSystem
+
     /** A plan step change: the rest bell, a short buzz, and the next step spoken if voice is on. */
     private fun cuePlanStep(step: ActivityPlanRunStep, withBell: Boolean) {
         if (withBell) playRestTimerBellIfEnabled()
@@ -734,7 +739,7 @@ class ActivityRecordingController @Inject constructor(
         if (preferencesRepository.activityRecordingPreferences().voiceAnnouncementsEnabled) {
             speakCue(
                 listOfNotNull(
-                    context.getString(R.string.activity_recording_plan_cue_next, step.spokenGoal(context)),
+                    context.getString(R.string.activity_recording_plan_cue_next, step.spokenGoal(context, spokenWeightUnit())),
                     // The pace announcer never speaks for repetition sessions.
                     _state.value.currentHeartRateBpm?.let { context.getString(R.string.activity_recording_plan_cue_heart_rate, it) },
                 ).joinToString(". "),
@@ -785,9 +790,9 @@ class ActivityRecordingController @Inject constructor(
                     R.plurals.activity_recording_plan_cue_rest_minutes,
                     minutes.toInt(),
                     minutes,
-                    next.spokenGoal(context),
+                    next.spokenGoal(context, spokenWeightUnit()),
                 )
-                next != null -> context.getString(R.string.activity_recording_plan_cue_rest, restSeconds, next.spokenGoal(context))
+                next != null -> context.getString(R.string.activity_recording_plan_cue_rest, restSeconds, next.spokenGoal(context, spokenWeightUnit()))
                 minutes != null -> context.resources.getQuantityString(
                     R.plurals.activity_recording_plan_cue_rest_last_minutes,
                     minutes.toInt(),

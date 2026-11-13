@@ -168,9 +168,9 @@
     <string name="activity_recording_plan_cue_rest_last">Отдых %1$d секунд.</string>
     <string name="activity_recording_plan_cue_complete">План завершён. Завершите его, когда будете готовы.</string>
     <string name="activity_recording_plan_set_progress">Подход %1$d из %2$d</string>
-    <string name="activity_recording_plan_weight">%1$s кг</string>
     <string name="activity_recording_plan_setup_rest_minutes">отдых %1$d мин</string>
     <string name="activity_recording_plan_spoken_reps_weight">%1$s, %2$d повторений, %3$s килограммов</string>
+    <string name="activity_recording_plan_spoken_reps_weight_pounds">%1$s, %2$d повторений, %3$s фунтов</string>
     <plurals name="activity_recording_plan_spoken_minutes">
         <item quantity="one">%1$s, %2$d минута</item>
         <item quantity="few">%1$s, %2$d минуты</item>
@@ -218,7 +218,7 @@
     <string name="activity_entry_set_rest_label">Время отдыха</string>
     <string name="activity_entry_set_seconds_label">%1$d секунд в подходе</string>
     <string name="activity_entry_add_set">Добавить подход</string>
-    <string name="activity_entry_set_weight_label">Вес (кг)</string>
+    <string name="activity_entry_set_weight_label">Вес (%1$s)</string>
     <string name="activity_entry_plan_preview_reps">%1$d повторений</string>
     <string name="activity_entry_distance_label">Расстояние %1$s</string>
     <string name="activity_entry_elevation_label">Набор высоты %1$s</string>
@@ -717,7 +717,7 @@
     <string name="workout_plan_target_power">Мощность %1$d–%2$d Вт</string>
     <string name="workout_plan_target_speed">Скорость %1$.1f–%2$.1f км/ч</string>
     <string name="workout_plan_target_cadence">Частота вращения %1$d–%2$d об/мин</string>
-    <string name="workout_plan_target_weight">Вес %1$.1f кг</string>
+    <string name="workout_plan_target_weight">Вес %1$s</string>
     <string name="workout_plan_target_rpe">Воспринимаемая нагрузка %1$d</string>
     <string name="workout_plan_target_amrap">Максимально возможное количество повторений</string>
     <string name="workout_plans_export">Экспортировать планы</string>
@@ -729,10 +729,10 @@
     <string name="workout_plan_preview_minutes">%1$d мин</string>
     <string name="workout_plan_step_sets_label">Подходы</string>
     <string name="workout_plan_step_set_rest_label">Отдых после каждого подхода</string>
-    <string name="workout_plan_step_weight_label">Вес (кг)</string>
+    <string name="workout_plan_step_weight_label">Вес (%1$s)</string>
     <string name="workout_plan_error_step_sets">Количество подходов должно быть от 1 до 99</string>
     <string name="workout_plan_error_step_set_rest">Отдых после каждого подхода должен составлять от 0 до 24 часов</string>
-    <string name="workout_plan_error_step_weight">Введите вес больше 0 и не более 1000 кг</string>
+    <string name="workout_plan_error_step_weight">Введите вес больше 0 и не более %1$s</string>
     <string name="hc_exercise_type_badminton">Бадминтон</string>
     <string name="hc_exercise_type_baseball">Бейсбол</string>
     <string name="hc_exercise_type_basketball">Баскетбол</string>

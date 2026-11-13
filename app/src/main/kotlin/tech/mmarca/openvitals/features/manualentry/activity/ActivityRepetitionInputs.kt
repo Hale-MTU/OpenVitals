@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import tech.mmarca.openvitals.core.presentation.UnitFormatter
+import tech.mmarca.openvitals.domain.preferences.UnitQuantity
 import tech.mmarca.openvitals.R
 import tech.mmarca.openvitals.features.activity.exerciseSegmentLabel
 import tech.mmarca.openvitals.features.workoutplans.WorkoutPlanStepChoice
@@ -68,6 +70,7 @@ internal fun ActivityRepetitionInputs(
     onAddExercise: (WorkoutPlanStepChoice) -> Unit,
     onAddSet: () -> Unit,
     onRemoveSet: (Int) -> Unit,
+    unitFormatter: UnitFormatter,
     modifier: Modifier = Modifier,
 ) {
     val type = state.selectedActivityType
@@ -127,6 +130,7 @@ internal fun ActivityRepetitionInputs(
                         StepRow(
                             index = index,
                             set = set,
+                            unitFormatter = unitFormatter,
                             ownSegmentType = type.segmentType,
                             showExercisePicker = mixed,
                             enabled = enabled,
@@ -192,6 +196,7 @@ internal fun ActivityRepetitionInputs(
 private fun StepRow(
     index: Int,
     set: ActivityRepetitionSetInput,
+    unitFormatter: UnitFormatter,
     ownSegmentType: Int?,
     showExercisePicker: Boolean,
     enabled: Boolean,
@@ -280,12 +285,17 @@ private fun StepRow(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f),
             )
+            val weightInput = rememberLoadInput(
+                kgText = set.weightKgText,
+                unitSystem = unitFormatter.unitSystem(UnitQuantity.WEIGHT),
+                onKgTextChanged = onWeightChanged,
+            )
             OutlinedTextField(
-                value = set.weightKgText,
-                onValueChange = onWeightChanged,
+                value = weightInput.text,
+                onValueChange = weightInput.onTextChanged,
                 enabled = enabled,
                 singleLine = true,
-                label = { Text(stringResource(R.string.activity_entry_set_weight_label)) },
+                label = { Text(stringResource(R.string.activity_entry_set_weight_label, unitFormatter.loadUnit())) },
                 isError = isError,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.width(GoalFieldWidth),

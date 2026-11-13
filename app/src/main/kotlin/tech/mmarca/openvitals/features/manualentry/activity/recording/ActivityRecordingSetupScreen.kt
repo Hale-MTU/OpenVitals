@@ -140,7 +140,7 @@ internal fun ActivityRecordingSetupScreen(
 
             val guidedPlan = state.guidedPlan
             if (guidedPlan != null) {
-                ActivityPlanRunSetupCard(guidedPlan = guidedPlan, recordingState = recordingState)
+                ActivityPlanRunSetupCard(guidedPlan = guidedPlan, recordingState = recordingState, unitFormatter = unitFormatter)
             } else {
                 // A plan due today is very likely what the Start was for.
                 val todayPlan = state.hubPlans.firstOrNull { plan ->
@@ -704,6 +704,7 @@ internal fun RecordingWithoutGpsWarning(
 internal fun ActivityPlanRunSetupCard(
     guidedPlan: ActivityGuidedPlan,
     recordingState: ActivityRecordingState,
+    unitFormatter: UnitFormatter,
     modifier: Modifier = Modifier,
 ) {
     val plannedMinutes = java.time.Duration.ofMillis(guidedPlan.plan.durationMs).toMinutes().coerceAtLeast(1L)
@@ -748,7 +749,7 @@ internal fun ActivityPlanRunSetupCard(
                         ActivityPlanGoalKind.REPS -> stringResource(R.string.activity_entry_plan_preview_reps, step.goalValue.toInt())
                         ActivityPlanGoalKind.SECONDS -> durationText(step.goalValue)
                     }
-                    val weight = step.weightKg?.let { stringResource(R.string.activity_recording_plan_weight, it.toInputText(1)) }
+                    val weight = step.weightKg?.let { unitFormatter.load(it).text }
                     Text(
                         text = "${index + 1}. " + listOfNotNull(step.displayLabel(), goal, weight, rest).joinToString(" · "),
                         style = MaterialTheme.typography.bodyMedium,

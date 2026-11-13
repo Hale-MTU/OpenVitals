@@ -22,6 +22,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import tech.mmarca.openvitals.R
+import tech.mmarca.openvitals.core.presentation.UnitFormatter
+import tech.mmarca.openvitals.domain.preferences.UnitSystem
 import tech.mmarca.openvitals.testing.string
 import tech.mmarca.openvitals.ui.theme.OpenVitalsTheme
 
@@ -227,6 +229,7 @@ class ActivityRepetitionInputsTest {
                         onAddExercise = {},
                         onAddSet = onAddSet,
                         onRemoveSet = onRemoveSet,
+                        unitFormatter = UnitFormatter({ UnitSystem.METRIC }),
                     )
                 }
             }
