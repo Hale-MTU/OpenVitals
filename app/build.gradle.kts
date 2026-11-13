@@ -55,6 +55,29 @@ val versionNameOverride = providers.environmentVariable("OPENVITALS_VERSION_NAME
 val nightlyVersionNameSuffix = versionNameOverride
     .map { "" }
     .orElse("-nightly")
+// The VertMatch partner API integration (vertmatch/README.md). Off unless the build asks for it
+// with -Popenvitals.vertmatch=true: the default build has no VertMatch code, no extra strings
+// and no INTERNET permission. With it on, app/src/vertmatch is compiled in and its manifest
+// (the one that asks for INTERNET) is merged.
+val vertMatchEnabled = providers.gradleProperty("openvitals.vertmatch")
+    .map { it.toBoolean() }
+    .getOrElse(false)
+// Issued by VertMatch when it approves the app. Not a secret, but it names the approved app, so
+// it comes from the build (property or environment) and stays out of the repo: a fork or a
+// third-party build then cannot send traffic as OpenVitals. Empty: the integration shows as
+// "not set up" and nothing can connect.
+val vertMatchClientId = providers.gradleProperty("openvitals.vertmatch.clientId")
+    .orElse(providers.environmentVariable("OPENVITALS_VERTMATCH_CLIENT_ID"))
+    .getOrElse("")
+    .also { id ->
+        require(id.all { it.isLetterOrDigit() || it == '-' || it == '_' }) {
+            "openvitals.vertmatch.clientId may hold letters, digits, - and _ only"
+        }
+    }
+// Only once VertMatch agreed refresh tokens for the app: asks Auth0 for offline_access.
+val vertMatchRefreshTokens = providers.gradleProperty("openvitals.vertmatch.refreshTokens")
+    .map { it.toBoolean() }
+    .getOrElse(false)
 val localAppleHealthExportPath = providers.gradleProperty("appleHealthExport")
     .orElse(providers.systemProperty("appleHealthExport"))
     .orElse(providers.environmentVariable("APPLE_HEALTH_EXPORT"))
@@ -107,6 +130,10 @@ android {
         versionCode = versionCodeOverride.orElse(baseVersionCode).get()
         versionName = versionNameOverride.orElse(baseVersionName).get()
         buildConfigField("boolean", "OPENVITALS_DIAGNOSTICS", "false")
+        if (vertMatchEnabled) {
+            buildConfigField("String", "VERTMATCH_CLIENT_ID", "\"$vertMatchClientId\"")
+            buildConfigField("boolean", "VERTMATCH_REFRESH_TOKENS", vertMatchRefreshTokens.toString())
+        }
         if (apkAbiFilters.isNotEmpty()) {
             ndk {
                 abiFilters.addAll(apkAbiFilters)
@@ -190,6 +217,11 @@ android {
     sourceSets {
         getByName("main") {
             res.srcDir(translationCoverageResDir)
+            if (vertMatchEnabled) {
+                // kotlin, not java: AGP's built-in Kotlin compiles only Kotlin source directories.
+                kotlin.srcDir("src/vertmatch/kotlin")
+                res.srcDir("src/vertmatch/res")
+            }
         }
     }
 
@@ -228,6 +260,9 @@ tasks.configureEach {
 // and widget taps were dead from 2.7.0 to 2.7.1. A failure here fails the build.
 androidComponents {
     onVariants { variant ->
+        if (vertMatchEnabled) {
+            variant.sources.manifests.addStaticManifestFile("src/vertmatch/AndroidManifest.xml")
+        }
         val variantName = variant.name.replaceFirstChar { it.uppercase() }
         // AGP's public artifacts, not build paths: AGP 9.4 stopped writing outputs/mapping.
         val mapping = variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE)
@@ -262,6 +297,10 @@ dependencies {
     // The OpenLink client, from the openlink/ submodule (a composite build).
     implementation("tech.mmarca.openlink:client")
     implementation(project(":domain"))
+    // Only in the opt-in VertMatch build: the partner API client needs a socket.
+    if (vertMatchEnabled) {
+        implementation(project(":vertmatch"))
+    }
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
 

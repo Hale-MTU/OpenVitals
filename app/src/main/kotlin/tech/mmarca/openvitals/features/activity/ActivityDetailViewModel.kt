@@ -92,7 +92,11 @@ internal class ActivityDetailViewModel @Inject constructor(
     private val coMapsNavigationRepository: CoMapsNavigationRepository? = null,
     private val dispatchers: DispatcherProvider = DefaultDispatcherProvider,
     savedStateHandle: SavedStateHandle,
+    extensionSet: Set<@JvmSuppressWildcards ActivityDetailExtension> = emptySet(),
 ) : ViewModel() {
+
+    /** Cards optional integrations add under the export card; none in the default build. */
+    val extensions: List<ActivityDetailExtension> = extensionSet.toList()
 
     /** The workout the route opened. Blank when it named none: the not-found state. */
     private val activityId: String = savedStateHandle[ACTIVITY_DETAIL_ID_ARG] ?: ""

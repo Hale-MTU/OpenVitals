@@ -247,6 +247,7 @@ internal fun ActivityDetailScreen(
             onShareWorkoutAsFit = { shareWorkout(ActivityWorkoutExportFormat.FIT) },
             onSaveWorkoutAsFitWithRoute = { launchWorkoutExport(ActivityWorkoutExportFormat.FIT_WITH_ROUTE) },
             onShareWorkoutAsFitWithRoute = { shareWorkout(ActivityWorkoutExportFormat.FIT_WITH_ROUTE) },
+            extensions = viewModel.extensions,
         )
     }
 }
@@ -286,6 +287,7 @@ internal fun ActivityDetailContent(
     onShareWorkoutAsFit: () -> Unit = {},
     onSaveWorkoutAsFitWithRoute: () -> Unit = {},
     onShareWorkoutAsFitWithRoute: () -> Unit = {},
+    extensions: List<ActivityDetailExtension> = emptyList(),
 ) {
     val context = LocalContext.current
     LazyColumn(contentPadding = PaddingValues(vertical = 8.dp)) {
@@ -479,6 +481,17 @@ internal fun ActivityDetailContent(
                     .fillMaxWidth()
                     .padding(horizontal = Spacing.lg, vertical = Spacing.xs),
             )
+        }
+        extensions.forEach { extension ->
+            item {
+                extension.Card(
+                    workout = workout,
+                    series = ActivityWorkoutSeries(heartRateSamples, speedSamples, cadenceSamples),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Spacing.lg, vertical = Spacing.xs),
+                )
+            }
         }
         item {
             ActivityRouteAnalysisCard(

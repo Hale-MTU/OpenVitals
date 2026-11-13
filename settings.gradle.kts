@@ -28,3 +28,5 @@ rootProject.name = "OpenVitals"
 includeBuild("openlink")
 include(":app")
 include(":domain")
+// The VertMatch partner API client. Dormant: nothing depends on it (see vertmatch/README.md).
+include(":vertmatch")

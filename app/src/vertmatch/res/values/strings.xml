@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The VertMatch integration's strings. They live in the opt-in source set (app/src/vertmatch),
+    not in app/src/main, so the default build and its translations are untouched. English only for
+    now: other locales fall back to it until the integration ships and they go to Weblate.
+-->
+<resources>
+    <string name="vertmatch_title">VertMatch</string>
+    <string name="vertmatch_open">Open VertMatch</string>
+    <string name="vertmatch_connect">Connect VertMatch</string>
+    <string name="vertmatch_disconnect">Disconnect VertMatch</string>
+    <string name="vertmatch_send">Send to VertMatch</string>
+    <string name="vertmatch_send_again">Send again</string>
+
+    <string name="vertmatch_status_not_configured">This build of OpenVitals is not set up for VertMatch.</string>
+    <string name="vertmatch_status_disconnected">Not connected.</string>
+    <string name="vertmatch_status_connected">Connected. Activities are only sent when you tap Send on one.</string>
+    <string name="vertmatch_status_app_stopped">VertMatch has switched off access for OpenVitals. Nothing is sent until it is switched on again.</string>
+
+    <string name="vertmatch_what_title">What this does</string>
+    <string name="vertmatch_what_body">Send an activity you recorded to your VertMatch training, and see your VertMatch training summary here. Deleting a sent activity in OpenVitals deletes it on VertMatch too.</string>
+    <string name="vertmatch_privacy_body">Sent to VertMatch: the activity you choose, as a FIT file with its time, heart rate, speed, cadence and route. Received from VertMatch: your goal race and your training load for the last seven days. Nothing else is sent, and nothing is sent until you tap Send. Disconnecting deletes the sign-in from this phone.</string>
+    <string name="vertmatch_connection_title">Connection</string>
+
+    <string name="vertmatch_card_body">Send this activity to your VertMatch training.</string>
+    <string name="vertmatch_card_sent">This activity is on VertMatch. Deleting it here deletes it there too.</string>
+    <string name="vertmatch_card_connect_first">Connect VertMatch to send this activity.</string>
+    <string name="vertmatch_card_no_distance">This activity has no distance, so VertMatch cannot match it with a copy it may already have from Health Connect. If the VertMatch app also reads Health Connect, the activity can show up there twice.</string>
+
+    <string name="vertmatch_summary_title">Training summary</string>
+    <string name="vertmatch_summary_none">No summary loaded yet.</string>
+    <string name="vertmatch_summary_race">Goal race: %1$s, %2$s</string>
+    <string name="vertmatch_summary_no_race">No goal race set on VertMatch.</string>
+    <string name="vertmatch_summary_week">Last 7 days: load %1$s, fitness %2$s, fatigue %3$s</string>
+    <string name="vertmatch_summary_week_unavailable">Training load is part of VertMatch Premium.</string>
+    <string name="vertmatch_summary_reload">Reload summary</string>
+
+    <string name="vertmatch_message_connected">VertMatch is connected.</string>
+    <string name="vertmatch_message_declined">VertMatch was not connected.</string>
+    <string name="vertmatch_message_disconnected">VertMatch is disconnected.</string>
+    <string name="vertmatch_message_sent">Sent to VertMatch.</string>
+    <string name="vertmatch_message_known">You deleted this activity on VertMatch, so it is not sent again.</string>
+    <string name="vertmatch_message_duplicate">VertMatch already has this activity from another app.</string>
+    <string name="vertmatch_message_cannot_send">This activity cannot be sent.</string>
+    <string name="vertmatch_message_no_duration">VertMatch needs an activity with a duration.</string>
+    <string name="vertmatch_message_refused">VertMatch did not accept this activity.</string>
+    <string name="vertmatch_message_sign_in_again">Connect VertMatch again to continue.</string>
+    <string name="vertmatch_message_account_deleted">Your VertMatch account was deleted, so the connection was removed.</string>
+    <string name="vertmatch_message_account_suspended">Your VertMatch account is suspended.</string>
+    <string name="vertmatch_message_app_stopped">VertMatch has switched off access for OpenVitals.</string>
+    <string name="vertmatch_message_try_later">VertMatch could not be reached. Try again later.</string>
+</resources>

@@ -45,8 +45,8 @@ tasks.register("verifyAndroidTest") {
 
 tasks.register("verifyCiUnitTest") {
     group = "verification"
-    description = "Runs the phone app unit tests against the CI build type, and the domain module's."
-    dependsOn(":domain:testCiUnitTest", ":app:testCiUnitTest")
+    description = "Runs the phone app unit tests against the CI build type, and the domain and vertmatch modules'."
+    dependsOn(":domain:testCiUnitTest", ":app:testCiUnitTest", ":vertmatch:test")
 }
 
 tasks.register<Exec>("verifyTranslations") {
