@@ -57,3 +57,9 @@ The feature uses `ActivityRepository` through activity ViewModels. New activity 
 - [`fit-files-import.md`](fit-files-import.md): FIT activity, course, and workout import from Settings Data Importers.
 - [`offline-maps-support.md`](offline-maps-support.md): local map packs for route display.
 - [`non-health-connect-metrics-dashboard.md`](non-health-connect-metrics-dashboard.md): cardio load and other derived activity context.
+
+## Heart rate zones
+
+The activity detail places a session's heart rate on five zones and shows the time in each. If the user set their own zone limits (Body Energy calibration, manual zones), those apply. Otherwise the zones are the American College of Sports Medicine's intensity classes (very light, light, moderate, vigorous, near-maximal; Garber et al., Med Sci Sports Exerc 2011, table 4, doi:10.1249/MSS.0b013e318213fefb): with a resting rate from the body profile shares of the heart rate reserve (Karvonen: 0, 30, 40, 60, 90 percent), without one shares of the maximum (0, 57, 64, 77, 96 percent). The maximum is the one entered in the body profile, else the age-predicted one (Tanaka, Gulati for women); the detail screen does not use an observed maximum. Without own limits and without either there is no card. A reading counts until the next one, but not across a gap of over 60 seconds (an app choice).
+
+`HeartRateZones` and `HeartRateZoneBasis` in `:domain` hold the bounds and the choice of basis; without own limits they are the same as OpenWatch's, so one heart rate falls in the same zone in both apps. Body Energy keeps its own zone estimate for the activity drain (it splits vigorous at 75 percent, a split without a source) and does not use these.

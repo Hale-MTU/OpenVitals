@@ -3853,4 +3853,12 @@
     <string name="body_profile_openwatch_synced_updated">Синхронизируется с OpenWatch · обновлено %1$s</string>
     <string name="openwatch_profile_sync_now">Синхронизировать профиль тела</string>
     <string name="openwatch_profile_nothing_to_sync">Сначала заполните профиль тела в разделе «Настройки», «Профиль тела»</string>
+    <string name="activity_heart_rate_zones_title">Пульсовые зоны</string>
+    <string name="activity_heart_rate_zone_1">Зона 1 · Очень лёгкая</string>
+    <string name="activity_heart_rate_zone_2">Зона 2 · Лёгкая</string>
+    <string name="activity_heart_rate_zone_3">Зона 3 · Умеренная</string>
+    <string name="activity_heart_rate_zone_4">Зона 4 · Высокая</string>
+    <string name="activity_heart_rate_zone_5">Зона 5 · Почти максимальная</string>
+    <string name="activity_heart_rate_zones_basis">Зоны от максимума %1$d уд/мин (классы интенсивности ACSM)</string>
+    <string name="activity_heart_rate_zones_manual">Зоны по вашим собственным границам (заданы в «Энергии тела»)</string>
 </resources>

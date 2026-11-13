@@ -45,6 +45,15 @@ fun tanakaMaxHeartRate(ageYears: Int): Long =
 const val observedMaxHeartRateMinimumBpm = 150
 const val observedMaxHeartRateRestingDeltaBpm = 60
 
+/**
+ * How far back an observed maximum is looked for. The maximum falls by about
+ * 0.7 bpm a year ([tanakaMaxHeartRate]), so a year moves it by less than a
+ * beat, and one hard session within it is enough to set it. A shorter window
+ * drops back to the formula after a few easy months. App choice, no published
+ * source.
+ */
+const val observedMaxHeartRateLookbackDays = 365L
+
 /** Whether [observedMaxBpm] is a real maximum rather than the ceiling of an easy week. */
 fun isObservedMaxHeartRateTrustworthy(
     observedMaxBpm: Int,

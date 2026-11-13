@@ -10,13 +10,21 @@ enum class BmrInput { SEX, BIRTH_YEAR, WEIGHT, HEIGHT }
 /**
  * Mifflin-St Jeor (1990): the calories a body at rest burns in a day, from
  * weight, height, age and sex. The formula most dietetic guidelines prefer
- * for adults; it needs all four inputs and gives no answer without them.
+ * for adults. The daily estimate ([basalMetabolicRateKcal]) needs all four
+ * inputs and gives no answer without them.
  */
 object BasalMetabolicRate {
-    fun mifflinStJeor(sex: BiologicalSex, weightKg: Double, heightCm: Double, ageYears: Int): Double {
+    /**
+     * Without a [sex], −78, the mean of the men's (+5) and women's (−161)
+     * terms. The paper writes the equation with sex as one term, 166 × sex − 161
+     * (men 1, women 0), so this is the same equation at sex = 0.5. Only
+     * estimates that would otherwise fall back to a cruder value use it.
+     */
+    fun mifflinStJeor(sex: BiologicalSex?, weightKg: Double, heightCm: Double, ageYears: Int): Double {
         val sexTerm = when (sex) {
             BiologicalSex.MALE -> 5.0
             BiologicalSex.FEMALE -> -161.0
+            null -> -78.0
         }
         return 10.0 * weightKg + 6.25 * heightCm - 5.0 * ageYears + sexTerm
     }

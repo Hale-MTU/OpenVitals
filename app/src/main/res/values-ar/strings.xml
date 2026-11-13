@@ -110,4 +110,12 @@
     <string name="openwatch_profile_nothing_to_sync">أدخل ملفك الجسدي أولاً من الإعدادات، الملف الجسدي</string>
     <string name="body_profile_prompt_message">لتقدير السعرات الحرارية، أضف إلى ملفك الجسدي: %1$s.</string>
     <string name="body_profile_prompt_action">افتح الملف الجسدي</string>
+    <string name="activity_heart_rate_zones_title">مناطق معدل ضربات القلب</string>
+    <string name="activity_heart_rate_zone_1">المنطقة 1 · خفيف جدًا</string>
+    <string name="activity_heart_rate_zone_2">المنطقة 2 · خفيف</string>
+    <string name="activity_heart_rate_zone_3">المنطقة 3 · متوسط</string>
+    <string name="activity_heart_rate_zone_4">المنطقة 4 · شديد</string>
+    <string name="activity_heart_rate_zone_5">المنطقة 5 · قريب من الحد الأقصى</string>
+    <string name="activity_heart_rate_zones_basis">المناطق من حد أقصى %1$d نبضة/دقيقة (فئات الشدة لـ ACSM)</string>
+    <string name="activity_heart_rate_zones_manual">المناطق من حدودك الخاصة (المضبوطة في طاقة الجسم)</string>
 </resources>

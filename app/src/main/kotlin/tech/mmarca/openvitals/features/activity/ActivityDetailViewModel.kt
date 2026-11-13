@@ -14,16 +14,22 @@ import tech.mmarca.openvitals.core.performance.LoadCoordinator
 import tech.mmarca.openvitals.core.performance.runCatchingCancellable
 import tech.mmarca.openvitals.data.repository.ActivityMarkerRepository
 import tech.mmarca.openvitals.data.repository.contract.ActivitySplitPreferences
+import tech.mmarca.openvitals.data.repository.contract.BodyEnergyCalibrationPreferences
 import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
 import tech.mmarca.openvitals.domain.model.PlannedExerciseData
 import tech.mmarca.openvitals.data.repository.contract.CoMapsNavigationRepository
 import tech.mmarca.openvitals.data.repository.contract.HeartRepository
+import tech.mmarca.openvitals.data.repository.contract.loadObservedMaxHeartRate
 import tech.mmarca.openvitals.domain.insights.ActivitySplits
 import tech.mmarca.openvitals.domain.insights.HeartRateRecoveryReading
 import tech.mmarca.openvitals.domain.insights.buildActivitySplits
 import tech.mmarca.openvitals.domain.insights.calculateHeartRateRecovery
+import tech.mmarca.openvitals.domain.insights.HeartRateZoneBasis
+import tech.mmarca.openvitals.domain.insights.HeartRateZones
 import tech.mmarca.openvitals.domain.insights.heartRateRecoveryWindowFor
+import tech.mmarca.openvitals.domain.preferences.BodyEnergyCalibration
+import tech.mmarca.openvitals.domain.preferences.BodyProfile
 import tech.mmarca.openvitals.domain.model.ActivityCadenceSample
 import tech.mmarca.openvitals.domain.model.ActivityRecordingMarker
 import tech.mmarca.openvitals.domain.model.CoMapsNavigationSnapshot
@@ -35,6 +41,7 @@ import tech.mmarca.openvitals.domain.model.withSampleBackfilledMetrics
 import tech.mmarca.openvitals.domain.preferences.ActivitySplitDistance
 import tech.mmarca.openvitals.navigation.ACTIVITY_DETAIL_ID_ARG
 import javax.inject.Inject
+import java.time.ZoneId
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,6 +83,9 @@ internal data class ActivityDetailUiState(
     /** How the heart rate fell after the effort stopped, for a session that carries a stop mark. */
     val heartRateRecovery: HeartRateRecoveryReading? = null,
 
+    /** How long the session's heart rate sat in each zone. Null without a basis or a reading. */
+    val heartRateZones: ActivityHeartRateZoneTime? = null,
+
     /** The plan this session was logged against, when it still exists and can be read. */
     val linkedPlan: PlannedExerciseData? = null,
 
@@ -88,6 +98,7 @@ internal class ActivityDetailViewModel @Inject constructor(
     private val heartRepository: HeartRepository? = null,
     private val markerRepository: ActivityMarkerRepository? = null,
     private val bodyProfilePreferences: BodyProfilePreferences,
+    private val calibrationPreferences: BodyEnergyCalibrationPreferences,
     private val splitPreferences: ActivitySplitPreferences,
     private val coMapsNavigationRepository: CoMapsNavigationRepository? = null,
     private val dispatchers: DispatcherProvider = DefaultDispatcherProvider,
@@ -160,8 +171,14 @@ internal class ActivityDetailViewModel @Inject constructor(
             val coMapsSamples = async(dispatchers.io) {
                 runCatchingCancellable { loadCoMapsSamples(workout) }.getOrNull().orEmpty()
             }
+            // One read of the observed maximum serves the zones and the recovery.
+            val zoneHeartRates = async {
+                runCatchingCancellable { loadZoneHeartRates(workout) }.getOrNull() ?: ZoneHeartRates()
+            }
             val heartRateRecovery = async {
-                runCatchingCancellable { loadHeartRateRecovery(workout) }.getOrNull()
+                runCatchingCancellable {
+                    loadHeartRateRecovery(workout, zoneHeartRates.await().observedMaxBpm)
+                }.getOrNull()
             }
             val linkedPlan = async {
                 workout.plannedExerciseSessionId?.let { planId ->
@@ -174,6 +191,8 @@ internal class ActivityDetailViewModel @Inject constructor(
             val loadedMarkers = markers.await()
             val loadedCoMapsSamples = coMapsSamples.await()
             val recovery = heartRateRecovery.await()
+            val profile = bodyProfilePreferences.bodyProfile()
+            val calibration = calibrationPreferences.bodyEnergyCalibration().normalized()
             val plan = linkedPlan.await()
             // Backfill, height profile and splits walk every sample.
             withContext(dispatchers.default) {
@@ -192,6 +211,7 @@ internal class ActivityDetailViewModel @Inject constructor(
                     coMapsSamples = loadedCoMapsSamples,
                     elevationSamples = elevationProfile(backfilledWorkout.route),
                     heartRateRecovery = recovery,
+                    heartRateZones = heartRateZoneTime(heartRate, profile, calibration, zoneHeartRates.await()),
                     linkedPlan = plan,
                 ).withSplitsCutAt(splitDistanceMeters)
             }
@@ -236,8 +256,18 @@ internal class ActivityDetailViewModel @Inject constructor(
                     .orEmpty()
             }
 
+    /** The zones' observed maximum and resting rate; nothing without a heart repository. Two aggregate reads. */
+    private suspend fun loadZoneHeartRates(workout: ExerciseData): ZoneHeartRates = coroutineScope {
+        val heartRepository = heartRepository ?: return@coroutineScope ZoneHeartRates()
+        val observed = async { heartRepository.loadObservedMaxHeartRate(workout.endTime)?.toInt() }
+        val resting = async {
+            heartRepository.loadRestingHeartRate(workout.endTime.atZone(ZoneId.systemDefault()).toLocalDate())?.toInt()
+        }
+        ZoneHeartRates(observed.await(), resting.await())
+    }
+
     /** The recovery reading, or null without a stop mark, in which case no read is issued. */
-    private suspend fun loadHeartRateRecovery(workout: ExerciseData): HeartRateRecoveryReading? {
+    private suspend fun loadHeartRateRecovery(workout: ExerciseData, observedMaxBpm: Int?): HeartRateRecoveryReading? {
         val heartRepository = heartRepository ?: return null
         val window = heartRateRecoveryWindowFor(workout) ?: return null
         val samples = heartRepository.loadHeartRateSamples(window.readStart, window.readEnd)
@@ -247,8 +277,8 @@ internal class ActivityDetailViewModel @Inject constructor(
             samples = samples,
             restingHeartRateBpm = profile.restingHeartRateBpm,
             ageYears = profile.ageYears(),
-            // The 90-day observed maximum is a trend-screen concern.
-            observedMaxHeartRateBpm = null,
+            // The same year-long observed maximum as the recovery screen, up to this workout.
+            observedMaxHeartRateBpm = observedMaxBpm,
             explicitMaxHeartRateBpm = profile.maxHeartRateBpm,
             sex = profile.sex,
         )
@@ -303,4 +333,29 @@ internal class ActivityDetailViewModel @Inject constructor(
             splitSpeedTrace = splitSpeedTrace(recordedSpeed = speedSamples, splits = splits),
         )
     }
+}
+
+/**
+ * What the zones' basis reads besides the profile: the year's observed maximum up
+ * to the workout, and the resting rate of its day, which only judges whether that
+ * maximum is believable. The same two inputs OpenWatch's zone sync reads.
+ */
+private data class ZoneHeartRates(val observedMaxBpm: Int? = null, val nightRestingBpm: Int? = null)
+
+/** The time in each zone: on the user's own limits when set, else on the profile's basis. Null when there is neither. */
+private fun heartRateZoneTime(
+    samples: List<HeartRateSample>,
+    profile: BodyProfile,
+    calibration: BodyEnergyCalibration,
+    heartRates: ZoneHeartRates,
+): ActivityHeartRateZoneTime? {
+    if (samples.size < 2) return null
+    val manual = calibration.manualZoneThresholdsBpm.takeIf { calibration.useManualZones }
+    val basis = HeartRateZoneBasis.of(
+        profile,
+        observedMaxBpm = heartRates.observedMaxBpm,
+        nightRestingBpm = heartRates.nightRestingBpm,
+    )
+    val bounds = HeartRateZones.boundsOf(manual, basis) ?: return null
+    return ActivityHeartRateZoneTime(bounds, HeartRateZones.timeInZones(samples, bounds.lowerBpm))
 }

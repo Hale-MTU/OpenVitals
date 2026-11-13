@@ -11,11 +11,8 @@ import tech.mmarca.openvitals.domain.preferences.BiologicalSex
 private const val MinimumTrimpMinutes = 5.0
 private const val GoodHeartRateCoverageMinutes = 10.0
 private const val GoodHeartRateCoverageRatio = 0.6
-private const val MaxHeartRateSampleGapMinutes = 5.0
 private const val ActiveHeartRateReserveThreshold = 0.3
 private const val MinimumMovementFallbackLoad = 0.25
-private const val ObservedMaxHeartRateMinimumBpm = 150L
-private const val ObservedMaxHeartRateRestingDeltaBpm = 60L
 
 enum class CardioLoadConfidence {
     HIGH,
@@ -67,11 +64,6 @@ data class CardioLoadTimeWindow(
         get() = Duration.between(start, end).seconds.coerceAtLeast(0L).toDouble() / 60.0
 }
 
-private data class MaxHeartRateContext(
-    val bpm: Long,
-    val isObservedAvailable: Boolean,
-)
-
 private data class TrimpResult(
     val score: Double,
     val coveredMinutes: Double,
@@ -95,8 +87,15 @@ fun calculateCardioLoad(
 ): CardioLoadEstimate {
     val fallback = movementFallbackCardioLoad(steps)
     val resting = restingHeartRate ?: baselineRestingHeartRate ?: samples.estimatedRestingHeartRate()
+    val highestObserved = listOfNotNull(observedMaxHeartRate, samples.maxOfOrNull { it.beatsPerMinute }).maxOrNull()
     val maxHeartRate = resting?.let {
-        maxHeartRateContext(observedMaxHeartRate, samples, it, ageYears, sex, explicitMaxHeartRate)
+        dailyMaxHeartRate(
+            restingHeartRate = it,
+            observedMaxHeartRate = highestObserved,
+            ageYears = ageYears,
+            sex = sex,
+            explicitMaxHeartRate = explicitMaxHeartRate,
+        )
     }
     val trimp = if (resting != null && maxHeartRate != null) {
         calculateTrimp(
@@ -104,7 +103,7 @@ fun calculateCardioLoad(
             restingHeartRate = resting,
             maxHeartRate = maxHeartRate.bpm,
             activityWindows = activityWindows,
-            weighting = BanisterWeighting.of(sex),
+            sex = sex,
         )
     } else {
         null
@@ -113,7 +112,7 @@ fun calculateCardioLoad(
     val activityWindowMinutes = activityWindows.sumOf { it.durationMinutes }
     if (trimp != null && trimp.coveredMinutes >= MinimumTrimpMinutes && trimp.score > 0.0) {
         val confidence = when {
-            trimp.hasGoodCoverage && restingHeartRate != null && maxHeartRate?.isObservedAvailable == true ->
+            trimp.hasGoodCoverage && restingHeartRate != null && maxHeartRate?.isMeasured == true ->
                 CardioLoadConfidence.HIGH
             trimp.hasGoodCoverage -> CardioLoadConfidence.MEDIUM
             else -> CardioLoadConfidence.LOW
@@ -132,7 +131,7 @@ fun calculateCardioLoad(
             restingHeartRateBpm = resting,
             restingHeartRateObserved = restingHeartRate != null,
             maxHeartRateBpm = maxHeartRate?.bpm,
-            maxHeartRateObserved = maxHeartRate?.isObservedAvailable == true,
+            maxHeartRateObserved = maxHeartRate?.isMeasured == true,
             heartRateSampleCount = samples.size,
             activityWindowCount = activityWindows.size,
             activityWindowMinutes = activityWindowMinutes,
@@ -153,7 +152,7 @@ fun calculateCardioLoad(
             restingHeartRateBpm = resting,
             restingHeartRateObserved = restingHeartRate != null,
             maxHeartRateBpm = maxHeartRate?.bpm,
-            maxHeartRateObserved = maxHeartRate?.isObservedAvailable == true,
+            maxHeartRateObserved = maxHeartRate?.isMeasured == true,
             heartRateSampleCount = samples.size,
             activityWindowCount = activityWindows.size,
             activityWindowMinutes = activityWindowMinutes,
@@ -168,7 +167,7 @@ private fun calculateTrimp(
     restingHeartRate: Long,
     maxHeartRate: Long,
     activityWindows: List<CardioLoadTimeWindow>,
-    weighting: BanisterWeighting,
+    sex: BiologicalSex?,
 ): TrimpResult? {
     val sortedSamples = samples
         .sortedBy { it.time }
@@ -201,7 +200,7 @@ private fun calculateTrimp(
         }
 
         coveredMinutes += intervalMinutes
-        score += intervalMinutes * heartRateReserve * weighting.factor * exp(weighting.exponent * heartRateReserve)
+        score += intervalMinutes * heartRateReserve * banisterWeighting(sex, heartRateReserve)
     }
 
     if (coveredMinutes <= 0.0) return null
@@ -218,19 +217,19 @@ private fun calculateTrimp(
  * b = 1.92 for men, a = 0.86, b = 1.67 for women. Morton, Fitz-Clarke and
  * Banister, "Modeling human performance in running", J Appl Physiol
  * 1990;69(3):1171–1177, doi:10.1152/jappl.1990.69.3.1171; the constants as
- * restated in doi:10.2147/CIA.S211568. Without a recorded sex the men's
- * constants stay, as before the profile carried one.
+ * restated in doi:10.2147/CIA.S211568. Without a recorded sex, the mean of
+ * the men's and women's weighting: an app choice, the paper gives none.
  */
 const val BanisterTrimpUrl = "https://pmc.ncbi.nlm.nih.gov/articles/PMC6561225/"
 const val TrainingLoadReviewUrl = "https://pmc.ncbi.nlm.nih.gov/articles/PMC4213373/"
 
-private enum class BanisterWeighting(val factor: Double, val exponent: Double) {
-    MEN(0.64, 1.92),
-    WOMEN(0.86, 1.67),
-    ;
-
-    companion object {
-        fun of(sex: BiologicalSex?): BanisterWeighting = if (sex == BiologicalSex.FEMALE) WOMEN else MEN
+private fun banisterWeighting(sex: BiologicalSex?, heartRateReserve: Double): Double {
+    val men = 0.64 * exp(1.92 * heartRateReserve)
+    val women = 0.86 * exp(1.67 * heartRateReserve)
+    return when (sex) {
+        BiologicalSex.MALE -> men
+        BiologicalSex.FEMALE -> women
+        null -> (men + women) / 2.0
     }
 }
 
@@ -249,44 +248,7 @@ private fun movementFallbackCardioLoad(steps: DailySteps?): Int {
     }
 }
 
-private fun maxHeartRateContext(
-    observedMaxHeartRate: Long?,
-    samples: List<HeartRateSample>,
-    restingHeartRate: Long,
-    ageYears: Int?,
-    sex: BiologicalSex?,
-    explicitMaxHeartRate: Long? = null,
-): MaxHeartRateContext? {
-    // A stated maximum outranks everything.
-    if (explicitMaxHeartRate != null && explicitMaxHeartRate > restingHeartRate) {
-        return MaxHeartRateContext(bpm = explicitMaxHeartRate, isObservedAvailable = true)
-    }
-    val sampleMax = samples.maxOfOrNull { it.beatsPerMinute }
-    val observedMax = listOfNotNull(observedMaxHeartRate, sampleMax).maxOrNull() ?: return null
-    val observedAvailable = observedMax >= maxOf(
-        ObservedMaxHeartRateMinimumBpm,
-        restingHeartRate + ObservedMaxHeartRateRestingDeltaBpm,
-    )
-    val estimatedMax = ageYears?.let { ageMaxHeartRate(it, sex) }
-        ?: maxOf(observedMax + 10L, restingHeartRate + 70L)
-    return MaxHeartRateContext(
-        bpm = if (observedAvailable) observedMax else estimatedMax,
-        isObservedAvailable = observedAvailable,
-    )
-}
-
-private fun List<HeartRateSample>.estimatedRestingHeartRate(): Long? {
-    if (isEmpty()) return null
-    val sorted = map { it.beatsPerMinute }.sorted()
-    val index = (sorted.lastIndex * 0.1).roundToInt().coerceIn(sorted.indices)
-    return sorted[index].coerceIn(40L, 100L)
-}
-
-private fun CardioLoadTimeWindow.overlapMinutes(other: CardioLoadTimeWindow): Double {
-    val overlapStart = maxOf(start, other.start)
-    val overlapEnd = minOf(end, other.end)
-    if (!overlapEnd.isAfter(overlapStart)) return 0.0
-    return Duration.between(overlapStart, overlapEnd).seconds.toDouble() / 60.0
-}
+internal fun CardioLoadTimeWindow.overlapMinutes(other: CardioLoadTimeWindow): Double =
+    overlapMinutes(start, end, other.start, other.end)
 
 private fun Double?.orZero(): Double = this ?: 0.0

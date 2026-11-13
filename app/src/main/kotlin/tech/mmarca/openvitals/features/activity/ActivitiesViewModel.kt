@@ -34,6 +34,7 @@ import tech.mmarca.openvitals.domain.model.PlannedExerciseData
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
 import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
 import tech.mmarca.openvitals.data.repository.contract.HeartRepository
+import tech.mmarca.openvitals.data.repository.contract.loadObservedMaxHeartRate
 import tech.mmarca.openvitals.data.repository.contract.DailyGoalPreferences
 import tech.mmarca.openvitals.data.repository.contract.PeriodPreferences
 import java.time.LocalDate
@@ -47,6 +48,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import tech.mmarca.openvitals.core.stats.lowerMedianOrNull
 
 @Immutable
 data class ActivitiesUiState(
@@ -241,6 +243,11 @@ class ActivitiesViewModel @Inject constructor(
                             heartRepository.loadHeartRateSamples(windows.current.start, currentDataEnd)
                         }
                     }
+                    val observedMaxHeartRate = async {
+                        heartRepository.loadObservedMaxHeartRate(
+                            currentDataEnd.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant(),
+                        )
+                    }
                     val loadedRestingHeartRate = restingHeartRate.await()
                     val loadedWorkouts = workouts.await()
                     val profile = bodyProfilePreferences.bodyProfile().normalized(windows.current.end)
@@ -260,6 +267,7 @@ class ActivitiesViewModel @Inject constructor(
                                 heartRateSamples = heartRateSamples.await(),
                                 restingHeartRate = loadedRestingHeartRate,
                                 hrv = hrv.await(),
+                                observedMaxHeartRate = observedMaxHeartRate.await(),
                                 profile = profile,
                             )
                         },
@@ -368,6 +376,7 @@ private fun activityOverviewDays(
     heartRateSamples: List<HeartRateSample>,
     restingHeartRate: List<DailyRestingHR>,
     hrv: List<DailyHrv>,
+    observedMaxHeartRate: Long?,
     profile: BodyProfile,
 ): List<ActivityOverviewDay> {
     val stepsByDate = steps.associateBy { it.date }
@@ -380,8 +389,7 @@ private fun activityOverviewDays(
     val restingHeartRateByDate = restingHeartRate.associateBy { it.date }
     val baselineRestingHeartRate = restingHeartRate
         .map { it.bpm }
-        .medianOrNull()
-    val observedMaxHeartRate = heartRateSamples.maxOfOrNull { it.beatsPerMinute }
+        .lowerMedianOrNull()
 
     return generateSequence(start) { date ->
         date.plusDays(1).takeUnless { it.isAfter(end) }
@@ -460,12 +468,6 @@ internal fun activityDisplayPeriod(
         today = today,
         weekPeriodMode = activityWeekMode.toWeekPeriodMode(),
     )
-}
-
-private fun List<Long>.medianOrNull(): Long? {
-    if (isEmpty()) return null
-    val sorted = sorted()
-    return sorted[sorted.lastIndex / 2]
 }
 
 private fun List<ExerciseData>.overlapping(date: LocalDate, zone: ZoneId): List<ExerciseData> {

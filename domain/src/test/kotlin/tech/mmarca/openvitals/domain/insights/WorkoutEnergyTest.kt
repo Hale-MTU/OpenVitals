@@ -66,10 +66,23 @@ class WorkoutEnergyTest {
     }
 
     @Test
-    fun `a heart rate without sex or age falls back to the MET`() {
-        val result = estimate(heartRate = 150.0, body = profile.copy(sex = null)) as WorkoutEnergyResult.Estimate
+    fun `a heart rate without an age falls back to the MET`() {
+        val result = estimate(heartRate = 150.0, body = profile.copy(birthYear = null)) as WorkoutEnergyResult.Estimate
 
         assertEquals(WorkoutEnergyMethod.COMPENDIUM_MET, result.method)
+    }
+
+    @Test
+    fun `without a sex Keytel and Mifflin-St Jeor take the mean of both`() {
+        val result = estimate(heartRate = 150.0, body = profile.copy(sex = null)) as WorkoutEnergyResult.Estimate
+
+        // Keytel, 30 years, 70 kg, 150 bpm: men 59.5051, women 40.0568 kJ/min.
+        val grossKcal = (59.5051 + 40.0568) / 2 / 4.184 * 60
+        // Mifflin-St Jeor with -78: 700 + 1093.75 - 150 - 78 = 1565.75 kcal/day.
+        val restingKcal = 1565.75 / 1440 * 60
+        assertEquals(WorkoutEnergyMethod.HEART_RATE, result.method)
+        assertEquals(grossKcal - restingKcal, result.activeKcal, 1e-3)
+        assertEquals(grossKcal, result.totalKcal, 1e-3)
     }
 
     @Test

@@ -3847,4 +3847,12 @@
     <string name="body_profile_openwatch_synced_updated">Kept in sync with OpenWatch · updated %1$s</string>
     <string name="openwatch_profile_sync_now">Sync body profile now</string>
     <string name="openwatch_profile_nothing_to_sync">Enter your body profile in Settings, Body profile first</string>
+    <string name="activity_heart_rate_zones_title">Heart rate zones</string>
+    <string name="activity_heart_rate_zone_1">Zone 1 · Very light</string>
+    <string name="activity_heart_rate_zone_2">Zone 2 · Light</string>
+    <string name="activity_heart_rate_zone_3">Zone 3 · Moderate</string>
+    <string name="activity_heart_rate_zone_4">Zone 4 · Vigorous</string>
+    <string name="activity_heart_rate_zone_5">Zone 5 · Near-maximal</string>
+    <string name="activity_heart_rate_zones_basis">Zones from a maximum of %1$d bpm (ACSM intensity classes)</string>
+    <string name="activity_heart_rate_zones_manual">Zones from your own limits (set in Body energy)</string>
 </resources>

@@ -866,8 +866,8 @@ class BodyEnergyTimelineTest {
     }
 
     @Test
-    fun `the manual profile heart rates no longer reach the model`() {
-        // v11 removed the manual resting/max inputs; Body Energy must ignore them.
+    fun `an entered resting rate does not reach the model`() {
+        // v11 removed the manual resting input; Body Energy takes resting from Health Connect.
         val start = dayStart.plus(Duration.ofHours(8))
         val end = start.plus(Duration.ofHours(2))
         val samples = heartRateSamples(start, end, bpm = 120)
@@ -886,13 +886,37 @@ class BodyEnergyTimelineTest {
                 previousEndScore = 100,
                 samples = samples,
                 restingHeartRateBpm = 60,
-                bodyProfile = BodyProfile(restingHeartRateBpm = 40, maxHeartRateBpm = 220),
+                bodyProfile = BodyProfile(restingHeartRateBpm = 40),
             )
         )
 
         assertNotNull(withoutProfile.confidenceReasonCode)
         assertEquals(withoutProfile.drained, withProfile.drained)
         assertEquals(withoutProfile.confidence, withProfile.confidence)
+    }
+
+    @Test
+    fun `an entered maximum is used, as in cardio load and recovery`() {
+        val start = dayStart.plus(Duration.ofHours(8))
+        val end = start.plus(Duration.ofHours(2))
+        val samples = heartRateSamples(start, end, bpm = 120)
+
+        // Without it the maximum is the fallback, 60 + 70 = 130: 120 bpm is near-maximal.
+        val withoutMax = calculateBodyEnergyTimeline(
+            inputs(now = end, previousEndScore = 100, samples = samples, restingHeartRateBpm = 60)
+        )
+        // With 220 entered, 120 bpm is 37.5 % of the reserve: a light effort.
+        val withMax = calculateBodyEnergyTimeline(
+            inputs(
+                now = end,
+                previousEndScore = 100,
+                samples = samples,
+                restingHeartRateBpm = 60,
+                bodyProfile = BodyProfile(maxHeartRateBpm = 220),
+            )
+        )
+
+        assertTrue(withMax.drained < withoutMax.drained)
     }
 
     // Fixtures.

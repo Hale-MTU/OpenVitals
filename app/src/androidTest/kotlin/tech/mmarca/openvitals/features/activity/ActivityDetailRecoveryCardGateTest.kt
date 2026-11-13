@@ -97,6 +97,7 @@ class ActivityDetailRecoveryCardGateTest {
             workout = WORKOUT,
             heartRateSamples = emptyList(),
             heartRateRecovery = recovery,
+            heartRateZones = null,
             speedSamples = emptyList(),
             cadenceSamples = emptyList(),
             markers = emptyList(),

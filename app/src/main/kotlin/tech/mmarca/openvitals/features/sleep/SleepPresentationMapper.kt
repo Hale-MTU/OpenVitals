@@ -28,14 +28,10 @@ import tech.mmarca.openvitals.domain.model.splitNightAndNaps
 import tech.mmarca.openvitals.domain.preferences.SleepWindow
 import java.time.LocalDate
 import java.time.ZoneId
-import kotlin.math.PI
-import kotlin.math.atan2
-import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
-import kotlin.math.sin
+import tech.mmarca.openvitals.core.stats.circularMeanMinutes
 
-private const val MinutesPerDay = 24 * 60
 
 object SleepPresentationMapper {
 
@@ -305,10 +301,10 @@ private fun List<SleepData>.averageSchedule(): SleepOverviewSchedule? {
     val zone = ZoneId.systemDefault()
     val startMinute = circularMeanMinutes(
         map { session -> session.startTime.atZone(zone).toLocalTime().toMinuteOfDay() },
-    )
+    ) ?: return null
     val endMinute = circularMeanMinutes(
         map { session -> session.endTime.atZone(zone).toLocalTime().toMinuteOfDay() },
-    )
+    ) ?: return null
     return SleepOverviewSchedule(startMinute = startMinute, endMinute = endMinute)
 }
 
@@ -317,13 +313,5 @@ private fun List<SleepData>.mainSleepSession(): SleepData? =
 
 private fun List<SleepData>.stageDurationMs(stageTypes: Set<Int>): Long =
     sumOf { session -> session.stages.durationMsForTypes(stageTypes) }
-
-private fun circularMeanMinutes(values: List<Int>): Int {
-    if (values.isEmpty()) return 0
-    val sinMean = values.sumOf { sin(it.toDouble() / MinutesPerDay * 2.0 * PI) } / values.size
-    val cosMean = values.sumOf { cos(it.toDouble() / MinutesPerDay * 2.0 * PI) } / values.size
-    val angle = atan2(sinMean, cosMean).let { if (it < 0.0) it + 2.0 * PI else it }
-    return (angle / (2.0 * PI) * MinutesPerDay).roundToInt() % MinutesPerDay
-}
 
 private fun java.time.LocalTime.toMinuteOfDay(): Int = hour * 60 + minute
