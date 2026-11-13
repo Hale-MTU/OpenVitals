@@ -63,7 +63,8 @@ class HeartRateZonesTest {
         val start = Instant.parse("2026-11-12T10:00:00Z")
         fun at(seconds: Long, bpm: Long) = HeartRateSample(start.plusSeconds(seconds), bpm, "test")
         val time = HeartRateZones.timeInZones(
-            listOf(at(30, 130), at(0, 120), at(60, 192), at(300, 192), at(310, 100)),
+            // 60 s to 400 s is more than five minutes: a gap, it counts for nothing.
+            listOf(at(30, 130), at(0, 120), at(60, 192), at(400, 192), at(410, 100)),
             basis.boundsBpm,
         )
         assertEquals(

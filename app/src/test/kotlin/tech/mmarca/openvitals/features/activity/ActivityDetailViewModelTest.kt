@@ -26,6 +26,7 @@ import io.mockk.every
 import io.mockk.mockk
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDate
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -110,6 +111,28 @@ class ActivityDetailViewModelTest {
         assertEquals(190, zones.bounds.maxBpm)
         // 150 bpm is 71 % of the reserve: ACSM's vigorous class, zone 4.
         assertEquals(Duration.ofSeconds(30), zones.durations[3])
+    }
+
+    @Test fun `a believable observed maximum of the year wins over the age formula`() = runTest {
+        val workout = workout(id = "activity-1")
+        val repo = mockk<ActivityRepository>()
+        val heartRepo = mockk<HeartRepository>()
+        coEvery { repo.loadWorkout("activity-1") } returns workout
+        stubMetricSamples(repo)
+        coEvery { heartRepo.loadHeartRateSamples(workout.startTime, workout.endTime) } returns listOf(
+            HeartRateSample(workout.startTime, 150L, "test"),
+            HeartRateSample(workout.startTime.plusSeconds(30), 150L, "test"),
+        )
+        coEvery { heartRepo.loadMaxHeartRate(workout.endTime.minus(Duration.ofDays(365)), workout.endTime) } returns 195L
+        coEvery { heartRepo.loadRestingHeartRate(any()) } returns 55L
+        // Tanaka at 30 would say 187; 195 clears the 150 / resting + 60 bar.
+        val preferences = FakePreferences(initialProfile = BodyProfile(birthYear = LocalDate.now().year - 30))
+
+        val vm = activityDetailViewModel(repo, "activity-1", heartRepository = heartRepo, preferences = preferences)
+
+        val zones = requireNotNull(vm.uiState.value.heartRateZones)
+        assertEquals(195, zones.bounds.maxBpm)
+        assertEquals(HeartRateZones.Basis(195).boundsBpm, zones.bounds.lowerBpm)
     }
 
     @Test fun `the user's own zone limits win over the profile`() = runTest {
@@ -457,6 +480,7 @@ class ActivityDetailViewModelTest {
             HeartRateSample(recoveryStart.plusSeconds(60), 140L, "test"),
         )
         coEvery { heartRepo.loadMaxHeartRate(any(), any()) } returns null
+        coEvery { heartRepo.loadRestingHeartRate(any()) } returns null
 
         val vm = activityDetailViewModel(repo, "activity-1", heartRepository = heartRepo)
 
@@ -464,7 +488,7 @@ class ActivityDetailViewModelTest {
         assertEquals(178L, reading.peakBpm)
         assertEquals(38L, reading.headlineDropBpm)
         coVerify(exactly = 1) { heartRepo.loadHeartRateSamples(readStart, readEnd) }
-        // The year-long observed maximum up to the workout's end, as the recovery screen reads it.
+        // The year-long observed maximum up to the workout's end, read once for the zones and the recovery.
         coVerify(exactly = 1) { heartRepo.loadMaxHeartRate(workout.endTime.minus(Duration.ofDays(365)), workout.endTime) }
     }
 

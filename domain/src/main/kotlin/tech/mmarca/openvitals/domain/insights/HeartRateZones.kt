@@ -34,10 +34,12 @@ object HeartRateZones {
     val RESERVE_SHARE_BOUNDS: List<Double> = listOf(0.0, 0.30, 0.40, 0.60, 0.90)
 
     /**
-     * A reading further from its neighbours than this counts for no time at
-     * all: the strap or watch was off. An app choice, no published source.
+     * A reading further from the next one than this counts for no time at all:
+     * the strap or watch was off. The same limit as cardio load, intensity
+     * minutes and workout calories ([MaxHeartRateSampleGapMinutes]) and as
+     * OpenWatch. An app choice, no published source.
      */
-    val MaxSampleGap: Duration = Duration.ofSeconds(60)
+    val MaxSampleGap: Duration = Duration.ofMinutes(MaxHeartRateSampleGapMinutes.toLong())
 
     data class Basis(val maxBpm: Int, val restingBpm: Int? = null) {
         private val resting: Int? get() = restingBpm?.takeIf { it < maxBpm }
