@@ -412,6 +412,9 @@ internal data class ParsedRepetitionSet(
 /** A positive load up to [MaxActivityWeightKg]; null for anything else. */
 internal fun String.toWeightKgOrNull(): Double? = toPositiveDoubleOrNull()?.takeIf { it <= MaxActivityWeightKg }
 
+/** A load as the form keeps it: grams of precision, so a weight typed in pounds comes back as typed. */
+internal fun Double.toWeightKgText(): String = toInputText(3)
+
 internal fun activityEntrySessionRange(state: ActivityEntryUiState): Pair<Instant, Instant>? {
     val startDate = state.startDateText.trim().let { runCatching { LocalDate.parse(it) }.getOrNull() }
         ?: return null

@@ -122,6 +122,7 @@ internal fun NavGraphBuilder.manualEntryRoutes(
                 navController.popBackStack()
             },
             onClose = { navController.popBackStack() },
+            unitFormatter = unitFormatter,
         )
     }
 

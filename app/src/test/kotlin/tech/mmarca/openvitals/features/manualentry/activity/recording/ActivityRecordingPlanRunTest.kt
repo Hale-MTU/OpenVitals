@@ -177,6 +177,21 @@ class ActivityRecordingPlanRunTest {
         assertNotNull(next.currentSetStartedAt)
     }
 
+    @Test fun `counting the rest of a set at once ends the step with the whole count`() {
+        val recorder = controller()
+        assertTrue(recorder.startPlanRecording(plan(), calisthenics))
+        recorder.adjustRepetitionCount(1)
+
+        // What holding + sends: the reps still missing from the target of 3.
+        recorder.adjustRepetitionCount(2)
+
+        val resting = recorder.state.value
+        assertEquals(ActivityRecordingStatus.RESTING, resting.status)
+        assertEquals(1, resting.planStepIndex)
+        assertEquals(3L, resting.repetitionSets.single().repetitions)
+        assertEquals(3L, resting.repetitionCount)
+    }
+
     @Test fun `a rest ends by itself, on the thread that owns the state`() {
         // The rest timer used to fire on Dispatchers.IO and write the state from there, racing
         // the main thread's own writes. On the main dispatcher the test clock can drive it.

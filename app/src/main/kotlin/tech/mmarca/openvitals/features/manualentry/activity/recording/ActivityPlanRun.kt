@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import tech.mmarca.openvitals.R
+import tech.mmarca.openvitals.core.presentation.UnitFormatter
+import tech.mmarca.openvitals.domain.preferences.UnitSystem
 import tech.mmarca.openvitals.features.manualentry.activity.ActivityEntryType
 import tech.mmarca.openvitals.features.manualentry.activity.ActivityRecordingSensor
 import tech.mmarca.openvitals.features.manualentry.activity.DefaultActivityEntryTypes
@@ -46,11 +48,21 @@ fun ActivityPlanRunStep.displayLabel(context: Context): String = label ?: exerci
 @Composable
 internal fun ActivityPlanRunStep.displayLabel(): String = label ?: exerciseSegmentLabel(segmentType)
 
-/** "Push-ups, 10 reps" / "Plank, 45 seconds" / "Squat, 12 reps, 50 kilograms" — what the voice cue says. */
-fun ActivityPlanRunStep.spokenGoal(context: Context): String = when (goalKind) {
+/**
+ * "Push-ups, 10 reps" / "Plank, 45 seconds" / "Squat, 12 reps, 50 kilograms" — what the voice cue says.
+ * The load is spoken in [weightUnit]: kilograms, or pounds for imperial.
+ */
+fun ActivityPlanRunStep.spokenGoal(context: Context, weightUnit: UnitSystem = UnitSystem.METRIC): String = when (goalKind) {
     ActivityPlanGoalKind.REPS -> {
         val weight = weightKg
-        if (weight != null) {
+        if (weight != null && weightUnit == UnitSystem.IMPERIAL) {
+            context.getString(
+                R.string.activity_recording_plan_spoken_reps_weight_pounds,
+                displayLabel(context),
+                goalValue,
+                (weight * UnitFormatter.PoundsPerKilogram).toInputText(1),
+            )
+        } else if (weight != null) {
             context.getString(R.string.activity_recording_plan_spoken_reps_weight, displayLabel(context), goalValue, weight.toInputText(1))
         } else {
             context.getString(R.string.activity_recording_plan_spoken_reps, displayLabel(context), goalValue)

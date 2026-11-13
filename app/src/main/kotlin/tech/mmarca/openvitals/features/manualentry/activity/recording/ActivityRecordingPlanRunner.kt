@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import java.time.Instant
 import tech.mmarca.openvitals.R
 import tech.mmarca.openvitals.core.presentation.UnitFormatter
-import tech.mmarca.openvitals.features.manualentry.activity.toInputText
 import tech.mmarca.openvitals.features.workoutplans.durationText
 import tech.mmarca.openvitals.ui.components.AutoResizeText
 import tech.mmarca.openvitals.ui.components.CountdownRing
@@ -135,7 +134,7 @@ internal fun ActivityPlanStepBanner(
                     )
                     step.weightKg?.let { weightKg ->
                         Text(
-                            text = stringResource(R.string.activity_recording_plan_weight, weightKg.toInputText(1)),
+                            text = unitFormatter.load(weightKg).text,
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -192,7 +191,7 @@ internal fun planStepGoalText(step: ActivityPlanRunStep, unitFormatter: UnitForm
             ActivityPlanGoalKind.REPS -> stringResource(R.string.activity_entry_plan_preview_reps, step.goalValue.toInt())
             ActivityPlanGoalKind.SECONDS -> durationText(step.goalValue)
         },
-        step.weightKg?.let { stringResource(R.string.activity_recording_plan_weight, it.toInputText(1)) },
+        step.weightKg?.let { unitFormatter.load(it).text },
     ).joinToString(" · ")
 
 @Composable

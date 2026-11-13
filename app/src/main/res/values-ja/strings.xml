@@ -147,7 +147,7 @@
     <string name="activity_entry_set_repetitions_label">%1$dの反復回数を設定する</string>
     <string name="activity_entry_set_rest_label">休憩時間</string>
     <string name="activity_entry_add_set">セットを追加</string>
-    <string name="activity_entry_set_weight_label">重量 (kg)</string>
+    <string name="activity_entry_set_weight_label">重量 (%1$s)</string>
     <string name="activity_entry_plan_preview_reps">%1$d回</string>
     <string name="activity_entry_distance_label">距離%1$s</string>
     <string name="activity_entry_elevation_label">登った歩数%1$s</string>
@@ -225,9 +225,9 @@
     <string name="activity_recording_plan_cue_rest_last">%1$d 秒休憩。</string>
     <string name="activity_recording_plan_cue_complete">プラン完了。準備ができたら終了してください。</string>
     <string name="activity_recording_plan_set_progress">セット %1$d / %2$d</string>
-    <string name="activity_recording_plan_weight">%1$s kg</string>
     <string name="activity_recording_plan_setup_rest_minutes">休憩 %1$d 分</string>
     <string name="activity_recording_plan_spoken_reps_weight">%1$s、%2$d 回、%3$s キログラム</string>
+    <string name="activity_recording_plan_spoken_reps_weight_pounds">%1$s、%2$d 回、%3$s ポンド</string>
     <plurals name="activity_recording_plan_spoken_minutes">
         <item quantity="one">%1$s、%2$d 分</item>
         <item quantity="other">%1$s、%2$d 分</item>
@@ -267,6 +267,7 @@
     <string name="activity_entry_recording_end_session">セッション終了</string>
     <string name="activity_entry_recording_rest_remaining">休憩 %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">センサーが回数を見逃したり余分に数えたりしたら + や - で修正してください。</string>
+    <string name="activity_recording_plan_fill_reps_hint">+ を長押しすると、セット全体をまとめてカウントします。</string>
     <string name="activity_entry_recording_accuracy">最新の精度 %1$s</string>
     <string name="activity_entry_recording_focus">フォーカス</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -702,7 +703,7 @@
     <string name="workout_plan_target_power">パワー %1$d〜%2$d W</string>
     <string name="workout_plan_target_speed">速度 %1$.1f〜%2$.1f km/h</string>
     <string name="workout_plan_target_cadence">ケイデンス %1$d〜%2$d rpm</string>
-    <string name="workout_plan_target_weight">重量 %1$.1f kg</string>
+    <string name="workout_plan_target_weight">重量 %1$s</string>
     <string name="workout_plan_target_rpe">RPE %1$d</string>
     <string name="workout_plan_target_amrap">できるだけ多くの回数</string>
     <string name="workout_plans_export">プランをエクスポート</string>
@@ -714,10 +715,10 @@
     <string name="workout_plan_preview_minutes">%1$d 分</string>
     <string name="workout_plan_step_sets_label">セット数</string>
     <string name="workout_plan_step_set_rest_label">各セット後の休憩</string>
-    <string name="workout_plan_step_weight_label">重量 (kg)</string>
+    <string name="workout_plan_step_weight_label">重量 (%1$s)</string>
     <string name="workout_plan_error_step_sets">セット数は 1 から 99 の間にしてください</string>
     <string name="workout_plan_error_step_set_rest">各セット後の休憩は 0 以上、24 時間以内にしてください</string>
-    <string name="workout_plan_error_step_weight">0 より大きく 1000 kg 以下の重量を入力してください</string>
+    <string name="workout_plan_error_step_weight">0 より大きく %1$s 以下の重量を入力してください</string>
     <string name="hc_exercise_type_badminton">バドミントン</string>
     <string name="hc_exercise_type_baseball">野球</string>
     <string name="hc_exercise_type_basketball">バスケットボール</string>
@@ -850,6 +851,7 @@
     <string name="activity_recording_plan_cue_heart_rate">心拍数 %1$d</string>
     <string name="activity_recording_plan_get_ready">準備</string>
     <string name="cd_add_one_repetition">1 回追加</string>
+    <string name="cd_add_remaining_repetitions">セットの残りをカウント</string>
     <string name="cd_remove_one_repetition">1 回減らす</string>
     <string name="workout_plan_error_title_required">タイトルを入力してください</string>
     <string name="workout_plan_error_start_date">有効な開始日を入力してください</string>

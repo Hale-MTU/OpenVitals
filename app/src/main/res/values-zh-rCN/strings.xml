@@ -147,7 +147,7 @@
     <string name="activity_entry_set_repetitions_label">第 %1$d 组次数</string>
     <string name="activity_entry_set_rest_label">休息时间</string>
     <string name="activity_entry_add_set">添加一组</string>
-    <string name="activity_entry_set_weight_label">重量 (kg)</string>
+    <string name="activity_entry_set_weight_label">重量 (%1$s)</string>
     <string name="activity_entry_plan_preview_reps">%1$d 次</string>
     <string name="activity_entry_distance_label">距离 %1$s</string>
     <string name="activity_entry_elevation_label">爬升 %1$s</string>
@@ -208,6 +208,7 @@
     <string name="activity_entry_recording_end_session">结束会话</string>
     <string name="activity_entry_recording_rest_remaining">休息 %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">传感器漏计或多计时，用 + 或 - 修正。</string>
+    <string name="activity_recording_plan_fill_reps_hint">长按 + 可一次计完整组。</string>
     <string name="activity_entry_recording_accuracy">上次精度 %1$s</string>
     <string name="activity_entry_recording_focus">专注</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -2886,9 +2887,9 @@
     <string name="activity_recording_plan_cue_rest_last">休息 %1$d 秒。</string>
     <string name="activity_recording_plan_cue_complete">计划完成。准备好后即可结束。</string>
     <string name="activity_recording_plan_set_progress">第 %1$d 组，共 %2$d 组</string>
-    <string name="activity_recording_plan_weight">%1$s kg</string>
     <string name="activity_recording_plan_setup_rest_minutes">休息 %1$d 分钟</string>
     <string name="activity_recording_plan_spoken_reps_weight">%1$s，%2$d 次，%3$s 千克</string>
+    <string name="activity_recording_plan_spoken_reps_weight_pounds">%1$s，%2$d 次，%3$s 磅</string>
     <plurals name="activity_recording_plan_spoken_minutes">
         <item quantity="one">%1$s，%2$d 分钟</item>
         <item quantity="other">%1$s，%2$d 分钟</item>
@@ -2962,7 +2963,7 @@
     <string name="workout_plan_target_power">功率 %1$d–%2$d W</string>
     <string name="workout_plan_target_speed">速度 %1$.1f–%2$.1f km/h</string>
     <string name="workout_plan_target_cadence">踏频 %1$d–%2$d rpm</string>
-    <string name="workout_plan_target_weight">重量 %1$.1f kg</string>
+    <string name="workout_plan_target_weight">重量 %1$s</string>
     <string name="workout_plan_target_rpe">RPE %1$d</string>
     <string name="workout_plan_target_amrap">尽可能多的次数</string>
     <string name="workout_plans_export">导出计划</string>
@@ -2974,10 +2975,10 @@
     <string name="workout_plan_preview_minutes">%1$d 分钟</string>
     <string name="workout_plan_step_sets_label">组数</string>
     <string name="workout_plan_step_set_rest_label">每组后休息</string>
-    <string name="workout_plan_step_weight_label">重量 (kg)</string>
+    <string name="workout_plan_step_weight_label">重量 (%1$s)</string>
     <string name="workout_plan_error_step_sets">组数须在 1 到 99 之间</string>
     <string name="workout_plan_error_step_set_rest">每组后休息须为 0 或以上，最长 24 小时</string>
-    <string name="workout_plan_error_step_weight">请输入大于 0 且不超过 1000 kg 的重量</string>
+    <string name="workout_plan_error_step_weight">请输入大于 0 且不超过 %1$s 的重量</string>
     <string name="hc_exercise_type_badminton">羽毛球</string>
     <string name="hc_exercise_type_baseball">棒球</string>
     <string name="hc_exercise_type_basketball">篮球</string>
@@ -3110,6 +3111,7 @@
     <string name="activity_recording_plan_cue_heart_rate">心率 %1$d</string>
     <string name="activity_recording_plan_get_ready">准备</string>
     <string name="cd_add_one_repetition">增加一次</string>
+    <string name="cd_add_remaining_repetitions">计完本组剩余次数</string>
     <string name="cd_remove_one_repetition">减少一次</string>
     <string name="workout_plan_error_title_required">请输入标题</string>
     <string name="workout_plan_error_start_date">请输入有效的开始日期</string>

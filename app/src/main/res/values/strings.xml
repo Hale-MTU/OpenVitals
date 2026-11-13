@@ -198,9 +198,9 @@
     <string name="activity_recording_plan_cue_rest_last">Rest %1$d seconds.</string>
     <string name="activity_recording_plan_cue_complete">Plan complete. Finish when you are ready.</string>
     <string name="activity_recording_plan_set_progress">Set %1$d of %2$d</string>
-    <string name="activity_recording_plan_weight">%1$s kg</string>
     <string name="activity_recording_plan_setup_rest_minutes">rest %1$d min</string>
     <string name="activity_recording_plan_spoken_reps_weight">%1$s, %2$d reps, %3$s kilograms</string>
+    <string name="activity_recording_plan_spoken_reps_weight_pounds">%1$s, %2$d reps, %3$s pounds</string>
     <plurals name="activity_recording_plan_spoken_minutes">
         <item quantity="one">%1$s, %2$d minute</item>
         <item quantity="other">%1$s, %2$d minutes</item>
@@ -242,7 +242,7 @@
     <string name="activity_entry_set_rest_label">Rest time</string>
     <string name="activity_entry_set_seconds_label">Set %1$d seconds</string>
     <string name="activity_entry_add_set">Add set</string>
-    <string name="activity_entry_set_weight_label">Weight (kg)</string>
+    <string name="activity_entry_set_weight_label">Weight (%1$s)</string>
     <string name="activity_entry_plan_preview_reps">%1$d reps</string>
     <string name="activity_entry_distance_label">Distance %1$s</string>
     <string name="activity_entry_elevation_label">Climb %1$s</string>
@@ -303,6 +303,7 @@
     <string name="activity_entry_recording_end_session">Finish session</string>
     <string name="activity_entry_recording_rest_remaining">Rest %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Use + or - if the sensor misses or adds a rep.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Hold + to count the whole set at once.</string>
     <string name="activity_entry_recording_accuracy">Last accuracy %1$s</string>
     <string name="activity_entry_recording_focus">Focus</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -743,7 +744,7 @@
     <string name="workout_plan_target_power">Power %1$d–%2$d W</string>
     <string name="workout_plan_target_speed">Speed %1$.1f–%2$.1f km/h</string>
     <string name="workout_plan_target_cadence">Cadence %1$d–%2$d rpm</string>
-    <string name="workout_plan_target_weight">Weight %1$.1f kg</string>
+    <string name="workout_plan_target_weight">Weight %1$s</string>
     <string name="workout_plan_target_rpe">RPE %1$d</string>
     <string name="workout_plan_target_amrap">As many reps as possible</string>
     <string name="workout_plans_export">Export plans</string>
@@ -755,10 +756,10 @@
     <string name="workout_plan_preview_minutes">%1$d min</string>
     <string name="workout_plan_step_sets_label">Sets</string>
     <string name="workout_plan_step_set_rest_label">Rest after each set</string>
-    <string name="workout_plan_step_weight_label">Weight (kg)</string>
+    <string name="workout_plan_step_weight_label">Weight (%1$s)</string>
     <string name="workout_plan_error_step_sets">Sets must be between 1 and 99</string>
     <string name="workout_plan_error_step_set_rest">Rest after each set must be 0 or more, up to 24 hours</string>
-    <string name="workout_plan_error_step_weight">Enter a weight above 0 and up to 1000 kg</string>
+    <string name="workout_plan_error_step_weight">Enter a weight above 0 and up to %1$s</string>
     <!-- Health Connect exercise session types -->
     <string name="hc_exercise_type_badminton">Badminton</string>
     <string name="hc_exercise_type_baseball">Baseball</string>
@@ -893,6 +894,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Heart rate %1$d</string>
     <string name="activity_recording_plan_get_ready">Get ready</string>
     <string name="cd_add_one_repetition">Add one repetition</string>
+    <string name="cd_add_remaining_repetitions">Count the rest of the set</string>
     <string name="cd_remove_one_repetition">Remove one repetition</string>
 
     <string name="workout_plan_error_title_required">Enter a title</string>

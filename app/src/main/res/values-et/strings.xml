@@ -146,7 +146,7 @@
     <string name="activity_entry_set_repetitions_label">Seeria %1$d kordust</string>
     <string name="activity_entry_set_rest_label">Puhkeaeg</string>
     <string name="activity_entry_add_set">Lisa seeria</string>
-    <string name="activity_entry_set_weight_label">Raskus (kg)</string>
+    <string name="activity_entry_set_weight_label">Raskus (%1$s)</string>
     <string name="activity_entry_plan_preview_reps">%1$d kordust</string>
     <string name="activity_entry_distance_label">Vahemaa %1$s</string>
     <string name="activity_entry_elevation_label">Tõus %1$s</string>
@@ -207,6 +207,7 @@
     <string name="activity_entry_recording_end_session">Lõpeta sessioon</string>
     <string name="activity_entry_recording_rest_remaining">Puhkust jäänud %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Kasuta + või -, kui andur jätab korduse vahele või lisab liiga palju.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Hoia + all, et lugeda kogu seeria korraga.</string>
     <string name="activity_entry_recording_accuracy">Viimane täpsus %1$s</string>
     <string name="activity_entry_recording_focus">Fookus</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -2862,9 +2863,9 @@
     <string name="activity_recording_plan_cue_rest_last">Puhka %1$d sekundit.</string>
     <string name="activity_recording_plan_cue_complete">Plaan tehtud. Lõpeta, kui oled valmis.</string>
     <string name="activity_recording_plan_set_progress">Seeria %1$d / %2$d</string>
-    <string name="activity_recording_plan_weight">%1$s kg</string>
     <string name="activity_recording_plan_setup_rest_minutes">puhkus %1$d min</string>
     <string name="activity_recording_plan_spoken_reps_weight">%1$s, %2$d kordust, %3$s kilogrammi</string>
+    <string name="activity_recording_plan_spoken_reps_weight_pounds">%1$s, %2$d kordust, %3$s naela</string>
     <plurals name="activity_recording_plan_spoken_minutes">
         <item quantity="one">%1$s, %2$d minut</item>
         <item quantity="other">%1$s, %2$d minutit</item>
@@ -2940,7 +2941,7 @@
     <string name="workout_plan_target_power">Võimsus %1$d–%2$d W</string>
     <string name="workout_plan_target_speed">Kiirus %1$.1f–%2$.1f km/h</string>
     <string name="workout_plan_target_cadence">Sagedus %1$d–%2$d p/min</string>
-    <string name="workout_plan_target_weight">Raskus %1$.1f kg</string>
+    <string name="workout_plan_target_weight">Raskus %1$s</string>
     <string name="workout_plan_target_rpe">RPE %1$d</string>
     <string name="workout_plan_target_amrap">Nii palju kordusi kui võimalik</string>
     <string name="workout_plans_export">Ekspordi plaanid</string>
@@ -2952,10 +2953,10 @@
     <string name="workout_plan_preview_minutes">%1$d min</string>
     <string name="workout_plan_step_sets_label">Seeriad</string>
     <string name="workout_plan_step_set_rest_label">Puhkus pärast iga seeriat</string>
-    <string name="workout_plan_step_weight_label">Raskus (kg)</string>
+    <string name="workout_plan_step_weight_label">Raskus (%1$s)</string>
     <string name="workout_plan_error_step_sets">Seeriaid peab olema 1 kuni 99</string>
     <string name="workout_plan_error_step_set_rest">Puhkus pärast iga seeriat peab olema 0 või rohkem, kuni 24 tundi</string>
-    <string name="workout_plan_error_step_weight">Sisesta raskus, mis on üle 0 ja kuni 1000 kg</string>
+    <string name="workout_plan_error_step_weight">Sisesta raskus, mis on üle 0 ja kuni %1$s</string>
     <string name="hc_exercise_type_badminton">Sulgpall</string>
     <string name="hc_exercise_type_baseball">Pesapall</string>
     <string name="hc_exercise_type_basketball">Korvpall</string>
@@ -3088,6 +3089,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Pulss %1$d</string>
     <string name="activity_recording_plan_get_ready">Valmistu</string>
     <string name="cd_add_one_repetition">Lisa üks kordus</string>
+    <string name="cd_add_remaining_repetitions">Loe ülejäänud seeria</string>
     <string name="cd_remove_one_repetition">Eemalda üks kordus</string>
     <string name="workout_plan_error_title_required">Sisesta pealkiri</string>
     <string name="workout_plan_error_start_date">Sisesta kehtiv alguskuupäev</string>

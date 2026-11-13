@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import tech.mmarca.openvitals.core.presentation.UnitFormatter
 import tech.mmarca.openvitals.R
 import tech.mmarca.openvitals.ui.theme.Spacing
 import tech.mmarca.openvitals.core.presentation.ScreenError
@@ -63,6 +64,7 @@ import tech.mmarca.openvitals.ui.components.rememberHealthConnectPermissionLaunc
 fun WorkoutPlanBuilderScreen(
     onSaved: (String) -> Unit,
     onClose: () -> Unit,
+    unitFormatter: UnitFormatter,
     viewModel: WorkoutPlanBuilderViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -99,6 +101,7 @@ fun WorkoutPlanBuilderScreen(
             else -> WorkoutPlanBuilderContent(
                 state = state,
                 viewModel = viewModel,
+                unitFormatter = unitFormatter,
                 onGrantPermissions = { permissionLauncher.launch(state.writePermissions) },
                 onOpenPicker = { pickerBlockId = it },
             )
@@ -147,6 +150,7 @@ fun WorkoutPlanBuilderScreen(
 private fun WorkoutPlanBuilderContent(
     state: WorkoutPlanBuilderUiState,
     viewModel: WorkoutPlanBuilderViewModel,
+    unitFormatter: UnitFormatter,
     onGrantPermissions: () -> Unit,
     onOpenPicker: (String) -> Unit,
 ) {
@@ -192,6 +196,7 @@ private fun WorkoutPlanBuilderContent(
                 block = block,
                 state = state,
                 enabled = enabled,
+                unitFormatter = unitFormatter,
                 canMoveUp = index > 0,
                 canMoveDown = index < state.form.blocks.lastIndex,
                 onNameChanged = { viewModel.updateBlockName(block.id, it) },

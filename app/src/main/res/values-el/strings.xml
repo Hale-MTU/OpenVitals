@@ -193,9 +193,9 @@
     <string name="activity_recording_plan_cue_rest_last">Ξεκούραση για %1$d δευτερόλεπτα.</string>
     <string name="activity_recording_plan_cue_complete">Το πρόγραμμα ολοκληρώθηκε. Ολοκλήρωσε όταν είσαι έτοιμος.</string>
     <string name="activity_recording_plan_set_progress">Σετ %1$d από %2$d</string>
-    <string name="activity_recording_plan_weight">%1$s kg</string>
     <string name="activity_recording_plan_setup_rest_minutes">Ξεκούραση για %1$d λεπτά</string>
     <string name="activity_recording_plan_spoken_reps_weight">%1$s, %2$d επαναλήψεις, %3$s κιλά</string>
+    <string name="activity_recording_plan_spoken_reps_weight_pounds">%1$s, %2$d επαναλήψεις, %3$s λίβρες</string>
     <plurals name="activity_recording_plan_spoken_minutes">
         <item quantity="one">%1$s, %2$d λεπτό</item>
         <item quantity="other">%1$s, %2$d λεπτά</item>
@@ -237,7 +237,7 @@
     <string name="activity_entry_set_rest_label">Χρόνος ανάπαυσης</string>
     <string name="activity_entry_set_seconds_label">Σετ %1$d δευτερόλεπτα</string>
     <string name="activity_entry_add_set">Προσθήκη σετ</string>
-    <string name="activity_entry_set_weight_label">Βάρος (κιλά)</string>
+    <string name="activity_entry_set_weight_label">Βάρος (%1$s)</string>
     <string name="activity_entry_plan_preview_reps">%1$d επαναλήψεις</string>
     <string name="activity_entry_distance_label">Απόσταση %1$s</string>
     <string name="activity_entry_elevation_label">Ανάβαση %1$s</string>
@@ -298,6 +298,7 @@
     <string name="activity_entry_recording_end_session">Τέλος συνεδρίας</string>
     <string name="activity_entry_recording_rest_remaining">Ανάπαυση %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Χρησιμοποίησε τα κουμπιά + ή − αν ο αισθητήρας παραλείψει ή προσθέσει κάποια επανάληψη.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Κράτησε πατημένο το + για να μετρηθεί όλο το σετ μαζί.</string>
     <string name="activity_entry_recording_accuracy">Τελευταία ακρίβεια: %1$s</string>
     <string name="activity_entry_recording_focus">Εστίαση</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -774,7 +775,7 @@
     <string name="workout_plan_target_power">Ισχύς %1$d–%2$d W</string>
     <string name="workout_plan_target_speed">Ταχύτητα %1$.1f–%2$.1f km/h</string>
     <string name="workout_plan_target_cadence">Ρυθμός πεταλιάς %1$d–%2$d rpm</string>
-    <string name="workout_plan_target_weight">Βάρος %1$.1f kg</string>
+    <string name="workout_plan_target_weight">Βάρος %1$s</string>
     <string name="workout_plan_target_rpe">Αντιληπτή ένταση %1$d</string>
     <string name="workout_plan_target_amrap">Όσες περισσότερες επαναλήψεις γίνεται</string>
     <string name="workout_plans_export">Εξαγωγή προγραμμάτων</string>
@@ -786,10 +787,10 @@
     <string name="workout_plan_preview_minutes">%1$d λεπ.</string>
     <string name="workout_plan_step_sets_label">Σετ</string>
     <string name="workout_plan_step_set_rest_label">Διάλειμμα μετά από κάθε σετ</string>
-    <string name="workout_plan_step_weight_label">Βάρος (kg)</string>
+    <string name="workout_plan_step_weight_label">Βάρος (%1$s)</string>
     <string name="workout_plan_error_step_sets">Τα σετ πρέπει να είναι από 1 έως 99</string>
     <string name="workout_plan_error_step_set_rest">Ο χρόνος ανάπαυσης μετά από κάθε σετ πρέπει να είναι τουλάχιστον 0 και έως 24 ώρες</string>
-    <string name="workout_plan_error_step_weight">Εισαγάγετε βάρος μεγαλύτερο από 0 και έως 1000 kg</string>
+    <string name="workout_plan_error_step_weight">Εισαγάγετε βάρος μεγαλύτερο από 0 και έως %1$s</string>
     <string name="hc_exercise_type_badminton">Τύποι συνεδρίας άσκησης στο Health Connect</string>
     <string name="hc_exercise_type_baseball">Μπέιζμπολ</string>
     <string name="hc_exercise_type_basketball">Καλαθοσφαίριση</string>
@@ -921,6 +922,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Καρδιακός ρυθμός %1$d</string>
     <string name="activity_recording_plan_get_ready">Ετοιμάσου</string>
     <string name="cd_add_one_repetition">Πρόσθεσε μία επανάληψη</string>
+    <string name="cd_add_remaining_repetitions">Μέτρησε το υπόλοιπο σετ</string>
     <string name="cd_remove_one_repetition">Αφαίρεσε μία επανάληψη</string>
     <string name="workout_plan_error_title_required">Εισαγωγή τίτλου</string>
     <string name="workout_plan_error_start_date">Εισαγάγετε έγκυρη ημερομηνία έναρξης</string>
