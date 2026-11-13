@@ -761,15 +761,15 @@ private fun resolveIntensityContext(
     ).maxOrNull()
     val ageYears = profile.ageYears(inputs.date)
     val ageMax = ageYears?.let { ageMaxHeartRate(it, profile.sex) }
-    // The same choice as cardio load and intensity minutes, except that Body Energy
-    // ignores an entered maximum: since v11 it calibrates from data and manual zones only.
+    // The same choice as cardio load, intensity minutes and heart rate recovery,
+    // so an entered maximum counts here too. An entered resting rate still does not.
     val daily = resting?.let {
         dailyMaxHeartRate(
             restingHeartRate = it,
             observedMaxHeartRate = observedMax,
             ageYears = ageYears,
             sex = profile.sex,
-            explicitMaxHeartRate = null,
+            explicitMaxHeartRate = profile.maxHeartRateBpm?.toLong(),
         )
     }
     // Without a resting rate there is no reserve to place a heart rate on; the maximum is shown only.
