@@ -36,6 +36,13 @@ class UnitFormatterTest {
         assertEquals("154.3 lb", formatter(UnitSystem.IMPERIAL).weight(70.0).text)
     }
 
+    @Test fun `a load drops the decimal when it is whole and follows the weight unit`() {
+        assertEquals("50 kg", formatter(UnitSystem.METRIC).load(50.0).text)
+        assertEquals("12.5 kg", formatter(UnitSystem.METRIC).load(12.5).text)
+        assertEquals("135 lb", formatter(UnitSystem.IMPERIAL).load(61.235).text)
+        assertEquals("lb", formatter(UnitSystem.IMPERIAL).loadUnit())
+    }
+
     @Test fun `metric height uses centimeters`() {
         assertEquals("180 cm", formatter(UnitSystem.METRIC).height(180.0).text)
     }

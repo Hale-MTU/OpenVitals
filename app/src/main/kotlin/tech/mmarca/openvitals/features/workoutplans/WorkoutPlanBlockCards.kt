@@ -29,6 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import tech.mmarca.openvitals.core.presentation.UnitFormatter
+import tech.mmarca.openvitals.domain.preferences.UnitQuantity
+import tech.mmarca.openvitals.features.manualentry.activity.rememberLoadInput
 import tech.mmarca.openvitals.R
 import tech.mmarca.openvitals.ui.theme.Spacing
 import tech.mmarca.openvitals.ui.theme.Emphasis
@@ -44,6 +47,7 @@ internal fun WorkoutPlanBlockCard(
     block: WorkoutPlanBlockInput,
     state: WorkoutPlanBuilderUiState,
     enabled: Boolean,
+    unitFormatter: UnitFormatter,
     canMoveUp: Boolean,
     canMoveDown: Boolean,
     onNameChanged: (String) -> Unit,
@@ -118,6 +122,7 @@ internal fun WorkoutPlanBlockCard(
                     step = step,
                     errors = state.stepErrors(step.id),
                     enabled = enabled,
+                    unitFormatter = unitFormatter,
                     canMoveUp = stepIndex > 0,
                     canMoveDown = stepIndex < block.steps.lastIndex,
                     onGoalTypeChanged = { onStepGoalTypeChanged(step.id, it) },
@@ -180,6 +185,7 @@ private fun WorkoutPlanStepRow(
     step: WorkoutPlanStepInput,
     errors: List<WorkoutPlanValidationError>,
     enabled: Boolean,
+    unitFormatter: UnitFormatter,
     canMoveUp: Boolean,
     canMoveDown: Boolean,
     onGoalTypeChanged: (WorkoutPlanGoalType) -> Unit,
@@ -237,7 +243,7 @@ private fun WorkoutPlanStepRow(
             }
         }
 
-        val targets = step.performanceTargets.mapNotNull { performanceTargetText(it) }
+        val targets = step.performanceTargets.mapNotNull { performanceTargetText(it, unitFormatter) }
         if (targets.isNotEmpty()) {
             Text(
                 text = stringResource(R.string.workout_plan_targets_kept, targets.joinToString(" · ")),
@@ -309,19 +315,24 @@ private fun WorkoutPlanStepRow(
                     label = { Text(stringResource(R.string.workout_plan_step_sets_label)) },
                     modifier = Modifier.weight(1f),
                 )
+                val weightInput = rememberLoadInput(
+                    kgText = step.weightKgText,
+                    unitSystem = unitFormatter.unitSystem(UnitQuantity.WEIGHT),
+                    onKgTextChanged = onWeightChanged,
+                )
                 OutlinedTextField(
-                    value = step.weightKgText,
-                    onValueChange = onWeightChanged,
+                    value = weightInput.text,
+                    onValueChange = weightInput.onTextChanged,
                     enabled = enabled,
                     singleLine = true,
                     isError = weightError != null,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    label = { Text(stringResource(R.string.workout_plan_step_weight_label)) },
+                    label = { Text(stringResource(R.string.workout_plan_step_weight_label, unitFormatter.loadUnit())) },
                     modifier = Modifier.weight(1f),
                 )
             }
             FieldErrorText(setsError?.message())
-            FieldErrorText(weightError?.message())
+            FieldErrorText(weightError?.message(unitFormatter))
             Row(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
                 verticalAlignment = Alignment.CenterVertically,

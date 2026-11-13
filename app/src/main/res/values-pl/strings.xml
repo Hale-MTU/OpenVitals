@@ -244,6 +244,7 @@
     <string name="activity_entry_recording_end_session">Zakończ sesję</string>
     <string name="activity_entry_recording_rest_remaining">Odpocznij %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Użyj + lub - jeżeli sensor pominie lub doda powtórzenie.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Przytrzymaj +, aby zaliczyć całą serię naraz.</string>
     <string name="activity_entry_recording_accuracy">Ostatnia dokładność %1$s</string>
     <string name="activity_entry_recording_focus">Skupienie</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -292,9 +293,9 @@
     <string name="settings_home_widget_refresh_2h">2 godz.</string>
     <string name="screen_food_entry">Wpis jedzenia</string>
     <string name="activity_recording_plan_set_progress">Seria %1$d z %2$d</string>
-    <string name="activity_recording_plan_weight">%1$s kg</string>
     <string name="activity_recording_plan_setup_rest_minutes">odpoczynek %1$d min</string>
     <string name="activity_recording_plan_spoken_reps_weight">%1$s, %2$d powtórzeń, %3$s kilogramów</string>
+    <string name="activity_recording_plan_spoken_reps_weight_pounds">%1$s, %2$d powtórzeń, %3$s funtów</string>
     <plurals name="activity_recording_plan_spoken_minutes">
         <item quantity="one">%1$s, %2$d minuta</item>
         <item quantity="few">%1$s, %2$d minuty</item>
@@ -313,7 +314,7 @@
         <item quantity="many">Odpoczynek %1$d minut.</item>
         <item quantity="other">Odpoczynek %1$d minuty.</item>
     </plurals>
-    <string name="activity_entry_set_weight_label">Ciężar (kg)</string>
+    <string name="activity_entry_set_weight_label">Ciężar (%1$s)</string>
     <string name="activity_entry_recording_tab_by_time">Wg czasu</string>
     <string name="activity_entry_recording_tab_by_distance">Wg dystansu</string>
     <string name="activity_entry_recording_time_split">Międzyczas</string>
@@ -741,7 +742,7 @@
     <string name="workout_plan_target_power">Moc %1$d–%2$d W</string>
     <string name="workout_plan_target_speed">Prędkość %1$.1f–%2$.1f km/h</string>
     <string name="workout_plan_target_cadence">Kadencja %1$d–%2$d rpm</string>
-    <string name="workout_plan_target_weight">Ciężar %1$.1f kg</string>
+    <string name="workout_plan_target_weight">Ciężar %1$s</string>
     <string name="workout_plan_target_rpe">RPE %1$d</string>
     <string name="workout_plan_target_amrap">Jak najwięcej powtórzeń</string>
     <string name="workout_plans_export">Eksportuj plany</string>
@@ -753,10 +754,10 @@
     <string name="workout_plan_preview_minutes">%1$d min</string>
     <string name="workout_plan_step_sets_label">Serie</string>
     <string name="workout_plan_step_set_rest_label">Odpoczynek po każdej serii</string>
-    <string name="workout_plan_step_weight_label">Ciężar (kg)</string>
+    <string name="workout_plan_step_weight_label">Ciężar (%1$s)</string>
     <string name="workout_plan_error_step_sets">Liczba serii musi wynosić od 1 do 99</string>
     <string name="workout_plan_error_step_set_rest">Odpoczynek po każdej serii musi wynosić 0 lub więcej, maksymalnie 24 godziny</string>
-    <string name="workout_plan_error_step_weight">Podaj ciężar powyżej 0 i do 1000 kg</string>
+    <string name="workout_plan_error_step_weight">Podaj ciężar powyżej 0 i do %1$s</string>
     <string name="hc_exercise_type_badminton">Badminton</string>
     <string name="hc_exercise_type_baseball">Baseball</string>
     <string name="hc_exercise_type_basketball">Koszykówka</string>
@@ -889,6 +890,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Tętno %1$d</string>
     <string name="activity_recording_plan_get_ready">Przygotuj się</string>
     <string name="cd_add_one_repetition">Dodaj jedno powtórzenie</string>
+    <string name="cd_add_remaining_repetitions">Zalicz resztę serii</string>
     <string name="cd_remove_one_repetition">Usuń jedno powtórzenie</string>
     <string name="workout_plan_error_title_required">Podaj tytuł</string>
     <string name="workout_plan_error_start_date">Podaj poprawną datę rozpoczęcia</string>

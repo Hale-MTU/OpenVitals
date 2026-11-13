@@ -146,7 +146,7 @@
     <string name="activity_entry_set_repetitions_label">Série %1$d opakování</string>
     <string name="activity_entry_set_rest_label">Doba odpočinku</string>
     <string name="activity_entry_add_set">Přidat sérii</string>
-    <string name="activity_entry_set_weight_label">Váha (kg)</string>
+    <string name="activity_entry_set_weight_label">Váha (%1$s)</string>
     <string name="activity_entry_plan_preview_reps">%1$d opakování</string>
     <string name="activity_entry_distance_label">Vzdálenost %1$s</string>
     <string name="activity_entry_elevation_label">Stoupání %1$s</string>
@@ -207,6 +207,7 @@
     <string name="activity_entry_recording_end_session">Ukončit relaci</string>
     <string name="activity_entry_recording_rest_remaining">Odpočinek %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Pokud senzor opakování vynechá nebo přidá, použijte + nebo -.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Podržením + započítáte celou sérii najednou.</string>
     <string name="activity_entry_recording_accuracy">Poslední přesnost %1$s</string>
     <string name="activity_entry_recording_focus">Soustředění</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -2890,9 +2891,9 @@
     <string name="activity_recording_plan_cue_rest_last">Odpočívejte %1$d sekund.</string>
     <string name="activity_recording_plan_cue_complete">Plán dokončen. Ukončete, až budete chtít.</string>
     <string name="activity_recording_plan_set_progress">Série %1$d z %2$d</string>
-    <string name="activity_recording_plan_weight">%1$s kg</string>
     <string name="activity_recording_plan_setup_rest_minutes">odpočinek %1$d min</string>
     <string name="activity_recording_plan_spoken_reps_weight">%1$s, %2$d opakování, %3$s kilogramů</string>
+    <string name="activity_recording_plan_spoken_reps_weight_pounds">%1$s, %2$d opakování, %3$s liber</string>
     <plurals name="activity_recording_plan_spoken_minutes">
         <item quantity="one">%1$s, %2$d minuta</item>
         <item quantity="few">%1$s, %2$d minuty</item>
@@ -2974,7 +2975,7 @@
     <string name="workout_plan_target_power">Výkon %1$d–%2$d W</string>
     <string name="workout_plan_target_speed">Rychlost %1$.1f–%2$.1f km/h</string>
     <string name="workout_plan_target_cadence">Kadence %1$d–%2$d ot/min</string>
-    <string name="workout_plan_target_weight">Váha %1$.1f kg</string>
+    <string name="workout_plan_target_weight">Váha %1$s</string>
     <string name="workout_plan_target_rpe">RPE %1$d</string>
     <string name="workout_plan_target_amrap">Co nejvíce opakování</string>
     <string name="workout_plans_export">Exportovat plány</string>
@@ -2986,10 +2987,10 @@
     <string name="workout_plan_preview_minutes">%1$d min</string>
     <string name="workout_plan_step_sets_label">Série</string>
     <string name="workout_plan_step_set_rest_label">Odpočinek po každé sérii</string>
-    <string name="workout_plan_step_weight_label">Váha (kg)</string>
+    <string name="workout_plan_step_weight_label">Váha (%1$s)</string>
     <string name="workout_plan_error_step_sets">Počet sérií musí být od 1 do 99</string>
     <string name="workout_plan_error_step_set_rest">Odpočinek po každé sérii musí být 0 nebo více, nejvýše 24 hodin</string>
-    <string name="workout_plan_error_step_weight">Zadejte váhu větší než 0 a nejvýše 1000 kg</string>
+    <string name="workout_plan_error_step_weight">Zadejte váhu větší než 0 a nejvýše %1$s</string>
     <string name="hc_exercise_type_badminton">Badminton</string>
     <string name="hc_exercise_type_baseball">Baseball</string>
     <string name="hc_exercise_type_basketball">Basketbal</string>
@@ -3122,6 +3123,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Tepová frekvence %1$d</string>
     <string name="activity_recording_plan_get_ready">Připravte se</string>
     <string name="cd_add_one_repetition">Přidat jedno opakování</string>
+    <string name="cd_add_remaining_repetitions">Započítat zbytek série</string>
     <string name="cd_remove_one_repetition">Odebrat jedno opakování</string>
     <string name="workout_plan_error_title_required">Zadejte název</string>
     <string name="workout_plan_error_start_date">Zadejte platné datum začátku</string>

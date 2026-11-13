@@ -146,7 +146,7 @@
     <string name="activity_entry_set_repetitions_label">Reps da série %1$d</string>
     <string name="activity_entry_set_rest_label">Tempo de descanso</string>
     <string name="activity_entry_add_set">Adicionar série</string>
-    <string name="activity_entry_set_weight_label">Peso (kg)</string>
+    <string name="activity_entry_set_weight_label">Peso (%1$s)</string>
     <string name="activity_entry_plan_preview_reps">%1$d reps</string>
     <string name="activity_entry_distance_label">Distância %1$s</string>
     <string name="activity_entry_elevation_label">Subida %1$s</string>
@@ -207,6 +207,7 @@
     <string name="activity_entry_recording_end_session">Terminar sessão</string>
     <string name="activity_entry_recording_rest_remaining">Descanso %1$s</string>
     <string name="activity_entry_recording_repetition_correction_hint">Use + ou - se o sensor falhar ou contar uma repetição a mais.</string>
+    <string name="activity_recording_plan_fill_reps_hint">Mantenha + premido para contar a série inteira de uma vez.</string>
     <string name="activity_entry_recording_accuracy">Última precisão %1$s</string>
     <string name="activity_entry_recording_focus">Foco</string>
     <string name="activity_entry_recording_dashboard_layout_two_by_four">2x4</string>
@@ -2872,9 +2873,9 @@
     <string name="activity_recording_plan_cue_rest_last">Descansa %1$d segundos.</string>
     <string name="activity_recording_plan_cue_complete">Plano concluído. Termina quando quiseres.</string>
     <string name="activity_recording_plan_set_progress">Série %1$d de %2$d</string>
-    <string name="activity_recording_plan_weight">%1$s kg</string>
     <string name="activity_recording_plan_setup_rest_minutes">descanso %1$d min</string>
     <string name="activity_recording_plan_spoken_reps_weight">%1$s, %2$d repetições, %3$s quilogramas</string>
+    <string name="activity_recording_plan_spoken_reps_weight_pounds">%1$s, %2$d repetições, %3$s libras</string>
     <plurals name="activity_recording_plan_spoken_minutes">
         <item quantity="one">%1$s, %2$d minuto</item>
         <item quantity="many">%1$s, %2$d minutos</item>
@@ -2953,7 +2954,7 @@
     <string name="workout_plan_target_power">Potência %1$d–%2$d W</string>
     <string name="workout_plan_target_speed">Velocidade %1$.1f–%2$.1f km/h</string>
     <string name="workout_plan_target_cadence">Cadência %1$d–%2$d rpm</string>
-    <string name="workout_plan_target_weight">Peso %1$.1f kg</string>
+    <string name="workout_plan_target_weight">Peso %1$s</string>
     <string name="workout_plan_target_rpe">RPE %1$d</string>
     <string name="workout_plan_target_amrap">O máximo de repetições possível</string>
     <string name="workout_plans_export">Exportar planos</string>
@@ -2965,10 +2966,10 @@
     <string name="workout_plan_preview_minutes">%1$d min</string>
     <string name="workout_plan_step_sets_label">Séries</string>
     <string name="workout_plan_step_set_rest_label">Descanso após cada série</string>
-    <string name="workout_plan_step_weight_label">Peso (kg)</string>
+    <string name="workout_plan_step_weight_label">Peso (%1$s)</string>
     <string name="workout_plan_error_step_sets">As séries devem estar entre 1 e 99</string>
     <string name="workout_plan_error_step_set_rest">O descanso após cada série deve ser 0 ou mais, até 24 horas</string>
-    <string name="workout_plan_error_step_weight">Introduza um peso acima de 0 e até 1000 kg</string>
+    <string name="workout_plan_error_step_weight">Introduza um peso acima de 0 e até %1$s</string>
     <string name="hc_exercise_type_badminton">Badminton</string>
     <string name="hc_exercise_type_baseball">Basebol</string>
     <string name="hc_exercise_type_basketball">Basquetebol</string>
@@ -3101,6 +3102,7 @@
     <string name="activity_recording_plan_cue_heart_rate">Frequência cardíaca %1$d</string>
     <string name="activity_recording_plan_get_ready">Prepara-te</string>
     <string name="cd_add_one_repetition">Adicionar uma repetição</string>
+    <string name="cd_add_remaining_repetitions">Contar o resto da série</string>
     <string name="cd_remove_one_repetition">Remover uma repetição</string>
     <string name="workout_plan_error_title_required">Introduza um título</string>
     <string name="workout_plan_error_start_date">Introduza uma data de início válida</string>

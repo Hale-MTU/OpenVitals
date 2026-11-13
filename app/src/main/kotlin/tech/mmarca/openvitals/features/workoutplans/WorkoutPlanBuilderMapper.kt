@@ -19,8 +19,8 @@ import tech.mmarca.openvitals.domain.model.plannedWeightKg
 import tech.mmarca.openvitals.domain.model.restPlanStep
 import tech.mmarca.openvitals.features.manualentry.activity.MaxActivityRepetitionSets
 import tech.mmarca.openvitals.features.manualentry.activity.MaxActivityRestSeconds
-import tech.mmarca.openvitals.features.manualentry.activity.toInputText
 import tech.mmarca.openvitals.features.manualentry.activity.toWeightKgOrNull
+import tech.mmarca.openvitals.features.manualentry.activity.toWeightKgText
 
 internal val WorkoutPlanTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("H:mm")
 internal const val MaxWorkoutPlanDurationMinutes = 7 * 24 * 60L
@@ -130,7 +130,7 @@ internal fun PlannedExerciseStepData.toStepInput(): WorkoutPlanStepInput {
                 descriptionText = description.orEmpty(),
                 goalType = WorkoutPlanGoalType.REPETITIONS,
                 goalValueText = completion.repetitions.toString(),
-                weightKgText = weightKg?.toInputText(1).orEmpty(),
+                weightKgText = weightKg?.toWeightKgText().orEmpty(),
                 performanceTargets = otherTargets,
             )
         !isRest && completion is PlannedExerciseCompletion.DurationSeconds -> {
@@ -143,7 +143,7 @@ internal fun PlannedExerciseStepData.toStepInput(): WorkoutPlanStepInput {
                 goalType = WorkoutPlanGoalType.DURATION,
                 goalValueText = text,
                 durationUnit = unit,
-                weightKgText = weightKg?.toInputText(1).orEmpty(),
+                weightKgText = weightKg?.toWeightKgText().orEmpty(),
                 performanceTargets = otherTargets,
             )
         }

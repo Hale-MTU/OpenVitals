@@ -367,6 +367,7 @@ internal fun ActivityRecordingScreen(
                                 countLabel = step.displayLabel(),
                                 unitFormatter = unitFormatter,
                                 onAdjustRepetitionCount = onAdjustRepetitionCount,
+                                fillTarget = step.goalValue,
                             )
                         }
                         RepetitionRecordingTotals(state = state, totalTime = totalTime, movingTime = movingTime)
