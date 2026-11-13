@@ -45,6 +45,12 @@ class BasalMetabolicRateTest {
     }
 
     @Test
+    fun `without a sex the formula takes the mean of both terms`() {
+        // 70 kg, 175 cm, 30 years: 700 + 1093.75 - 150 - 78.
+        assertEquals(1565.75, BasalMetabolicRate.mifflinStJeor(null, 70.0, 175.0, 30), 1e-9)
+    }
+
+    @Test
     fun `an age outside the profile bounds counts as no birth year`() {
         val infant = profile.copy(birthYear = today.year - 5)
         assertEquals(setOf(BmrInput.BIRTH_YEAR), infant.bmrMissingInputs(today))

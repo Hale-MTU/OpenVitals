@@ -103,7 +103,7 @@ fun calculateCardioLoad(
             restingHeartRate = resting,
             maxHeartRate = maxHeartRate.bpm,
             activityWindows = activityWindows,
-            weighting = BanisterWeighting.of(sex),
+            sex = sex,
         )
     } else {
         null
@@ -167,7 +167,7 @@ private fun calculateTrimp(
     restingHeartRate: Long,
     maxHeartRate: Long,
     activityWindows: List<CardioLoadTimeWindow>,
-    weighting: BanisterWeighting,
+    sex: BiologicalSex?,
 ): TrimpResult? {
     val sortedSamples = samples
         .sortedBy { it.time }
@@ -200,7 +200,7 @@ private fun calculateTrimp(
         }
 
         coveredMinutes += intervalMinutes
-        score += intervalMinutes * heartRateReserve * weighting.factor * exp(weighting.exponent * heartRateReserve)
+        score += intervalMinutes * heartRateReserve * banisterWeighting(sex, heartRateReserve)
     }
 
     if (coveredMinutes <= 0.0) return null
@@ -217,19 +217,19 @@ private fun calculateTrimp(
  * b = 1.92 for men, a = 0.86, b = 1.67 for women. Morton, Fitz-Clarke and
  * Banister, "Modeling human performance in running", J Appl Physiol
  * 1990;69(3):1171–1177, doi:10.1152/jappl.1990.69.3.1171; the constants as
- * restated in doi:10.2147/CIA.S211568. Without a recorded sex the men's
- * constants stay, as before the profile carried one.
+ * restated in doi:10.2147/CIA.S211568. Without a recorded sex, the mean of
+ * the men's and women's weighting: an app choice, the paper gives none.
  */
 const val BanisterTrimpUrl = "https://pmc.ncbi.nlm.nih.gov/articles/PMC6561225/"
 const val TrainingLoadReviewUrl = "https://pmc.ncbi.nlm.nih.gov/articles/PMC4213373/"
 
-private enum class BanisterWeighting(val factor: Double, val exponent: Double) {
-    MEN(0.64, 1.92),
-    WOMEN(0.86, 1.67),
-    ;
-
-    companion object {
-        fun of(sex: BiologicalSex?): BanisterWeighting = if (sex == BiologicalSex.FEMALE) WOMEN else MEN
+private fun banisterWeighting(sex: BiologicalSex?, heartRateReserve: Double): Double {
+    val men = 0.64 * exp(1.92 * heartRateReserve)
+    val women = 0.86 * exp(1.67 * heartRateReserve)
+    return when (sex) {
+        BiologicalSex.MALE -> men
+        BiologicalSex.FEMALE -> women
+        null -> (men + women) / 2.0
     }
 }
 
