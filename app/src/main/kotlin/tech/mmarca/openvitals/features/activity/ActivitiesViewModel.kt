@@ -34,6 +34,7 @@ import tech.mmarca.openvitals.domain.model.PlannedExerciseData
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
 import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
 import tech.mmarca.openvitals.data.repository.contract.HeartRepository
+import tech.mmarca.openvitals.data.repository.contract.loadObservedMaxHeartRate
 import tech.mmarca.openvitals.data.repository.contract.DailyGoalPreferences
 import tech.mmarca.openvitals.data.repository.contract.PeriodPreferences
 import java.time.LocalDate
@@ -242,6 +243,11 @@ class ActivitiesViewModel @Inject constructor(
                             heartRepository.loadHeartRateSamples(windows.current.start, currentDataEnd)
                         }
                     }
+                    val observedMaxHeartRate = async {
+                        heartRepository.loadObservedMaxHeartRate(
+                            currentDataEnd.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant(),
+                        )
+                    }
                     val loadedRestingHeartRate = restingHeartRate.await()
                     val loadedWorkouts = workouts.await()
                     val profile = bodyProfilePreferences.bodyProfile().normalized(windows.current.end)
@@ -261,6 +267,7 @@ class ActivitiesViewModel @Inject constructor(
                                 heartRateSamples = heartRateSamples.await(),
                                 restingHeartRate = loadedRestingHeartRate,
                                 hrv = hrv.await(),
+                                observedMaxHeartRate = observedMaxHeartRate.await(),
                                 profile = profile,
                             )
                         },
@@ -369,6 +376,7 @@ private fun activityOverviewDays(
     heartRateSamples: List<HeartRateSample>,
     restingHeartRate: List<DailyRestingHR>,
     hrv: List<DailyHrv>,
+    observedMaxHeartRate: Long?,
     profile: BodyProfile,
 ): List<ActivityOverviewDay> {
     val stepsByDate = steps.associateBy { it.date }
@@ -382,7 +390,6 @@ private fun activityOverviewDays(
     val baselineRestingHeartRate = restingHeartRate
         .map { it.bpm }
         .lowerMedianOrNull()
-    val observedMaxHeartRate = heartRateSamples.maxOfOrNull { it.beatsPerMinute }
 
     return generateSequence(start) { date ->
         date.plusDays(1).takeUnless { it.isAfter(end) }

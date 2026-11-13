@@ -20,6 +20,7 @@ import tech.mmarca.openvitals.data.repository.contract.BodyEnergyTimelineResult
 import tech.mmarca.openvitals.data.repository.contract.BodyRepository
 import tech.mmarca.openvitals.data.repository.contract.HealthRepository
 import tech.mmarca.openvitals.data.repository.contract.HeartRepository
+import tech.mmarca.openvitals.data.repository.contract.loadObservedMaxHeartRate
 import tech.mmarca.openvitals.data.repository.contract.SleepRepository
 import tech.mmarca.openvitals.data.repository.contract.VitalsRepository
 import tech.mmarca.openvitals.domain.insights.BodyEnergyConfidence
@@ -364,22 +365,21 @@ class BodyEnergyRepositoryImpl(
             "${timeline.date.toEpochDay()}|${timeline.currentScore}|${timeline.startScore}|$chained"
     }
 
-    /** The 28-day baselines, read with each day. Four aggregate reads. */
+    /** The 28-day baselines and the year's observed maximum, read with each day. Four aggregate reads. */
     private suspend fun loadBaselines(
         baselineStart: LocalDate,
         baselineEnd: LocalDate,
         dayStart: Instant,
     ): BodyEnergyBaselines = coroutineScope {
-        val baselineStartInstant = baselineStart.atStartOfDay(zone).toInstant()
         val baselineResting = async {
             heartRepository.loadDailyRestingHR(baselineStart, baselineEnd)
                 .map { it.bpm }
                 .filter { it > 0L }
                 .lowerMedianOrNull()
         }
-        // Observed max is taken over the whole baseline window. An aggregate: loading 28 days of samples ran out of memory.
+        // Observed max over the year before the day, as everywhere in the app. An aggregate: loading samples ran out of memory.
         val observedMax = async {
-            heartRepository.loadMaxHeartRate(baselineStartInstant, dayStart)
+            heartRepository.loadObservedMaxHeartRate(dayStart)
         }
         val hrvBaseline = async {
             heartRepository.loadDailyHRV(baselineStart, baselineEnd)

@@ -28,6 +28,7 @@ import tech.mmarca.openvitals.domain.model.HeartRateSample
 import tech.mmarca.openvitals.data.repository.contract.ActivityRepository
 import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
 import tech.mmarca.openvitals.data.repository.contract.HeartRepository
+import tech.mmarca.openvitals.data.repository.contract.loadObservedMaxHeartRate
 import tech.mmarca.openvitals.data.repository.contract.CalorieDisplayPreferences
 import tech.mmarca.openvitals.data.repository.contract.PeriodPreferences
 import tech.mmarca.openvitals.navigation.selectedDayOrNull
@@ -181,6 +182,9 @@ class ActivityOverviewViewModel @Inject constructor(
         val heartRateSamples = async { heartRepository.loadHeartRateSamples(start, end) }
         val restingHeartRate = async { heartRepository.loadDailyRestingHR(start, end) }
         val hrv = async { heartRepository.loadDailyHRV(start, end) }
+        val observedMaxHeartRate = async {
+            heartRepository.loadObservedMaxHeartRate(end.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant())
+        }
         ActivityOverviewLoadResult(
             steps = steps.await(),
             nutrition = nutrition.await(),
@@ -188,6 +192,7 @@ class ActivityOverviewViewModel @Inject constructor(
             heartRateSamples = heartRateSamples.await(),
             restingHeartRate = restingHeartRate.await(),
             hrv = hrv.await(),
+            observedMaxHeartRate = observedMaxHeartRate.await(),
         )
     }
 
@@ -198,6 +203,8 @@ class ActivityOverviewViewModel @Inject constructor(
         val heartRateSamples: List<HeartRateSample>,
         val restingHeartRate: List<DailyRestingHR>,
         val hrv: List<DailyHrv>,
+        /** The year's highest bpm before the period's end ([HeartRepository.loadObservedMaxHeartRate]). */
+        val observedMaxHeartRate: Long?,
     )
 
     private fun ActivityOverviewLoadResult.toDays(
@@ -216,7 +223,6 @@ class ActivityOverviewViewModel @Inject constructor(
         val baselineRestingHeartRate = restingHeartRate
             .map { it.bpm }
             .lowerMedianOrNull()
-        val observedMaxHeartRate = heartRateSamples.maxOfOrNull { it.beatsPerMinute }
         return generateSequence(start) { date ->
             date.plusDays(1).takeUnless { it.isAfter(end) }
         }.map { date ->

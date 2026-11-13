@@ -20,6 +20,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import java.time.Duration
 import java.time.Instant
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.runTest
@@ -387,6 +388,7 @@ class ActivityDetailViewModelTest {
             HeartRateSample(recoveryStart.minusSeconds(2), 178L, "test"),
             HeartRateSample(recoveryStart.plusSeconds(60), 140L, "test"),
         )
+        coEvery { heartRepo.loadMaxHeartRate(any(), any()) } returns null
 
         val vm = activityDetailViewModel(repo, "activity-1", heartRepository = heartRepo)
 
@@ -394,6 +396,8 @@ class ActivityDetailViewModelTest {
         assertEquals(178L, reading.peakBpm)
         assertEquals(38L, reading.headlineDropBpm)
         coVerify(exactly = 1) { heartRepo.loadHeartRateSamples(readStart, readEnd) }
+        // The year-long observed maximum up to the workout's end, as the recovery screen reads it.
+        coVerify(exactly = 1) { heartRepo.loadMaxHeartRate(workout.endTime.minus(Duration.ofDays(365)), workout.endTime) }
     }
 
     @Test fun `no recovery window issues no extra heart rate read`() = runTest {

@@ -69,6 +69,7 @@ class ActivityOverviewViewModelTest {
         coEvery { repo.loadDailyHRV(any(), any()) } returns hrv
         coEvery { repo.loadHeartRateSamples(any<LocalDate>(), any<LocalDate>()) } returns heartRateSamples
         coEvery { repo.loadDailyRestingHR(any(), any()) } returns restingHeartRate
+        coEvery { repo.loadMaxHeartRate(any(), any()) } returns null
     }
 
     @Test

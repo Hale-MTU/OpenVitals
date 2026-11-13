@@ -48,6 +48,7 @@ import tech.mmarca.openvitals.domain.insights.OvernightHrvInput
 import tech.mmarca.openvitals.domain.insights.SleepScoreEstimate
 import tech.mmarca.openvitals.domain.insights.SleepScoreLookbackDays
 import tech.mmarca.openvitals.domain.insights.calculateCardioLoad
+import tech.mmarca.openvitals.domain.insights.observedMaxHeartRateLookbackDays
 import tech.mmarca.openvitals.domain.insights.calculateIntensityMinutes
 import tech.mmarca.openvitals.domain.insights.calculateSleepScoreForDate
 import tech.mmarca.openvitals.core.period.TimeRange
@@ -790,6 +791,15 @@ class DashboardDataLoader @Inject constructor(
             } else {
                 emptyList()
             },
+            // The year before the period's end, as every observed maximum in the app. An aggregate.
+            observedMaxHeartRate = if (readHeartRatePermission in granted) {
+                hc.readMaxHeartRate(
+                    heartRateSampleEndInstant.minus(Duration.ofDays(observedMaxHeartRateLookbackDays)),
+                    heartRateSampleEndInstant,
+                )
+            } else {
+                null
+            },
             restingHeartRates = if (readRestingHRPermission in granted) {
                 hc.readDailyRestingHR(rangeStart, rangeEnd)
             } else {
@@ -836,7 +846,7 @@ class DashboardDataLoader @Inject constructor(
             val stepsByDate = dailySteps.associateBy { it.date }
             val restingHeartRateByDate = restingHeartRates.associateBy { it.date }
             val baselineRestingHeartRate = restingHeartRates.map { it.bpm }.lowerMedianOrNull()
-            val observedMaxHeartRate = heartRateSamples.maxOfOrNull { it.beatsPerMinute }
+            val observedMaxHeartRate = rawData.observedMaxHeartRate
             val heartRateSamplesByDate = heartRateSamples
                 .sortedBy { it.time }
                 .groupBy { it.time.atZone(zone).toLocalDate() }
@@ -1009,6 +1019,7 @@ private data class DashboardWeeklyTrainingSignals(
 private data class DashboardWeeklyTrainingRawData(
     val dailySteps: List<DailySteps>,
     val heartRateSamples: List<HeartRateSample>,
+    val observedMaxHeartRate: Long?,
     val restingHeartRates: List<DailyRestingHR>,
     val workouts: List<ExerciseData>,
 )
