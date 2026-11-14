@@ -35,8 +35,8 @@ community translation.
 ## Shipping Policy
 
 Shipping app languages are English, Czech, Spanish, French, Galician, German,
-Italian, Japanese, Estonian, Finnish, Polish, Portuguese, Russian, and
-Simplified Chinese. Every locale file is fully translated, so new keys go to
+Italian, Japanese, Estonian, Finnish, Polish, Portuguese, Russian, Ukrainian,
+and Simplified Chinese. Every locale file is fully translated, so new keys go to
 all of them.
 
 New languages can be collected in Codeberg Translate before they are ready to

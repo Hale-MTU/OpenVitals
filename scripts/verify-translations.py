@@ -46,6 +46,7 @@ CLDR_LANGUAGE_QUANTITIES = {
     "pl": {"one", "few", "many", "other"},
     "pt": {"one", "many", "other"},
     "ru": {"one", "few", "many", "other"},
+    "uk": {"one", "few", "many", "other"},
     "zh": {"other"},
 }
 
