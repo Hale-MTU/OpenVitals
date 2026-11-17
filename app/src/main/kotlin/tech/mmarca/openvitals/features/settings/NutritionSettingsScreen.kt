@@ -50,7 +50,6 @@ fun NutritionSettingsScreen(viewModel: NutritionSettingsViewModel) {
         item {
             CaffeinePreferencesCard(
                 preferences = state.caffeinePreferences,
-                bodyProfile = state.bodyProfile,
                 onSave = viewModel::updateCaffeinePreferences,
                 modifier = Modifier.padding(horizontal = LayoutMetrics.screenGutter),
             )

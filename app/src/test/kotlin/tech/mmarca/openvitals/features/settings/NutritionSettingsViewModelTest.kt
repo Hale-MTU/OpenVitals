@@ -1,7 +1,6 @@
 package tech.mmarca.openvitals.features.settings
 
 import android.util.Log
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -10,7 +9,6 @@ import io.mockk.runs
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -22,7 +20,6 @@ import org.junit.Test
 import tech.mmarca.healthcalculations.preferences.BodyProfile
 import tech.mmarca.healthcalculations.preferences.CaffeinePreferences
 import tech.mmarca.openvitals.data.repository.PreferencesRepository
-import tech.mmarca.openvitals.data.repository.contract.BodyRepository
 import tech.mmarca.openvitals.domain.preferences.NutritionAverageBasis
 import tech.mmarca.openvitals.domain.preferences.UnitSystem
 import tech.mmarca.openvitals.util.MainDispatcherRule
@@ -90,30 +87,12 @@ class NutritionSettingsViewModelTest {
         assertEquals(caffeinePreferences, vm.uiState.value.caffeinePreferences)
     }
 
-    @Test fun `the caffeine card sees the profile Health Connect resolved`() = runTest {
-        val prefs = prefs()
-        val bodyRepository = bodyRepo()
-        val resolved = BodyProfile(weightKg = 72.0)
-        coEvery { bodyRepository.resolveBodyProfile(any()) } returns resolved
-        val vm = viewModel(preferencesRepository = prefs, bodyRepository = bodyRepository)
-        advanceUntilIdle()
-
-        assertEquals(resolved, vm.uiState.value.bodyProfile)
-    }
-
     private fun viewModel(
         preferencesRepository: PreferencesRepository = prefs(),
-        bodyRepository: BodyRepository = bodyRepo(),
     ): NutritionSettingsViewModel =
         NutritionSettingsViewModel(
             preferencesRepository = preferencesRepository,
-            bodyRepository = bodyRepository,
         )
-
-    private fun bodyRepo(): BodyRepository =
-        mockk<BodyRepository>().also { repo ->
-            coEvery { repo.resolveBodyProfile(any()) } answers { firstArg() }
-        }
 
     private fun prefs(): PreferencesRepository {
         var caffeinePreferences = CaffeinePreferences()

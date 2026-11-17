@@ -66,12 +66,11 @@ fun CaffeineDrinkScreen(
         return
     }
 
-    val profile = remember(entry, state.preferences, state.bodyProfile) {
+    val profile = remember(entry, state.preferences) {
         caffeineDrinkProfile(
             entry = entry,
             now = Instant.now(),
             preferences = state.preferences,
-            bodyProfile = state.bodyProfile,
         )
     }
 

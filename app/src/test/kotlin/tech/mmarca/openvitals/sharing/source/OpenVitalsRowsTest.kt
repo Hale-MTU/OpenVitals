@@ -59,7 +59,7 @@ class OpenVitalsRowsTest {
     fun `no caffeine logged means no curve`() {
         val start = Instant.parse("2026-10-01T06:00:00Z")
 
-        assertThat(caffeineCurveRows(emptyList(), CaffeinePreferences(), BodyProfile(), start, start.plusSeconds(7_200))).isEmpty()
+        assertThat(caffeineCurveRows(emptyList(), CaffeinePreferences(), start, start.plusSeconds(7_200))).isEmpty()
     }
 
     @Test
@@ -75,7 +75,7 @@ class OpenVitalsRowsTest {
             mealType = 0,
         )
 
-        val rows = caffeineCurveRows(listOf(coffee), CaffeinePreferences(), BodyProfile(), drunk, drunk.plusSeconds(7_200))
+        val rows = caffeineCurveRows(listOf(coffee), CaffeinePreferences(), drunk, drunk.plusSeconds(7_200))
 
         assertThat(rows).isNotEmpty()
         assertThat(rows.map { it.metric }.toSet()).containsExactly("caffeine_active")

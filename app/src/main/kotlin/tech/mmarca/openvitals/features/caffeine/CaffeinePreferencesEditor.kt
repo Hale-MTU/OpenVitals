@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import java.time.LocalTime
-import tech.mmarca.healthcalculations.preferences.BodyProfile
 import tech.mmarca.healthcalculations.preferences.CaffeineAlcoholUse
 import tech.mmarca.healthcalculations.preferences.CaffeineGenotype
 import tech.mmarca.healthcalculations.preferences.CaffeineHabituation
@@ -42,7 +41,6 @@ import tech.mmarca.openvitals.R
 @Composable
 internal fun CaffeineModelEditor(
     preferences: CaffeinePreferences,
-    bodyProfile: BodyProfile,
     onChange: (CaffeinePreferences) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -72,12 +70,24 @@ internal fun CaffeineModelEditor(
         )
         Text(
             text = stringResource(
-                R.string.caffeine_pref_effective_half_life,
-                preferences.effectiveHalfLifeMinutes(bodyProfile),
+                if (preferences.isEffectiveHalfLifeCapped()) {
+                    R.string.caffeine_pref_effective_half_life_capped
+                } else {
+                    R.string.caffeine_pref_effective_half_life
+                },
+                preferences.effectiveHalfLifeMinutes(),
             ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 8.dp),
+        )
+        Text(
+            text = stringResource(
+                R.string.caffeine_pref_effective_sleep_threshold,
+                preferences.effectiveSleepThresholdMg(),
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -154,14 +164,12 @@ internal fun MetabolismEditor(
 @Composable
 internal fun CaffeinePreferencesEditor(
     preferences: CaffeinePreferences,
-    bodyProfile: BodyProfile,
     onChange: (CaffeinePreferences) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         CaffeineModelEditor(
             preferences = preferences,
-            bodyProfile = bodyProfile,
             onChange = onChange,
         )
         MetabolismEditor(

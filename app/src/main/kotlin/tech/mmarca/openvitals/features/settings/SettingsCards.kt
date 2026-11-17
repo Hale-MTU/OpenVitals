@@ -103,7 +103,6 @@ import tech.mmarca.openvitals.domain.preferences.ActivityWeekMode
 import tech.mmarca.openvitals.domain.preferences.AppLanguage
 import tech.mmarca.openvitals.domain.preferences.AppThemeMode
 import tech.mmarca.healthcalculations.preferences.BloodPressureGuideline
-import tech.mmarca.healthcalculations.preferences.BodyProfile
 import tech.mmarca.healthcalculations.preferences.CaffeinePreferences
 import tech.mmarca.openvitals.domain.preferences.ChartAggregationMode
 import tech.mmarca.openvitals.domain.preferences.HomeWidgetRefreshInterval
@@ -260,7 +259,6 @@ private val OfflineMapPackFormat.settingsLabelRes: Int
 @Composable
 internal fun CaffeinePreferencesCard(
     preferences: CaffeinePreferences,
-    bodyProfile: BodyProfile,
     onSave: (CaffeinePreferences) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -291,7 +289,6 @@ internal fun CaffeinePreferencesCard(
             )
             CaffeineModelEditor(
                 preferences = draft,
-                bodyProfile = bodyProfile,
                 onChange = { draft = it },
                 modifier = Modifier.padding(top = 8.dp),
             )

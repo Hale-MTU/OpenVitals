@@ -88,7 +88,6 @@ class CaffeineDrinkScreenTest {
         val viewModel = CaffeineViewModel(
             repository = FakeCaffeineRepository(listOf(FLAT_WHITE)),
             caffeineModel = preferences,
-            bodyProfilePreferences = preferences,
             nutritionRepository = UnusedNutritionRepository,
             periodPreferences = preferences,
             // The route the drink screen is opened on: its drink, on the drink's day.

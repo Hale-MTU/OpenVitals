@@ -86,7 +86,7 @@ internal class OpenVitalsReads @Inject constructor(
                 val entries = caffeineRepository.loadCaffeineData(
                     DatePeriod(start.atZone(zone).toLocalDate(), end.atZone(zone).toLocalDate()),
                 ).entries
-                caffeineCurveRows(entries, caffeinePreferences.caffeinePreferences(), bodyProfilePreferences.bodyProfile(), start, end)
+                caffeineCurveRows(entries, caffeinePreferences.caffeinePreferences(), start, end)
             },
         )
         else -> emptyList()

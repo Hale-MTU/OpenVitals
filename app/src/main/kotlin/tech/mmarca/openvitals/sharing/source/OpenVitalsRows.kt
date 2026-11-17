@@ -177,7 +177,6 @@ internal fun maxHeartRateRow(
 internal fun caffeineCurveRows(
     entries: List<CaffeineEntry>,
     preferences: CaffeinePreferences,
-    profile: BodyProfile,
     start: Instant,
     end: Instant,
 ): List<SampleRow> {
@@ -186,7 +185,7 @@ internal fun caffeineCurveRows(
     return generateSequence(start) { it.plus(CaffeineStep) }
         .takeWhile { it.isBefore(end) }
         .mapNotNull { at ->
-            CaffeineInsightCalculator.activeCaffeineMg(entries, at, normalized, profile)
+            CaffeineInsightCalculator.activeCaffeineMg(entries, at, normalized)
                 .takeIf { it >= MinimumActiveCaffeineMg }
                 ?.let { SampleRow(at, null, "caffeine_active", it, origin = Own) }
         }

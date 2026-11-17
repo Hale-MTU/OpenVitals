@@ -2274,6 +2274,8 @@
     <string name="caffeine_pref_minutes_suffix">min</string>
     <string name="caffeine_pref_milligrams_suffix">mg</string>
     <string name="caffeine_pref_effective_half_life">Effective half-life %1$d min</string>
+    <string name="caffeine_pref_effective_half_life_capped">Effective half-life %1$d min, the upper limit: further factors change nothing</string>
+    <string name="caffeine_pref_effective_sleep_threshold">Effective sleep threshold %1$d mg, with sleep sensitivity and habituation</string>
     <string name="settings_metabolism_title">Metabolism</string>
     <string name="settings_metabolism_body">How your body clears caffeine. These are facts about you, so they are kept here rather than with the caffeine settings.</string>
     <string name="settings_metabolism_sleep_sensitivity">Caffeine sensitivity</string>

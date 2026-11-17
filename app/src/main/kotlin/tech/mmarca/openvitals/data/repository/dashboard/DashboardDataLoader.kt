@@ -96,7 +96,6 @@ import tech.mmarca.healthcalculations.insights.CaffeineInsightCalculator
 import tech.mmarca.healthcalculations.insights.overnightHrvInput
 import tech.mmarca.healthcalculations.insights.bodyMassIndex
 import tech.mmarca.healthcalculations.insights.adjustedFatFreeMassIndex
-import tech.mmarca.healthcalculations.preferences.BodyProfile
 import tech.mmarca.healthcalculations.preferences.CaffeinePreferences
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -336,7 +335,6 @@ class DashboardDataLoader @Inject constructor(
                     entries = entries,
                     at = Instant.now(),
                     preferences = preferencesRepository?.caffeinePreferences() ?: CaffeinePreferences(),
-                    bodyProfile = preferencesRepository?.bodyProfile() ?: BodyProfile(),
                 ).takeIf { it > 0.0 }
             }
         }

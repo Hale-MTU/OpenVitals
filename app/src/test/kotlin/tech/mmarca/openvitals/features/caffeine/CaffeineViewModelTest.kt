@@ -328,7 +328,6 @@ class CaffeineViewModelTest {
         CaffeineViewModel(
             repository = repository,
             caffeineModel = preferences,
-            bodyProfilePreferences = preferences,
             nutritionRepository = nutritionRepository,
             periodPreferences = preferences,
             dispatchers = mainDispatcherRule.dispatcherProvider,

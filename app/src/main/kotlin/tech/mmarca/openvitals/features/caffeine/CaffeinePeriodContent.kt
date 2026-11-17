@@ -76,7 +76,6 @@ internal fun LazyListScope.caffeinePeriodContent(
         item {
             CaffeineSetupCard(
                 preferences = state.preferences,
-                bodyProfile = state.bodyProfile,
                 onSave = onCompleteSetup,
                 onSkip = onSkipSetup,
                 modifier = CardModifier,

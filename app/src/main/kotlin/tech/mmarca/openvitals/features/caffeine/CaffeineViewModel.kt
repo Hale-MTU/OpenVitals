@@ -18,7 +18,6 @@ import tech.mmarca.healthcalculations.insights.PeriodComparison
 import tech.mmarca.healthcalculations.insights.periodComparison
 import tech.mmarca.healthcalculations.model.CaffeineEntry
 import tech.mmarca.healthcalculations.model.CaffeineInsights
-import tech.mmarca.healthcalculations.preferences.BodyProfile
 import tech.mmarca.healthcalculations.preferences.CaffeinePreferences
 import tech.mmarca.openvitals.core.performance.DefaultDispatcherProvider
 import tech.mmarca.openvitals.core.performance.DispatcherProvider
@@ -31,7 +30,6 @@ import tech.mmarca.openvitals.core.period.TimeRange
 import tech.mmarca.openvitals.core.period.WeekPeriodMode
 import tech.mmarca.openvitals.core.presentation.ScreenError
 import tech.mmarca.openvitals.core.presentation.toScreenError
-import tech.mmarca.openvitals.data.repository.contract.BodyProfilePreferences
 import tech.mmarca.openvitals.data.repository.contract.CaffeineModelPreferences
 import tech.mmarca.openvitals.data.repository.contract.CaffeineRepository
 import tech.mmarca.openvitals.data.repository.contract.NutritionRepository
@@ -52,7 +50,6 @@ data class CaffeineUiState(
     val display: CaffeineInsights = CaffeineInsights(),
     val periodComparison: PeriodComparison = PeriodComparison(0.0, 0.0),
     val preferences: CaffeinePreferences = CaffeinePreferences(),
-    val bodyProfile: BodyProfile = BodyProfile(),
     val showSetup: Boolean = false,
     val selectedEntryId: String? = null,
     val error: ScreenError? = null,
@@ -62,7 +59,6 @@ data class CaffeineUiState(
 class CaffeineViewModel @Inject constructor(
     private val repository: CaffeineRepository,
     private val caffeineModel: CaffeineModelPreferences,
-    private val bodyProfilePreferences: BodyProfilePreferences,
     // A caffeine entry is a nutrition record, so deletion goes through the nutrition repository.
     private val nutritionRepository: NutritionRepository,
     private val periodPreferences: PeriodPreferences,
@@ -93,7 +89,6 @@ class CaffeineViewModel @Inject constructor(
             selectedDate = periodDriver.selection.selectedDate,
             weekPeriodMode = initialWeekPeriodMode,
             preferences = caffeineModel.caffeinePreferences(),
-            bodyProfile = bodyProfilePreferences.bodyProfile(),
         )
     )
     val uiState: StateFlow<CaffeineUiState> = _uiState.asStateFlow()
@@ -101,7 +96,6 @@ class CaffeineViewModel @Inject constructor(
 
     init {
         observePreferences()
-        observeBodyProfile()
         observeWeekPeriodMode()
         load()
     }
@@ -154,13 +148,11 @@ class CaffeineViewModel @Inject constructor(
             }.onSuccess { result ->
                 if (!isCurrent) return@load
                 val preferences = _uiState.value.preferences
-                val bodyProfile = _uiState.value.bodyProfile
                 val display = withContext(dispatchers.default) {
                     CaffeineInsightCalculator.build(
                         entries = result.entries,
                         period = query.windows.current,
                         preferences = preferences,
-                        bodyProfile = bodyProfile,
                         catalog = CaffeineHealthDrinkCatalog,
                     )
                 }
@@ -231,15 +223,6 @@ class CaffeineViewModel @Inject constructor(
         }
     }
 
-    private fun observeBodyProfile() {
-        viewModelScope.launch {
-            bodyProfilePreferences.bodyProfileFlow.drop(1).collect { bodyProfile ->
-                _uiState.value = _uiState.value.copy(bodyProfile = bodyProfile)
-                rebuildDisplay()
-            }
-        }
-    }
-
     private fun observeWeekPeriodMode() {
         viewModelScope.launch {
             periodPreferences.weekPeriodModeFlow.drop(1).collect { mode ->
@@ -260,7 +243,6 @@ class CaffeineViewModel @Inject constructor(
                 entries = state.entries,
                 period = currentQuery().windows.current,
                 preferences = state.preferences,
-                bodyProfile = state.bodyProfile,
                 catalog = CaffeineHealthDrinkCatalog,
             )
         }

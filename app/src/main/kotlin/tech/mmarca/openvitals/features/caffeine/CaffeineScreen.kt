@@ -70,7 +70,6 @@ import tech.mmarca.healthcalculations.model.CaffeinePoint
 import tech.mmarca.healthcalculations.model.CaffeineTimeBucket
 import tech.mmarca.healthcalculations.model.CaffeineTimeOfDayBucket
 import tech.mmarca.healthcalculations.model.displayLabel
-import tech.mmarca.healthcalculations.preferences.BodyProfile
 import tech.mmarca.healthcalculations.preferences.CaffeinePreferences
 import tech.mmarca.openvitals.R
 import tech.mmarca.openvitals.core.presentation.DateTimeFormatterProvider
@@ -153,7 +152,6 @@ fun CaffeineScreen(
             CaffeineContributionSheet(
                 insight = selectedInsight,
                 preferences = state.preferences,
-                bodyProfile = state.bodyProfile,
                 unitFormatter = unitFormatter,
                 dateTimeFormatterProvider = dateTimeFormatterProvider,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -166,7 +164,6 @@ fun CaffeineScreen(
 @Composable
 internal fun CaffeineSetupCard(
     preferences: CaffeinePreferences,
-    bodyProfile: BodyProfile,
     onSave: (CaffeinePreferences) -> Unit,
     onSkip: () -> Unit,
     modifier: Modifier = Modifier,
@@ -195,7 +192,6 @@ internal fun CaffeineSetupCard(
             )
             CaffeinePreferencesEditor(
                 preferences = draft,
-                bodyProfile = bodyProfile,
                 onChange = { draft = it },
                 modifier = Modifier.padding(top = 8.dp),
             )
@@ -1212,7 +1208,6 @@ private fun CaffeineEntryRowContent(
 private fun CaffeineContributionSheet(
     insight: CaffeineEntryInsight,
     preferences: CaffeinePreferences,
-    bodyProfile: BodyProfile,
     unitFormatter: UnitFormatter,
     dateTimeFormatterProvider: DateTimeFormatterProvider,
     modifier: Modifier = Modifier,
@@ -1220,12 +1215,11 @@ private fun CaffeineContributionSheet(
     val zone = ZoneId.systemDefault()
     val unknownSource = stringResource(R.string.unknown_source)
     // The drink screen's own model, so the sheet and that screen agree on this drink.
-    val profile = remember(insight.entry, preferences, bodyProfile) {
+    val profile = remember(insight.entry, preferences) {
         caffeineDrinkProfile(
             entry = insight.entry,
             now = Instant.now(),
             preferences = preferences,
-            bodyProfile = bodyProfile,
         )
     }
     Column(modifier = modifier.fillMaxWidth()) {
