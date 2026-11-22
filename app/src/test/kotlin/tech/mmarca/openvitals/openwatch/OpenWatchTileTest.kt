@@ -26,8 +26,9 @@ class OpenWatchTileTest {
     }
 
     @Test
-    fun `a trusted link with only the scale shows no tile`() {
+    fun `a trusted link with only the scale, or a kind newer than this app, shows no tile`() {
         assertNull(openWatchTile(trusted, listOf(watch("scale", null, kind = OpenLinkDeviceKind.SCALE))))
+        assertNull(openWatchTile(trusted, listOf(watch("ring", 1_000, kind = OpenLinkDeviceKind("RING")))))
     }
 
     @Test

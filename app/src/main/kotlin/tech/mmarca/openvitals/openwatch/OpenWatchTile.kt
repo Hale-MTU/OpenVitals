@@ -30,7 +30,8 @@ internal fun openWatchTile(status: OpenLinkStatus, devices: List<OpenLinkDevice>
         return OpenWatchTileDisplay(deviceId = null, name = "OpenWatch", awaitingConsent = true)
     }
     if (!state.isTrusted) return null
-    val watches = devices.filter { it.kind != OpenLinkDeviceKind.SCALE }
+    // Kinds are an open set: a scale, and a kind newer than this app, have no place on the tile.
+    val watches = devices.filter { it.kind == OpenLinkDeviceKind.WATCH || it.kind == OpenLinkDeviceKind.BIKE_COMPUTER }
     val primary = watches.firstOrNull { it.syncing }
         ?: watches.maxByOrNull { it.lastSyncedAtMillis ?: Long.MIN_VALUE }
         ?: return null
