@@ -3885,4 +3885,6 @@
     <string name="data_sharing_permission_cycle_description">lea tus datos del ciclo de OpenVitals</string>
     <string name="data_sharing_permission_sexual_activity_label">Datos de actividad sexual de OpenVitals</string>
     <string name="data_sharing_permission_sexual_activity_description">lea tus datos de actividad sexual de OpenVitals</string>
+    <string name="caffeine_pref_effective_half_life_capped">Vida media efectiva %1$d min, el límite superior: otros factores no cambian nada</string>
+    <string name="caffeine_pref_effective_sleep_threshold">Umbral efectivo de sueño %1$d mg, con sensibilidad al sueño y habituación</string>
 </resources>
