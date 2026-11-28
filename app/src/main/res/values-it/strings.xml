@@ -3811,6 +3811,7 @@
     <string name="openwatch_capability_profile">Condividere il profilo corporeo in entrambe le direzioni</string>
     <string name="openwatch_capability_recording">Mantenere l\'orologio in trasmissione durante la registrazione</string>
     <string name="openwatch_capability_live">Usare la frequenza cardiaca dell\'orologio durante la registrazione</string>
+    <string name="openwatch_capability_settings">Condividere l\'obiettivo di idratazione giornaliero e le unità di misura</string>
     <string name="openwatch_just_now">proprio ora</string>
     <string name="body_profile_openwatch_synced">Sincronizzato con OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Sincronizzato con OpenWatch · aggiornato %1$s</string>

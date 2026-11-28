@@ -146,10 +146,15 @@ class PreferencesRepositoryTest {
     @Test fun `hydration daily goal defaults 2 liters and clamps`() {
         val (repo, _) = newRepo()
         assertEquals(2.0, repo.hydrationDailyGoalLiters, 1e-9)
+        assertNull(repo.hydrationGoalChoiceLitersFlow.value)
         repo.hydrationDailyGoalLiters = 99.0
         assertEquals(10.0, repo.hydrationDailyGoalLiters, 1e-6)
         repo.hydrationDailyGoalLiters = 0.0
         assertEquals(0.25, repo.hydrationDailyGoalLiters, 1e-6)
+        assertEquals(0.25, repo.hydrationGoalChoiceLitersFlow.value!!, 1e-6)
+        repo.resetHydrationDailyGoal()
+        assertEquals(2.0, repo.hydrationDailyGoalLiters, 1e-9)
+        assertNull(repo.hydrationGoalChoiceLitersFlow.value)
     }
 
     @Test fun `heart-rate thresholds default and clamp`() {

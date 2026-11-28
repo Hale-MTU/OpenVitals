@@ -103,6 +103,7 @@
     <string name="openwatch_capability_profile">مشاركة ملفك الجسدي في الاتجاهين</string>
     <string name="openwatch_capability_recording">إبقاء ساعتك تبث أثناء التسجيل</string>
     <string name="openwatch_capability_live">استخدام معدل نبض القلب من ساعتك أثناء التسجيل</string>
+    <string name="openwatch_capability_settings">مشاركة هدف الترطيب اليومي ووحدات القياس</string>
     <string name="openwatch_just_now">الآن</string>
     <string name="body_profile_openwatch_synced">متزامن مع OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">متزامن مع OpenWatch · حُدّث %1$s</string>

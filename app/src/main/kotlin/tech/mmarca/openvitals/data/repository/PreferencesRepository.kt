@@ -86,7 +86,7 @@ class PreferencesRepository @Inject constructor(
     SleepWindowPreferences,
     NutritionDisplayPreferences,
     HeartThresholdPreferences,
-    HydrationGoalPreferences,
+    HydrationGoalPreferences by HydrationGoalStore(context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)),
     BodyEnergyCalibrationPreferences,
     CaffeineModelPreferences,
     MindfulnessTimerPreferences,
@@ -125,7 +125,7 @@ class PreferencesRepository @Inject constructor(
     private val _bodyEnergyCalibration = MutableStateFlow(readBodyEnergyCalibration())
     private val _caffeinePreferences = MutableStateFlow(readCaffeinePreferences())
     private val _bodyProfile = MutableStateFlow(readBodyProfile())
-    val unitSystemPreferenceFlow: StateFlow<UnitSystemPreference> = _unitSystemPreference.asStateFlow()
+    override val unitSystemPreferenceFlow: StateFlow<UnitSystemPreference> = _unitSystemPreference.asStateFlow()
 
     /** The resolved system — never [UnitSystemPreference.SYSTEM]'s raw form. */
     val unitSystemFlow: StateFlow<UnitSystem> = _unitSystem.asStateFlow()
@@ -423,20 +423,6 @@ class PreferencesRepository @Inject constructor(
                 } else {
                     putInt(KEY_FAVORITE_ACTIVITY_EXERCISE_TYPE, value)
                 }
-            }
-        }
-
-    override var hydrationDailyGoalLiters: Double
-        get() = prefs.getFloat(
-            KEY_HYDRATION_DAILY_GOAL_LITERS,
-            DEFAULT_HYDRATION_DAILY_GOAL_LITERS.toFloat(),
-        ).toDouble()
-        set(value) {
-            prefs.edit {
-                putFloat(
-                    KEY_HYDRATION_DAILY_GOAL_LITERS,
-                    value.coerceIn(MIN_HYDRATION_DAILY_GOAL_LITERS, MAX_HYDRATION_DAILY_GOAL_LITERS).toFloat(),
-                )
             }
         }
 
@@ -1344,7 +1330,7 @@ class PreferencesRepository @Inject constructor(
          * The "Last updated" date of PRIVACY.md. A user who accepted another value is asked
          * again. Change both together; PrivacyPolicyVersionTest fails when they differ.
          */
-        const val CURRENT_PRIVACY_POLICY_VERSION = "2026-11-15"
+        const val CURRENT_PRIVACY_POLICY_VERSION = "2026-11-28"
         private const val KEY_LAST_ACTIVITY_EXERCISE_TYPE = "last_activity_exercise_type"
         private const val KEY_FAVORITE_ACTIVITY_EXERCISE_TYPE = "favorite_activity_exercise_type"
         private const val KEY_DASHBOARD_WIDGET_ORDER = "dashboard_widget_order"
@@ -1358,7 +1344,6 @@ class PreferencesRepository @Inject constructor(
         private const val KEY_STRIDE_LENGTH_METERS = "stride_length_meters"
         private const val KEY_MANUAL_ENTRY_WIDGET_ORDER = "manual_entry_widget_order"
         private const val KEY_METRIC_DETAIL_SECTION_ORDER = "metric_detail_section_order"
-        private const val KEY_HYDRATION_DAILY_GOAL_LITERS = "hydration_daily_goal_liters"
         private const val KEY_HYDRATION_CONTAINER_VOLUME_MILLILITERS = "hydration_container_volume_milliliters"
         private const val KEY_RECENT_HYDRATION_AMOUNTS_MILLILITERS = "recent_hydration_amounts_milliliters"
         private const val MAX_RECENT_HYDRATION_AMOUNTS = 2
@@ -1418,9 +1403,7 @@ class PreferencesRepository @Inject constructor(
         private const val KEY_VALUE_PAIR_SEPARATOR = "="
         private const val KEY_NUTRIENT_SEPARATOR = ";"
         private const val KEY_LAYOUT_SECTION_SEPARATOR = "|"
-        const val DEFAULT_HYDRATION_DAILY_GOAL_LITERS = 2.0
-        private const val MIN_HYDRATION_DAILY_GOAL_LITERS = 0.25
-        private const val MAX_HYDRATION_DAILY_GOAL_LITERS = 10.0
+        const val DEFAULT_HYDRATION_DAILY_GOAL_LITERS = HydrationGoalStore.DEFAULT_LITERS
         const val DEFAULT_HIGH_HEART_RATE_THRESHOLD_BPM = HeartRateThresholds.DEFAULT_HIGH_BPM
         const val DEFAULT_LOW_HEART_RATE_THRESHOLD_BPM = HeartRateThresholds.DEFAULT_LOW_BPM
         const val MIN_HIGH_HEART_RATE_THRESHOLD_BPM = HeartRateThresholds.MIN_HIGH_BPM

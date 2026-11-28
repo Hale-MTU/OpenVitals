@@ -3849,6 +3849,7 @@
     <string name="openwatch_capability_profile">身体プロフィールを双方向で共有する</string>
     <string name="openwatch_capability_recording">記録中にウォッチのストリーミングを維持する</string>
     <string name="openwatch_capability_live">記録中にウォッチの心拍数を使う</string>
+    <string name="openwatch_capability_settings">1日の水分目標と単位を共有する</string>
     <string name="openwatch_just_now">たった今</string>
     <string name="body_profile_openwatch_synced">OpenWatch と同期</string>
     <string name="body_profile_openwatch_synced_updated">OpenWatch と同期 · %1$sに更新</string>

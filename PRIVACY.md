@@ -1,6 +1,6 @@
 # OpenVitals Privacy Policy
 
-Last updated: November 15, 2026
+Last updated: November 28, 2026
 
 OpenVitals is a local-first Android app for viewing health and fitness data from Health Connect.
 
@@ -94,6 +94,10 @@ any part of this can be switched off.
 
 - Your body profile (birth year, sex, height, weight, resting and maximum heart rate) is
   kept the same in both apps, so you enter it once. The more recent change wins.
+- Your daily water goal, once you set one, is kept the same in both apps the same way, so
+  OpenWatch can show it on your watch.
+- Your choice of units (metric, imperial, or as your phone's region measures) goes to
+  OpenWatch, which shows its screens the same way.
 - OpenVitals shows the watch OpenWatch syncs on its dashboard (name, battery, last sync)
   and can ask OpenWatch to sync it.
 - While you record an activity, OpenVitals asks OpenWatch to keep the watch streaming and

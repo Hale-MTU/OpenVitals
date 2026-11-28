@@ -240,6 +240,7 @@ private fun CapabilityLine(capability: String, allowed: Boolean) {
                     OpenLink.CAPABILITY_PROFILE -> R.string.openwatch_capability_profile
                     OpenLink.CAPABILITY_DEVICES -> R.string.openwatch_capability_devices
                     OpenLink.CAPABILITY_RECORDING -> R.string.openwatch_capability_recording
+                    OpenLink.CAPABILITY_SETTINGS -> R.string.openwatch_capability_settings
                     else -> R.string.openwatch_capability_live
                 },
             ),

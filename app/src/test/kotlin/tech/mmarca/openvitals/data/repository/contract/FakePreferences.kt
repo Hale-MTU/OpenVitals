@@ -2,6 +2,7 @@ package tech.mmarca.openvitals.data.repository.contract
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import tech.mmarca.openvitals.core.period.PeriodRangePreferenceKey
 import tech.mmarca.openvitals.core.period.TimeRange
@@ -24,6 +25,7 @@ import tech.mmarca.openvitals.domain.preferences.NutritionAverageBasis
 import tech.mmarca.healthcalculations.preferences.SleepWindow
 import tech.mmarca.openvitals.domain.preferences.UnitQuantity
 import tech.mmarca.openvitals.domain.preferences.UnitSystem
+import tech.mmarca.openvitals.domain.preferences.UnitSystemPreference
 import tech.mmarca.openvitals.domain.preferences.toWeekPeriodMode
 
 /**
@@ -159,6 +161,14 @@ class FakePreferences(
         set(value) { nutritionBasis.value = value }
 
     override val nutritionAverageBasisFlow: Flow<NutritionAverageBasis> = nutritionBasis
+
+    override val hydrationGoalChoiceLitersFlow: StateFlow<Double?> = MutableStateFlow(null)
+
+    override val unitSystemPreferenceFlow: MutableStateFlow<UnitSystemPreference> = MutableStateFlow(UnitSystemPreference.METRIC)
+
+    override fun resetHydrationDailyGoal() {
+        hydrationDailyGoalLiters = 2.0
+    }
 
     override var bloodPressureGuideline: BloodPressureGuideline
         get() = guideline.value

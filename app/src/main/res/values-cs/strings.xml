@@ -3847,6 +3847,7 @@
     <string name="openwatch_capability_profile">Sdílet tělesný profil oběma směry</string>
     <string name="openwatch_capability_recording">Nechat hodinky vysílat během záznamu</string>
     <string name="openwatch_capability_live">Používat tep z hodinek během záznamu</string>
+    <string name="openwatch_capability_settings">Sdílet denní cíl hydratace a jednotky</string>
     <string name="openwatch_just_now">právě teď</string>
     <string name="body_profile_openwatch_synced">Synchronizováno s OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Synchronizováno s OpenWatch · aktualizováno %1$s</string>

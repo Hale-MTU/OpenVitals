@@ -36,7 +36,8 @@ class OpenWatchLinkSummaryTest {
 
         assertThat(summary.devices).containsExactly(venu)
         assertThat(summary.allowed).containsExactly(OpenLink.CAPABILITY_DEVICES, OpenLink.CAPABILITY_LIVE).inOrder()
-        assertThat(summary.notAllowed).containsExactly(OpenLink.CAPABILITY_PROFILE, OpenLink.CAPABILITY_RECORDING).inOrder()
+        assertThat(summary.notAllowed)
+            .containsExactly(OpenLink.CAPABILITY_PROFILE, OpenLink.CAPABILITY_RECORDING, OpenLink.CAPABILITY_SETTINGS).inOrder()
         assertThat(summary.profileShared).isFalse()
         assertThat(summary.profileSyncedAtMillis).isEqualTo(42)
     }

@@ -3844,6 +3844,7 @@
     <string name="openwatch_capability_profile">Share your body profile, both ways</string>
     <string name="openwatch_capability_recording">Keep your watch streaming while you record</string>
     <string name="openwatch_capability_live">Use your watch\'s heart rate while you record</string>
+    <string name="openwatch_capability_settings">Share your daily hydration goal and your units</string>
     <string name="openwatch_just_now">just now</string>
     <string name="body_profile_openwatch_synced">Kept in sync with OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Kept in sync with OpenWatch · updated %1$s</string>
