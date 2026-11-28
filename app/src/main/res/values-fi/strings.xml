@@ -149,6 +149,7 @@
     <string name="home_metric_widget_not_configured">Valitse mittari</string>
     <string name="home_quick_beverage_widget_description">Pikajuoma</string>
     <string name="home_quick_beverage_one_tap_widget_description">Pikajuoma 1x1</string>
+    <string name="home_start_activity_widget_description">Aloita aktiviteetti yhdellä napautuksella</string>
     <string name="home_quick_beverage_widget_config_title">Valitse juoma</string>
     <string name="home_quick_beverage_widget_config_prompt">Valitse widgetin juoma:</string>
     <string name="home_quick_beverage_widget_no_drinks">Juomia ei ole saatavilla.</string>

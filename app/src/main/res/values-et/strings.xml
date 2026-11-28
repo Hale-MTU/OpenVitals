@@ -81,6 +81,7 @@
     <string name="home_metric_widget_not_configured">Vali näitaja</string>
     <string name="home_quick_beverage_widget_description">Kiirjook</string>
     <string name="home_quick_beverage_one_tap_widget_description">Kiirjook 1x1</string>
+    <string name="home_start_activity_widget_description">Alusta tegevust ühe puudutusega</string>
     <string name="home_quick_beverage_widget_config_title">Vali jook</string>
     <string name="home_quick_beverage_widget_config_prompt">Vali vidina jaoks jook:</string>
     <string name="home_quick_beverage_widget_no_drinks">Jooke ei ole saadaval.</string>

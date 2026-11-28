@@ -82,6 +82,7 @@
     <string name="home_metric_widget_not_configured">計測を選択</string>
     <string name="home_quick_beverage_widget_description">飲料のクイック追加</string>
     <string name="home_quick_beverage_one_tap_widget_description">飲料のクイック追加 1x1</string>
+    <string name="home_start_activity_widget_description">ワンタップでアクティビティを開始</string>
     <string name="home_quick_beverage_widget_config_title">飲料を選択</string>
     <string name="home_quick_beverage_widget_config_prompt">ウィジェットの飲料を選択:</string>
     <string name="home_quick_beverage_widget_no_drinks">利用可能な飲料はありません。</string>

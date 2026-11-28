@@ -52,6 +52,15 @@ class HomeWidgetLaunchRouteTest {
         assertTrue(isSupportedOpenVitalsRoute(Screen.BodyEnergyDetails.createRoute(today.toString())))
         assertTrue(isSupportedOpenVitalsRoute(Screen.HydrationEntryLogDrink.createRoute("coffee")))
         assertTrue(isSupportedOpenVitalsRoute(homeCycleWidgetEntryRoute()))
+        assertTrue(isSupportedOpenVitalsRoute(homeStartActivityWidgetRoute()))
+    }
+
+    @Test
+    fun `the start-activity widget opens what the dashboard's Start workout opens`() {
+        // Record mode: with a recording running, that screen shows it instead of a second setup.
+        assertEquals(Screen.ActivityEntry.createRoute(mode = Screen.ActivityEntryMode.RECORD), homeStartActivityWidgetRoute())
+        assertTrue(isSupportedOpenVitalsRoute(homeStartActivityWidgetRoute()))
+        assertFalse(isSupportedOpenVitalsRoute(Screen.ActivityEntry.createRoute(mode = Screen.ActivityEntryMode.MANUAL)))
     }
 
     @Test

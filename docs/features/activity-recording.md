@@ -65,7 +65,7 @@ When elevation tiles are imported and correction is on, a finished recording tak
 
 ## Entry Point
 
-Recording starts from the activity **start hub** (`ActivityStartHub`, the first screen of `Screen.ActivityEntry`) via *Record activity*; the dashboard's Start opens recording setup directly (`mode=record`). "Choose another method" on the setup and recording screens returns to the hub. A finished recording lands in the manual form for review, as before.
+Recording starts from the activity **start hub** (`ActivityStartHub`, the first screen of `Screen.ActivityEntry`) via *Record activity*; the dashboard's Start opens recording setup directly (`mode=record`), and so does the Start activity home screen widget. With a recording already running, either one shows that recording instead of a second setup. "Choose another method" on the setup and recording screens returns to the hub. A finished recording lands in the manual form for review, as before.
 
 ## Guided Plan Run
 
