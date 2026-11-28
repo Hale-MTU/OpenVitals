@@ -40,6 +40,8 @@ import tech.mmarca.openvitals.sensors.ble.BleSensorCoordinator
  * Health data still comes through Health Connect; this carries the rest:
  *
  * - the body profile, both ways, last writer wins;
+ * - the daily water goal, both ways, the later change winning, and the units, from here only
+ *   ([OpenWatchSharedSettings]);
  * - the paired watches for the dashboard tile, and "sync now";
  * - while an activity records, a session that keeps the watch streaming, and its live
  *   heart rate into the recording as a sensor (a strap the user added still wins).
@@ -54,6 +56,7 @@ class OpenWatchLink @Inject constructor(
     private val recording: ActivityRecordingController,
     private val sensors: BleSensorCoordinator,
     private val profiles: BodyProfilePreferences,
+    private val sharedSettings: OpenWatchSharedSettings,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -130,6 +133,8 @@ class OpenWatchLink @Inject constructor(
                 adopt?.let(profiles::setBodyProfile)
             }
         }
+        scope.launch { sharedSettings.offers.collect { client.setSettings(it) } }
+        scope.launch { client.hostSettings.collect(sharedSettings::onHostSettings) }
         scope.launch {
             client.profileExchangedAtMillis.filter { it > 0 }.collect { at ->
                 _profileSyncedAtMillis.value = at

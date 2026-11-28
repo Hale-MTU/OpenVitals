@@ -3781,6 +3781,7 @@
     <string name="openwatch_capability_profile">Dein Körperprofil in beide Richtungen teilen</string>
     <string name="openwatch_capability_recording">Deine Uhr beim Aufzeichnen weiter senden lassen</string>
     <string name="openwatch_capability_live">Die Herzfrequenz deiner Uhr beim Aufzeichnen nutzen</string>
+    <string name="openwatch_capability_settings">Dein tägliches Hydrierungsziel und deine Einheiten teilen</string>
     <string name="openwatch_just_now">gerade eben</string>
     <string name="body_profile_openwatch_synced">Mit OpenWatch synchron gehalten</string>
     <string name="body_profile_openwatch_synced_updated">Mit OpenWatch synchron gehalten · aktualisiert %1$s</string>

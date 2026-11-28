@@ -3847,6 +3847,7 @@
     <string name="openwatch_capability_profile">Udostępniać profil ciała w obie strony</string>
     <string name="openwatch_capability_recording">Utrzymywać nadawanie zegarka podczas nagrywania</string>
     <string name="openwatch_capability_live">Używać tętna z zegarka podczas nagrywania</string>
+    <string name="openwatch_capability_settings">Udostępniać dzienny cel nawodnienia i jednostki</string>
     <string name="openwatch_just_now">przed chwilą</string>
     <string name="body_profile_openwatch_synced">Synchronizowane z OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Synchronizowane z OpenWatch · zaktualizowano %1$s</string>

@@ -3782,6 +3782,7 @@
     <string name="openwatch_capability_profile">双向共享你的身体资料</string>
     <string name="openwatch_capability_recording">记录时保持手表持续传输</string>
     <string name="openwatch_capability_live">记录时使用手表的心率</string>
+    <string name="openwatch_capability_settings">共享你的每日饮水目标和单位</string>
     <string name="openwatch_just_now">刚刚</string>
     <string name="body_profile_openwatch_synced">与 OpenWatch 保持同步</string>
     <string name="body_profile_openwatch_synced_updated">与 OpenWatch 保持同步 · 更新于%1$s</string>

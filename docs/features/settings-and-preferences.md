@@ -32,7 +32,7 @@ The settings root also shows support links, privacy notes, and the app version.
 Users can configure:
 
 - Language.
-- Unit system.
+- Unit system. With OpenWatch installed, OpenWatch shows its screens in the same system while OpenVitals shares its settings with it (`openwatch/OpenWatchSharedSettings`); the units per measurement stay OpenVitals' own.
 - Theme mode, including system, light, dark, and AMOLED, plus dynamic color.
 - Chart aggregation, which replaces raw samples with an average line and a min/max band per time bucket.
 - Rolling dates mode, such as calendar week/month/year or rolling 7/30/365-day windows.

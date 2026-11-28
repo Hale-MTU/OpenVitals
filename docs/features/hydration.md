@@ -38,6 +38,8 @@ OpenVitals-created hydration entries can be edited or deleted from the relevant 
 
 The daily hydration goal is set with a stepper in Settings, Nutrition, in the app's unit system. It drives goal progress, streaks, and the point at which hydration reminders pause for the day.
 
+With OpenWatch installed, a goal you set is kept the same in both apps over OpenLink, the later change winning: OpenWatch can show it on the watch, and a goal set there comes back here. The default of 2 L never crosses (`openwatch/OpenWatchSharedSettings`).
+
 ## Reminders
 
 Hydration reminders are local notification reminders. The feature stores reminder preferences locally, checks notification permission on supported Android versions, and does not create Health Connect records when reminders fire.

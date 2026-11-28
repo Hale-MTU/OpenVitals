@@ -456,6 +456,7 @@
     <string name="openwatch_capability_profile">Να μοιράζεται το σωματικό σας προφίλ και προς τις δύο πλευρές</string>
     <string name="openwatch_capability_recording">Να κρατά το ρολόι σε μετάδοση όσο καταγράφετε</string>
     <string name="openwatch_capability_live">Να χρησιμοποιεί τον καρδιακό ρυθμό του ρολογιού όσο καταγράφετε</string>
+    <string name="openwatch_capability_settings">Να μοιράζεται τον ημερήσιο στόχο ενυδάτωσης και τις μονάδες σας</string>
     <string name="openwatch_just_now">μόλις τώρα</string>
     <string name="body_profile_openwatch_synced">Συγχρονίζεται με το OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Συγχρονίζεται με το OpenWatch · ενημερώθηκε %1$s</string>

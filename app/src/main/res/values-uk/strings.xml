@@ -3846,6 +3846,7 @@
     <string name="openwatch_capability_profile">Ділитися вашим профілем тіла в обидва боки</string>
     <string name="openwatch_capability_recording">Тримати ваш годинник у потоці під час запису</string>
     <string name="openwatch_capability_live">Використовувати пульс вашого годинника під час запису</string>
+    <string name="openwatch_capability_settings">Ділитися вашою денною ціллю водного балансу та одиницями</string>
     <string name="openwatch_just_now">щойно</string>
     <string name="body_profile_openwatch_synced">Синхронізується з OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Синхронізується з OpenWatch · оновлено %1$s</string>

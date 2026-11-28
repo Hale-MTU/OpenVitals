@@ -71,7 +71,7 @@ class FileSizeRatchetTest {
             "features/manualentry/activity/ActivityEntryViewModel.kt" to 1600,
             "features/imports/applehealth/AppleHealthImportService.kt" to 1350,
             "features/heart/HeartMetricSharedSections.kt" to 1400,
-            "data/repository/PreferencesRepository.kt" to 1450,
+            "data/repository/PreferencesRepository.kt" to 1430,
             "features/body/BodyMetricContent.kt" to 1050,
             "features/activity/ActivitiesOverviewSections.kt" to 1200,
             "features/devicesync/store/SyncRecordCodec.kt" to 1150,

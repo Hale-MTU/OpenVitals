@@ -3852,6 +3852,7 @@ Se Acceder a rutas de exercicio non aparece no diálogo de acceso, abre os axust
     <string name="openwatch_capability_profile">Compartir o teu perfil corporal nos dous sentidos</string>
     <string name="openwatch_capability_recording">Manter o reloxo transmitindo mentres gravas</string>
     <string name="openwatch_capability_live">Usar a frecuencia cardíaca do reloxo mentres gravas</string>
+    <string name="openwatch_capability_settings">Compartir o teu obxectivo diario de hidratación e as túas unidades</string>
     <string name="openwatch_just_now">agora mesmo</string>
     <string name="body_profile_openwatch_synced">Sincronizado con OpenWatch</string>
     <string name="body_profile_openwatch_synced_updated">Sincronizado con OpenWatch · actualizado %1$s</string>
