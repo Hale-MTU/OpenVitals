@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -51,6 +53,15 @@ class PermissionCategoryCardTest {
         composeRule.onNodeWithText(string(R.string.onboarding_status_not_supported))
             .performScrollTo()
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun theStatusIconsAddNothingToWhatTheStatusLineSays() {
+        // A screen reader read "Granted" twice: the line, then the check beside it (#397).
+        setContent(granted = SLEEP_PERMISSIONS)
+
+        composeRule.onAllNodesWithContentDescription(string(R.string.onboarding_status_granted)).assertCountEquals(0)
+        composeRule.onAllNodesWithContentDescription(string(R.string.onboarding_status_not_supported)).assertCountEquals(0)
     }
 
     @Test

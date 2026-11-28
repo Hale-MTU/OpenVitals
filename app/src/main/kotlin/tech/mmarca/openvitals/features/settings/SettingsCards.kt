@@ -2712,17 +2712,18 @@ internal fun PermissionCategoryCard(
                             MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
+                // The status line beside them says it in words; a label here would be read twice (#397).
                 if (granted) {
                     Icon(
                         imageVector = Icons.Outlined.CheckCircle,
-                        contentDescription = stringResource(R.string.onboarding_status_granted),
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(start = 12.dp),
                     )
                 } else if (!category.available) {
                     Icon(
                         imageVector = Icons.Outlined.Lock,
-                        contentDescription = stringResource(R.string.onboarding_status_not_supported),
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 12.dp),
                     )
