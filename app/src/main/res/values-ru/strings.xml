@@ -82,6 +82,7 @@
     <string name="home_metric_widget_not_configured">Выберите показатель</string>
     <string name="home_quick_beverage_widget_description">Быстрое добавление напитка</string>
     <string name="home_quick_beverage_one_tap_widget_description">Быстрое добавление напитка 1×1</string>
+    <string name="home_start_activity_widget_description">Начать активность одним касанием</string>
     <string name="home_quick_beverage_widget_config_title">Выбрать напиток</string>
     <string name="home_quick_beverage_widget_config_prompt">Выберите напиток для виджета:</string>
     <string name="home_quick_beverage_widget_no_drinks">Нет доступных напитков.</string>

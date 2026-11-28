@@ -222,6 +222,8 @@ private const val LegacyDailyReadinessRoute = "daily_readiness"
 internal fun isSupportedOpenVitalsRoute(route: String): Boolean {
     if (route == Screen.Dashboard.route) return true
     if (route == Screen.ActivityEntry.createRoute()) return true
+    // The start-activity widget: what the dashboard's "Start workout" opens.
+    if (route == Screen.ActivityEntry.createRoute(mode = Screen.ActivityEntryMode.RECORD)) return true
     if (route == Screen.HydrationEntry.route) return true
     if (route == Screen.FoodEntry.route) return true
     // The cycle widget asks what to log today; a dated route would go stale after midnight.

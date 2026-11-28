@@ -26,6 +26,14 @@ internal val HomeWidgetReceivers: List<Class<*>> = listOf(
     HomeQuickBeverageOneTapWidgetReceiver::class.java,
 )
 
+/**
+ * Receivers whose tile shows no data, only a way in: drawn once, never refreshed, and no reason
+ * to schedule the background refresh. The manifest's widgets are these and [HomeWidgetReceivers].
+ */
+internal val StaticHomeWidgetReceivers: List<Class<*>> = listOf(
+    HomeStartActivityWidgetReceiver::class.java,
+)
+
 /** One tile's in-process refresh, per receiver. A test holds this to [HomeWidgetReceivers]. */
 internal val HomeWidgetRefreshers: Map<Class<*>, suspend (Context, Int) -> Unit> = mapOf(
     HomeMetricWidgetReceiver::class.java to { context, id -> refreshHomeMetricWidget(context, id) },

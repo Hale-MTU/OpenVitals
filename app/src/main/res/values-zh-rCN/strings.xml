@@ -82,6 +82,7 @@
     <string name="home_metric_widget_not_configured">选择一个指标</string>
     <string name="home_quick_beverage_widget_description">快捷饮品</string>
     <string name="home_quick_beverage_one_tap_widget_description">快捷饮品 1x1</string>
+    <string name="home_start_activity_widget_description">一键开始活动</string>
     <string name="home_quick_beverage_widget_config_title">选择饮品</string>
     <string name="home_quick_beverage_widget_config_prompt">选择小组件要显示的饮品：</string>
     <string name="home_quick_beverage_widget_no_drinks">暂无可用饮品。</string>

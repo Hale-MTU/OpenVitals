@@ -16,6 +16,7 @@ OpenVitals provides Android home screen widgets for quick health summaries and f
 - Configurable metric summary widgets.
 - Quick beverage logging, in a full-size and a 1x1 one-tap variant.
 - Cycle.
+- Start activity, a 1x1 shortcut.
 
 Metric widgets are configured when the widget is added. They show selected OpenVitals dashboard metrics without turning the launcher widget into a second dashboard screen.
 
@@ -30,6 +31,10 @@ The widget keeps dates, not text, and counts the cycle day when it draws, and a 
 The quick beverage widget can be configured for a saved drink choice. It is meant for repeated entries such as water, coffee, tea, or another frequently used beverage. The 1x1 variant is the same thing at launcher-icon size, for a drink logged often enough to deserve its own spot.
 
 When a beverage is logged, OpenVitals writes the supported hydration, caffeine, and nutrition values through the same explicit entry flow boundaries used inside the app.
+
+## Start Activity
+
+The Start activity widget is one tap target, an icon and "Start workout", at launcher-icon size. A tap opens the recording setup the dashboard's Start workout opens, without the dashboard in between; with a recording already running, it opens that recording. It shows no data, so it is never refreshed and does not keep the background refresh scheduled (`StaticHomeWidgetReceivers`). Like the other widgets it draws on the dark widget background.
 
 ## Data Source
 

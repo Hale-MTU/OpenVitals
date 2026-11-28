@@ -82,6 +82,7 @@
     <string name="cd_toggle_session_notes">Mostrar ou agochar as notas da sesión</string>
     <string name="home_quick_beverage_widget_description">Bebida rápida</string>
     <string name="home_quick_beverage_one_tap_widget_description">Bebida rápida 1x1</string>
+    <string name="home_start_activity_widget_description">Inicia unha actividade cun toque</string>
     <string name="home_quick_beverage_widget_config_title">Escolle a bebida</string>
     <string name="home_quick_beverage_widget_config_prompt">Escolle a bebida para o widget:</string>
     <string name="home_quick_beverage_widget_no_drinks">Non hai bebidas dispoñibles.</string>

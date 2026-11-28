@@ -48,8 +48,8 @@ class HomeWidgetRefreshTriggerTest {
     }
 
     @Test
-    fun `every widget the manifest declares is one this refreshes`() {
-        // Written out by hand, so a new receiver in the manifest and not in the list fails here.
+    fun `every widget the manifest declares is one this refreshes, or one with nothing to refresh`() {
+        // Written out by hand, so a new receiver in the manifest and in neither list fails here.
         val declared = MANIFEST_WIDGET_RECEIVER
             .findAll(File("src/main/AndroidManifest.xml").readText())
             .filter { "APPWIDGET_UPDATE" in it.groupValues[2] }
@@ -57,8 +57,10 @@ class HomeWidgetRefreshTriggerTest {
             .toSet()
 
         assertThat(declared).isNotEmpty()
-        assertThat(HomeWidgetReceivers.map { it.name.removePrefix("tech.mmarca.openvitals.") })
+        assertThat((HomeWidgetReceivers + StaticHomeWidgetReceivers).map { it.name.removePrefix("tech.mmarca.openvitals.") })
             .containsExactlyElementsIn(declared)
+        // A static tile on the refresh list would keep the background refresh scheduled for nothing.
+        assertThat(HomeWidgetReceivers).containsNoneIn(StaticHomeWidgetReceivers)
     }
 
     @Test

@@ -81,6 +81,7 @@
     <string name="home_metric_widget_not_configured">Vyberte metriku</string>
     <string name="home_quick_beverage_widget_description">Rychlý nápoj</string>
     <string name="home_quick_beverage_one_tap_widget_description">Rychlý nápoj 1x1</string>
+    <string name="home_start_activity_widget_description">Spustit aktivitu jedním klepnutím</string>
     <string name="home_quick_beverage_widget_config_title">Vyberte nápoj</string>
     <string name="home_quick_beverage_widget_config_prompt">Vyberte nápoj pro widget:</string>
     <string name="home_quick_beverage_widget_no_drinks">Žádné nápoje nejsou k dispozici.</string>

@@ -106,6 +106,7 @@
     <string name="home_metric_widget_not_configured">Επιλέξτε μια μέτρηση</string>
     <string name="home_quick_beverage_widget_description">Γρήγορη καταχώριση ροφήματος</string>
     <string name="home_quick_beverage_one_tap_widget_description">Γρήγορη καταχώριση ροφήματος 1×1</string>
+    <string name="home_start_activity_widget_description">Έναρξη δραστηριότητας με ένα πάτημα</string>
     <string name="home_quick_beverage_widget_config_title">Επιλογή ροφήματος</string>
     <string name="home_quick_beverage_widget_config_prompt">Επιλέξτε το ρόφημα για το γραφικό στοιχείο:</string>
     <string name="home_quick_beverage_widget_no_drinks">Δεν υπάρχουν διαθέσιμα ροφήματα.</string>

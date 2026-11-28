@@ -76,6 +76,7 @@
     <string name="home_metric_widget_not_configured">Wybierz wskaźnik</string>
     <string name="home_quick_beverage_widget_description">Napój na szybko</string>
     <string name="home_quick_beverage_one_tap_widget_description">Napój na szybko 1x1</string>
+    <string name="home_start_activity_widget_description">Rozpocznij aktywność jednym dotknięciem</string>
     <string name="home_quick_beverage_widget_config_title">Wybierz napój</string>
     <string name="home_quick_beverage_widget_config_prompt">Wybierz napój dla widżetu:</string>
     <string name="home_quick_beverage_widget_no_drinks">Brak dostępnych napoi.</string>
